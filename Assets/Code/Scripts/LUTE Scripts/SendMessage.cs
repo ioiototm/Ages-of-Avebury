@@ -39,12 +39,12 @@ public class SendMessage : Order
 
         //this code gets executed as the order is called
         //some orders may not lead to another node so you can call continue if you wish to move to the next order after this one   
-        //Continue();
+        Continue();
     }
 
     public override string GetSummary()
   {
  //you can use this to return a summary of the order which is displayed in the inspector of the order
-      return "";
-  }
+      return "This order will send a message to the UI with the following details: " + from + " " + subject + " " + message;
+    }
 }
