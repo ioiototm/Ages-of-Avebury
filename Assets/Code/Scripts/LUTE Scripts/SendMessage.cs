@@ -23,17 +23,22 @@ public class SendMessage : Order
     public override void OnEnter()
     {
         //get the ModernInboxCanvas/Scroll View/Viewport/Content object and spawn the message prefab as a child
-        GameObject content = GameObject.Find("ModernInboxCanvas/Scroll View/Viewport/Content");
+        //GameObject content = GameObject.Find("ModernInboxCanvas/Scroll View/Viewport/Content");
+
+        GameObject content = InitialiseEverything.inboxCanvas.transform.Find("Scroll View/Viewport/Content").gameObject;
 
         GameObject messageObject = Instantiate(messagePrefab, content.transform);
+
+        //this spawns it in a content ui object, which is in a view port which is in a scroll view, so changes to the scroll view will affect the content object
+
 
         //the message has a "FromField/Text (TMP)" object
         // a "SubjectField/Text (TMP)" object
         // and a "Panel/ContentsField" object
 
         //Update each of these objects with the values from the order
-        messageObject.transform.Find("FromField/Text (TMP)").GetComponent<TMPro.TextMeshProUGUI>().text = from;
-        messageObject.transform.Find("SubjectField/Text (TMP)").GetComponent<TMPro.TextMeshProUGUI>().text = subject;
+        messageObject.transform.Find("FromField/FromField").GetComponent<TMPro.TextMeshProUGUI>().text = from;
+        messageObject.transform.Find("SubjectField/SubjectField").GetComponent<TMPro.TextMeshProUGUI>().text = subject;
         messageObject.transform.Find("Panel/ContentsField").GetComponent<TMPro.TextMeshProUGUI>().text = message;
 
 
