@@ -119,46 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!21 &100665023
-Material:
-  serializedVersion: 8
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: UI/RoundedCorners/RoundedCorners
-  m_Shader: {fileID: 4800000, guid: 0bd2ec5d73751e34a814274a454bec41, type: 3}
-  m_Parent: {fileID: 0}
-  m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
-  m_InvalidKeywords: []
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_LockedProperties: 
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Ints: []
-    m_Floats:
-    - _ColorMask: 15
-    - _Stencil: 0
-    - _StencilComp: 8
-    - _StencilOp: 0
-    - _StencilReadMask: 255
-    - _StencilWriteMask: 255
-    - _UseUIAlphaClip: 0
-    m_Colors:
-    - _WidthHeightRadius: {r: 571.19995, g: 108, b: 80, a: 0}
-  m_BuildTextureStacks: []
-  m_AllowLocking: 1
 --- !u!1 &213297727
 GameObject:
   m_ObjectHideFlags: 0
@@ -483,10 +443,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a72ba2d9b50395b47afd252117aa0f54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  locationInfo: {fileID: 1085047731}
-  spriteRenderer: {fileID: 940109796}
+  markerSpriteRenderer: {fileID: 0}
   radiusSpriteRenderer: {fileID: 1403839932}
-  textMesh: {fileID: 1058525537}
+  markerTextMesh: {fileID: 0}
+  updateVisuals: 0
+  allowClickWithoutLocation: 0
+  interactable: 0
+  visualisationObject: {fileID: 1058525539}
+  maxScaleThreshold: 17
+  hideMarkerThreshold: 14
 --- !u!114 &537508052
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -963,42 +928,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 537508053}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1085047731
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b4ddc75f9f1b3043893d0de76d49f2c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  infoID: 1479e2c3-7de5-4396-b0a9-d24189958481
-  Position: 51.42856861319775, -1.8542802086417438
-  Name: Central Avebury
-  Sprite: {fileID: 21300000, guid: 89eb6064471d67f44919684e051b507c, type: 3}
-  InProgressSprite: {fileID: 21300000, guid: 3b2147c1716bc544a819d9fe29bd81f0, type: 3}
-  CompletedSprite: {fileID: 21300000, guid: 38eaf4005975a7945bef1ddb4fb84d2e, type: 3}
-  Color: {r: 1, g: 1, b: 1, a: 1}
-  ShowName: 0
-  showRadius: 1
-  defaultRadiusColour: {r: 0.7372549, g: 0.47058824, b: 0.23921569, a: 0.5882353}
-  visitedRadiusColour: {r: 0.96862745, g: 0.8862745, b: 0.14509805, a: 0.5882353}
-  completedRadiusColour: {r: 0.18513432, g: 0.745283, b: 0, a: 0.5882353}
-  locationDisabled: 0
-  radiusIncrease: 0
-  interactable: 1
-  saveInfo: 1
-  indepedentMarkerUpdating: 1
-  allowClickWithoutLocation: 0
-  locationStatus: 1
-  infoImage: {fileID: 0}
-  displayName: 
-  description: 
-  nodeComplete: Location Example
-  executeNode: 
 --- !u!1 &1101100705
 GameObject:
   m_ObjectHideFlags: 0
@@ -1078,46 +1007,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!21 &1110510262
-Material:
-  serializedVersion: 8
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: UI/RoundedCorners/RoundedCorners
-  m_Shader: {fileID: 4800000, guid: 0bd2ec5d73751e34a814274a454bec41, type: 3}
-  m_Parent: {fileID: 0}
-  m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
-  m_InvalidKeywords: []
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_LockedProperties: 
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Ints: []
-    m_Floats:
-    - _ColorMask: 15
-    - _Stencil: 0
-    - _StencilComp: 8
-    - _StencilOp: 0
-    - _StencilReadMask: 255
-    - _StencilWriteMask: 255
-    - _UseUIAlphaClip: 0
-    m_Colors:
-    - _WidthHeightRadius: {r: 571.19995, g: 108, b: 80, a: 0}
-  m_BuildTextureStacks: []
-  m_AllowLocking: 1
 --- !u!1 &1204839864
 GameObject:
   m_ObjectHideFlags: 0
@@ -1158,7 +1047,6 @@ GameObject:
   - component: {fileID: 1204839897}
   - component: {fileID: 1204839896}
   - component: {fileID: 1204839914}
-  - component: {fileID: 1204839913}
   - component: {fileID: 1204839912}
   - component: {fileID: 1204839911}
   - component: {fileID: 1204839910}
@@ -1178,6 +1066,15 @@ GameObject:
   - component: {fileID: 1204839916}
   - component: {fileID: 1204839918}
   - component: {fileID: 1204839919}
+  - component: {fileID: 1204839920}
+  - component: {fileID: 1204839921}
+  - component: {fileID: 1204839922}
+  - component: {fileID: 1204839923}
+  - component: {fileID: 1204839926}
+  - component: {fileID: 1204839925}
+  - component: {fileID: 1204839924}
+  - component: {fileID: 1204839927}
+  - component: {fileID: 1204839928}
   m_Layer: 0
   m_Name: BasicFlowEngine
   m_TagString: Untagged
@@ -1222,6 +1119,9 @@ MonoBehaviour:
   groupDescription: A series of nodes that can be executed as a group
   itemId: 0
   orderList:
+  - {fileID: 1204839925}
+  - {fileID: 1204839926}
+  - {fileID: 1204839924}
   - {fileID: 1204839896}
   - {fileID: 1204839887}
   - {fileID: 1204839893}
@@ -1229,7 +1129,6 @@ MonoBehaviour:
   isGrouped: 0
   groupIndex: -1
   repeatable: 0
-  nodeLocation: {fileID: 0}
   tint: {r: 1, g: 1, b: 1, a: 1}
   useCustomTint: 0
   hoverStartTime: 0
@@ -1237,6 +1136,7 @@ MonoBehaviour:
   targetKeyNode: {fileID: 0}
   showDesc: 0
   saveable: 0
+  updateLocationStatusToComplete: 1
   NodeComplete: 0
 --- !u!114 &1204839867
 MonoBehaviour:
@@ -1255,10 +1155,8 @@ MonoBehaviour:
   description: 
   hideComponents: 0
   localizationId: 
-  selectedOrders:
-  - {fileID: 1204839916}
-  selectedNodes:
-  - {fileID: 1204839870}
+  selectedOrders: []
+  selectedNodes: []
   nodeViewHeight: 551
   hideOrders: []
   variables:
@@ -1276,8 +1174,8 @@ MonoBehaviour:
   showHandlerInfoOnGraph: 1
   showAnnotations: 1
   labelTint: {r: 1, g: 1, b: 1, a: 1}
-  zoom: 0.6400001
-  scrollPos: {x: 719.6105, y: 468.62842}
+  zoom: 0.79
+  scrollPos: {x: 573.2802, y: 357.00482}
   version: 1
   sidesOfDie: 6
   postcards: []
@@ -1326,7 +1224,6 @@ MonoBehaviour:
   isGrouped: 0
   groupIndex: -1
   repeatable: 0
-  nodeLocation: {fileID: 0}
   tint: {r: 1, g: 1, b: 1, a: 1}
   useCustomTint: 0
   hoverStartTime: 0
@@ -1334,6 +1231,7 @@ MonoBehaviour:
   targetKeyNode: {fileID: 0}
   showDesc: 0
   saveable: 0
+  updateLocationStatusToComplete: 1
   NodeComplete: 0
 --- !u!114 &1204839870
 MonoBehaviour:
@@ -1350,7 +1248,7 @@ MonoBehaviour:
   nodeRect:
     serializedVersion: 2
     x: 915.45135
-    y: -92.421036
+    y: -90.858536
     width: 138.13
     height: 40
   nodeName: Show the Inbox
@@ -1359,6 +1257,7 @@ MonoBehaviour:
   itemId: 1
   orderList:
   - {fileID: 1204839872}
+  - {fileID: 1204839922}
   - {fileID: 1204839871}
   - {fileID: 1204839916}
   - {fileID: 1204839880}
@@ -1369,7 +1268,6 @@ MonoBehaviour:
   isGrouped: 0
   groupIndex: -1
   repeatable: 1
-  nodeLocation: {fileID: 0}
   tint: {r: 1, g: 1, b: 1, a: 1}
   useCustomTint: 0
   hoverStartTime: 0
@@ -1377,6 +1275,7 @@ MonoBehaviour:
   targetKeyNode: {fileID: 0}
   showDesc: 0
   saveable: 0
+  updateLocationStatusToComplete: 1
   NodeComplete: 0
 --- !u!114 &1204839871
 MonoBehaviour:
@@ -1429,6 +1328,7 @@ MonoBehaviour:
   groupDescription: A series of nodes that can be executed as a group
   itemId: 0
   orderList:
+  - {fileID: 1204839923}
   - {fileID: 1204839875}
   - {fileID: 1204839874}
   - {fileID: 1204839917}
@@ -1439,7 +1339,6 @@ MonoBehaviour:
   isGrouped: 0
   groupIndex: -1
   repeatable: 1
-  nodeLocation: {fileID: 0}
   tint: {r: 1, g: 1, b: 1, a: 1}
   useCustomTint: 0
   hoverStartTime: 0
@@ -1447,6 +1346,7 @@ MonoBehaviour:
   targetKeyNode: {fileID: 0}
   showDesc: 0
   saveable: 0
+  updateLocationStatusToComplete: 1
   NodeComplete: 0
 --- !u!114 &1204839874
 MonoBehaviour:
@@ -2205,8 +2105,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeRect:
     serializedVersion: 2
-    x: 340.5307
-    y: -143.90039
+    x: 344.3084
+    y: -149.37906
     width: 77.31
     height: 40
   nodeName: Main
@@ -2214,8 +2114,10 @@ MonoBehaviour:
   groupDescription: A series of nodes that can be executed as a group
   itemId: 1
   orderList:
+  - {fileID: 1204839927}
   - {fileID: 1204839892}
   - {fileID: 1204839891}
+  - {fileID: 1204839928}
   - {fileID: 1204839890}
   - {fileID: 1204839889}
   - {fileID: 1204839888}
@@ -2223,7 +2125,6 @@ MonoBehaviour:
   isGrouped: 0
   groupIndex: -1
   repeatable: 0
-  nodeLocation: {fileID: 0}
   tint: {r: 1, g: 1, b: 1, a: 1}
   useCustomTint: 0
   hoverStartTime: 0
@@ -2231,6 +2132,7 @@ MonoBehaviour:
   targetKeyNode: {fileID: 0}
   showDesc: 0
   saveable: 0
+  updateLocationStatusToComplete: 1
   NodeComplete: 0
 --- !u!114 &1204839895
 MonoBehaviour:
@@ -2259,7 +2161,6 @@ MonoBehaviour:
   isGrouped: 0
   groupIndex: -1
   repeatable: 0
-  nodeLocation: {fileID: 0}
   tint: {r: 1, g: 1, b: 1, a: 1}
   useCustomTint: 0
   hoverStartTime: 0
@@ -2267,6 +2168,7 @@ MonoBehaviour:
   targetKeyNode: {fileID: 0}
   showDesc: 0
   saveable: 0
+  updateLocationStatusToComplete: 1
   NodeComplete: 0
 --- !u!114 &1204839896
 MonoBehaviour:
@@ -2705,6 +2607,7 @@ MonoBehaviour:
   groupDescription: A series of nodes that can be executed as a group
   itemId: 1
   orderList:
+  - {fileID: 1204839921}
   - {fileID: 1204839919}
   - {fileID: 1204839902}
   - {fileID: 1204839918}
@@ -2716,7 +2619,6 @@ MonoBehaviour:
   isGrouped: 0
   groupIndex: -1
   repeatable: 1
-  nodeLocation: {fileID: 0}
   tint: {r: 1, g: 1, b: 1, a: 1}
   useCustomTint: 0
   hoverStartTime: 0
@@ -2724,6 +2626,7 @@ MonoBehaviour:
   targetKeyNode: {fileID: 0}
   showDesc: 0
   saveable: 0
+  updateLocationStatusToComplete: 1
   NodeComplete: 0
 --- !u!114 &1204839905
 MonoBehaviour:
@@ -3159,20 +3062,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectToHide: {fileID: 1833490471}
   delay: 0
---- !u!114 &1204839913
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1204839864}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 601b2c632b915be47a3eac4a5de2a02b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  objectToShow: {fileID: 1448812976}
-  delay: 0
 --- !u!114 &1204839914
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3187,8 +3076,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeRect:
     serializedVersion: 2
-    x: 1095.8125
-    y: -183.02399
+    x: 1109.875
+    y: -187.71149
     width: 153.48001
     height: 40
   nodeName: Show the Scanner
@@ -3196,7 +3085,7 @@ MonoBehaviour:
   groupDescription: A series of nodes that can be executed as a group
   itemId: 1
   orderList:
-  - {fileID: 1204839913}
+  - {fileID: 1204839920}
   - {fileID: 1204839912}
   - {fileID: 1204839907}
   - {fileID: 1204839908}
@@ -3208,7 +3097,6 @@ MonoBehaviour:
   isGrouped: 0
   groupIndex: -1
   repeatable: 1
-  nodeLocation: {fileID: 0}
   tint: {r: 1, g: 1, b: 1, a: 1}
   useCustomTint: 0
   hoverStartTime: 0
@@ -3216,6 +3104,7 @@ MonoBehaviour:
   targetKeyNode: {fileID: 0}
   showDesc: 0
   saveable: 0
+  updateLocationStatusToComplete: 1
   NodeComplete: 0
 --- !u!114 &1204839915
 MonoBehaviour:
@@ -3287,6 +3176,257 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectToShow: {fileID: 1174390875865756376}
   delay: 0
+--- !u!114 &1204839920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 054ce21405c41714381f08eb5f552136, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _toggle: 1
+  _planeDetectionMode: 1
+  _planeVisualizer: {fileID: 1585201990951412, guid: 58ac1e8ab6d461541b41066e0a2539f3, type: 3}
+  _pointCloudVisualizer: {fileID: 1854016325464908, guid: a6fdae211cffd2543aa5cd7bef76d698, type: 3}
+--- !u!114 &1204839921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 054ce21405c41714381f08eb5f552136, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _toggle: 0
+  _planeDetectionMode: 0
+  _planeVisualizer: {fileID: 1585201990951412, guid: 58ac1e8ab6d461541b41066e0a2539f3, type: 3}
+  _pointCloudVisualizer: {fileID: 1854016325464908, guid: a6fdae211cffd2543aa5cd7bef76d698, type: 3}
+--- !u!114 &1204839922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 054ce21405c41714381f08eb5f552136, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _toggle: 0
+  _planeDetectionMode: 0
+  _planeVisualizer: {fileID: 1585201990951412, guid: 58ac1e8ab6d461541b41066e0a2539f3, type: 3}
+  _pointCloudVisualizer: {fileID: 1854016325464908, guid: a6fdae211cffd2543aa5cd7bef76d698, type: 3}
+--- !u!114 &1204839923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 054ce21405c41714381f08eb5f552136, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _toggle: 0
+  _planeDetectionMode: 0
+  _planeVisualizer: {fileID: 1585201990951412, guid: 58ac1e8ab6d461541b41066e0a2539f3, type: 3}
+  _pointCloudVisualizer: {fileID: 1854016325464908, guid: a6fdae211cffd2543aa5cd7bef76d698, type: 3}
+--- !u!114 &1204839924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 054ce21405c41714381f08eb5f552136, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _toggle: 0
+  _planeDetectionMode: 0
+  _planeVisualizer: {fileID: 1585201990951412, guid: 58ac1e8ab6d461541b41066e0a2539f3, type: 3}
+  _pointCloudVisualizer: {fileID: 1854016325464908, guid: a6fdae211cffd2543aa5cd7bef76d698, type: 3}
+--- !u!114 &1204839925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 054ce21405c41714381f08eb5f552136, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _toggle: 0
+  _planeDetectionMode: 0
+  _planeVisualizer: {fileID: 1585201990951412, guid: 58ac1e8ab6d461541b41066e0a2539f3, type: 3}
+  _pointCloudVisualizer: {fileID: 1854016325464908, guid: a6fdae211cffd2543aa5cd7bef76d698, type: 3}
+--- !u!114 &1204839926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40e7ad385acaccf48b9cb2f7fef519f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _duration: 0.1
+--- !u!114 &1204839927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d956d6f323f561439edbd85dbb00be4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  variable:
+    variable: {fileID: 1204839881}
+    data:
+      integerData:
+        integerRef: {fileID: 0}
+        integerVal: 0
+      locationData:
+        locationRef: {fileID: 0}
+        locationVal: {fileID: 0}
+      collectionData:
+        collectionRef: {fileID: 0}
+        collectionVal: {fileID: 0}
+      nodeCollectionData:
+        nodeCollectionRef: {fileID: 0}
+        nodeCollectionVal: {fileID: 0}
+        total: 0
+      nodeData:
+        nodeRef: {fileID: 0}
+        nodeVal: {fileID: 0}
+      inventoryData:
+        inventoryRef: {fileID: 0}
+        inventoryVal: {fileID: 0}
+        item: {fileID: 0}
+      diceData:
+        diceRef: {fileID: 0}
+        diceVal: 0
+      booleanData:
+        booleanRef: {fileID: 0}
+        booleanVal: 0
+      floatData:
+        floatRef: {fileID: 0}
+        floatVal: 0
+      stringData:
+        stringRef: {fileID: 0}
+        stringVal: 
+      spriteData:
+        spriteRef: {fileID: 0}
+        spriteVal: {fileID: 0}
+      timeOfDayData:
+        timeOfDayRef: {fileID: 0}
+        timeOfDayVal: 0
+      seasonData:
+        seasonRef: {fileID: 0}
+        seasonVal: 0
+      uDateTimeData:
+        uDateTimeRef: {fileID: 0}
+        uDateTimeVal:
+          _dateTime: 01/01/0001 00:00:00
+      uDateData:
+        uDateRef: {fileID: 0}
+        uDateVal:
+          _dateString: 01/01/0001
+      uTimeData:
+        uTimeRef: {fileID: 0}
+        uTimeVal:
+          _timeString: 00:00:00
+      saveKeyData:
+        saveKeyRef: {fileID: 0}
+        saveKeyVal: 
+--- !u!114 &1204839928
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b39ee7e025229d4fa2fc01ac8fe85fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  variable:
+    variable: {fileID: 1204839881}
+    data:
+      integerData:
+        integerRef: {fileID: 0}
+        integerVal: 0
+      locationData:
+        locationRef: {fileID: 0}
+        locationVal: {fileID: 0}
+      collectionData:
+        collectionRef: {fileID: 0}
+        collectionVal: {fileID: 0}
+      nodeCollectionData:
+        nodeCollectionRef: {fileID: 0}
+        nodeCollectionVal: {fileID: 0}
+        total: 0
+      nodeData:
+        nodeRef: {fileID: 0}
+        nodeVal: {fileID: 0}
+      inventoryData:
+        inventoryRef: {fileID: 0}
+        inventoryVal: {fileID: 0}
+        item: {fileID: 0}
+      diceData:
+        diceRef: {fileID: 0}
+        diceVal: 0
+      booleanData:
+        booleanRef: {fileID: 0}
+        booleanVal: 0
+      floatData:
+        floatRef: {fileID: 0}
+        floatVal: 0
+      stringData:
+        stringRef: {fileID: 0}
+        stringVal: 
+      spriteData:
+        spriteRef: {fileID: 0}
+        spriteVal: {fileID: 0}
+      timeOfDayData:
+        timeOfDayRef: {fileID: 0}
+        timeOfDayVal: 0
+      seasonData:
+        seasonRef: {fileID: 0}
+        seasonVal: 0
+      uDateTimeData:
+        uDateTimeRef: {fileID: 0}
+        uDateTimeVal:
+          _dateTime: 01/01/0001 00:00:00
+      uDateData:
+        uDateRef: {fileID: 0}
+        uDateVal:
+          _dateString: 01/01/0001
+      uTimeData:
+        uTimeRef: {fileID: 0}
+        uTimeVal:
+          _timeString: 00:00:00
+      saveKeyData:
+        saveKeyRef: {fileID: 0}
+        saveKeyVal: 
 --- !u!224 &1300483746 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5413440061217181152, guid: ef814ab70eddd3740847c0a0e3035a50, type: 3}
@@ -3817,7 +3957,47 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!21 &1763738629
+--- !u!21 &1723463933
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: UI/RoundedCorners/RoundedCorners
+  m_Shader: {fileID: 4800000, guid: 0bd2ec5d73751e34a814274a454bec41, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _ColorMask: 15
+    - _Stencil: 0
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
+    - _UseUIAlphaClip: 0
+    m_Colors:
+    - _WidthHeightRadius: {r: 571.19995, g: 108, b: 80, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!21 &1767014582
 Material:
   serializedVersion: 8
   m_ObjectHideFlags: 0
@@ -4191,6 +4371,46 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!21 &2061837128
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: UI/RoundedCorners/RoundedCorners
+  m_Shader: {fileID: 4800000, guid: 0bd2ec5d73751e34a814274a454bec41, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _ColorMask: 15
+    - _Stencil: 0
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
+    - _UseUIAlphaClip: 0
+    m_Colors:
+    - _WidthHeightRadius: {r: 571.19995, g: 108, b: 80, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!1 &2145855483
 GameObject:
   m_ObjectHideFlags: 0
@@ -4632,7 +4852,6 @@ MonoBehaviour:
   isGrouped: 0
   groupIndex: -1
   repeatable: 0
-  nodeLocation: {fileID: 0}
   tint: {r: 1, g: 1, b: 1, a: 1}
   useCustomTint: 0
   hoverStartTime: 0
@@ -4640,6 +4859,7 @@ MonoBehaviour:
   targetKeyNode: {fileID: 0}
   showDesc: 0
   saveable: 0
+  updateLocationStatusToComplete: 1
   NodeComplete: 0
 --- !u!114 &418485371402609946
 MonoBehaviour:
@@ -4989,12 +5209,7 @@ MonoBehaviour:
   requiresPress: 1
   autoTrigger: 0
   requiresLocation: 1
-  triggerWhenAtLocation: 1
-  updateLocationMarkerOnComplete: 1
-  unvisitedSprite: {fileID: 21300000, guid: 89eb6064471d67f44919684e051b507c, type: 3}
-  visitedSprite: {fileID: 21300000, guid: 3b2147c1716bc544a819d9fe29bd81f0, type: 3}
-  completedSprite: {fileID: 21300000, guid: 38eaf4005975a7945bef1ddb4fb84d2e, type: 3}
-  overrideDefaultLocationSprites: 1
+  overrideLocationDisplayList: {fileID: 0}
 --- !u!1 &776081731919028108
 GameObject:
   m_ObjectHideFlags: 0
@@ -5041,7 +5256,6 @@ MonoBehaviour:
   isGrouped: 0
   groupIndex: -1
   repeatable: 0
-  nodeLocation: {fileID: 0}
   tint: {r: 0.8584906, g: 0.2956123, b: 0.2956123, a: 1}
   useCustomTint: 1
   hoverStartTime: 0
@@ -5049,6 +5263,7 @@ MonoBehaviour:
   targetKeyNode: {fileID: 0}
   showDesc: 0
   saveable: 0
+  updateLocationStatusToComplete: 1
   NodeComplete: 0
 --- !u!114 &858102362592146064
 MonoBehaviour:
@@ -6240,13 +6455,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcf32ea2cc0514b569329f6b6b68f9b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tracker: {fileID: 3805086454702226951}
-  _map: {fileID: 1088602071484657967}
-  engine: {fileID: 8599742930750171869}
-  _directionPrefab: {fileID: 0}
-  _radiusCirclePrefab: {fileID: 5790737691150376730, guid: d6ed17cc88af03542adfd3f2762a73e0, type: 3}
-  _markerPrefab: {fileID: 4158092623677246474, guid: 94b683dc45eda974897842ef5fcc2301, type: 3}
-  _spawnScale: 4
 --- !u!1 &1653612536501760376
 GameObject:
   m_ObjectHideFlags: 0
@@ -7429,7 +7637,6 @@ MonoBehaviour:
   isGrouped: 0
   groupIndex: -1
   repeatable: 1
-  nodeLocation: {fileID: 0}
   tint: {r: 1, g: 1, b: 1, a: 1}
   useCustomTint: 0
   hoverStartTime: 0
@@ -7437,6 +7644,7 @@ MonoBehaviour:
   targetKeyNode: {fileID: 0}
   showDesc: 0
   saveable: 0
+  updateLocationStatusToComplete: 1
   NodeComplete: 0
 --- !u!114 &3485242407331286963
 MonoBehaviour:
@@ -7823,7 +8031,6 @@ MonoBehaviour:
   isGrouped: 0
   groupIndex: -1
   repeatable: 0
-  nodeLocation: {fileID: 0}
   tint: {r: 1, g: 1, b: 1, a: 1}
   useCustomTint: 0
   hoverStartTime: 0
@@ -7831,6 +8038,7 @@ MonoBehaviour:
   targetKeyNode: {fileID: 0}
   showDesc: 0
   saveable: 0
+  updateLocationStatusToComplete: 1
   NodeComplete: 0
 --- !u!1 &3954461789126843868
 GameObject:
@@ -8728,6 +8936,34 @@ PrefabInstance:
       propertyPath: m_Colors.m_DisabledColor.r
       value: 0.8980393
       objectReference: {fileID: 0}
+    - target: {fileID: 6642325199159946782, guid: ef814ab70eddd3740847c0a0e3035a50, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6642325199159946782, guid: ef814ab70eddd3740847c0a0e3035a50, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6642325199159946782, guid: ef814ab70eddd3740847c0a0e3035a50, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1204839914}
+    - target: {fileID: 6642325199159946782, guid: ef814ab70eddd3740847c0a0e3035a50, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6642325199159946782, guid: ef814ab70eddd3740847c0a0e3035a50, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: StartExecution
+      objectReference: {fileID: 0}
+    - target: {fileID: 6642325199159946782, guid: ef814ab70eddd3740847c0a0e3035a50, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Node, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6642325199159946782, guid: ef814ab70eddd3740847c0a0e3035a50, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 8456581604773842439, guid: ef814ab70eddd3740847c0a0e3035a50, type: 3}
       propertyPath: m_fontSize
       value: 46.2
@@ -9104,7 +9340,6 @@ MonoBehaviour:
   isGrouped: 0
   groupIndex: -1
   repeatable: 0
-  nodeLocation: {fileID: 0}
   tint: {r: 1, g: 1, b: 1, a: 1}
   useCustomTint: 0
   hoverStartTime: 0
@@ -9112,6 +9347,7 @@ MonoBehaviour:
   targetKeyNode: {fileID: 0}
   showDesc: 0
   saveable: 0
+  updateLocationStatusToComplete: 1
   NodeComplete: 0
 --- !u!224 &5677640670305206328
 RectTransform:
@@ -10512,7 +10748,6 @@ MonoBehaviour:
   isGrouped: 0
   groupIndex: -1
   repeatable: 0
-  nodeLocation: {fileID: 0}
   tint: {r: 0.8584906, g: 0.2956123, b: 0.2956123, a: 1}
   useCustomTint: 1
   hoverStartTime: 0
@@ -10520,6 +10755,7 @@ MonoBehaviour:
   targetKeyNode: {fileID: 0}
   showDesc: 0
   saveable: 0
+  updateLocationStatusToComplete: 1
   NodeComplete: 0
 --- !u!4 &7330593392088909011
 Transform:
@@ -11126,7 +11362,6 @@ MonoBehaviour:
   isGrouped: 0
   groupIndex: -1
   repeatable: 0
-  nodeLocation: {fileID: 0}
   tint: {r: 1, g: 1, b: 1, a: 1}
   useCustomTint: 0
   hoverStartTime: 0
@@ -11134,6 +11369,7 @@ MonoBehaviour:
   targetKeyNode: {fileID: 0}
   showDesc: 0
   saveable: 0
+  updateLocationStatusToComplete: 1
   NodeComplete: 0
 --- !u!114 &8184610779139394939
 MonoBehaviour:
