@@ -29,6 +29,8 @@ public class SendMessage : Order
         GameObject content = InitialiseEverything.inboxCanvas.transform.Find("Scroll View/Viewport/Content").gameObject;
 
         GameObject messageObject = Instantiate(messagePrefab, content.transform);
+        messageObject.transform.SetSiblingIndex(0);
+
 
         //this spawns it in a content ui object, which is in a view port which is in a scroll view, so changes to the scroll view will affect the content object
 
