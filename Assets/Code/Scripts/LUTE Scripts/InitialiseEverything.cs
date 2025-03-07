@@ -16,17 +16,20 @@ public class InitialiseEverything : Order
   
     public static GameObject menuCanvas;
 
+    public static GameObject mapCanvas;
 
     public override void OnEnter()
     {
         //get the ModernInboxCanvas/Scroll View/Viewport/Content object and spawn the message prefab as a child
         inboxCanvas = GameObject.Find("ModernInboxCanvas");
         menuCanvas = GameObject.Find("ModernMenuCanvas");
+        //mapCanvas = GameObject.Find("ModernMapCanvas");
 
 
         //disable the inbox and enable the menu
         inboxCanvas.SetActive(false);
         menuCanvas.SetActive(true);
+        //mapCanvas.SetActive(false);
 
         //GameObject messageObject = Instantiate(messagePrefab, content.transform);
 
