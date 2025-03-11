@@ -1,3 +1,4 @@
+using LoGaCulture.LUTE;
 using UnityEngine;
 
 [OrderInfo("AgesOfAvebury",
@@ -28,6 +29,8 @@ public class SendMessage : Order
         GameObject content = InitialiseEverything.inboxCanvas.transform.Find("Scroll View/Viewport/Content").gameObject;
 
         GameObject messageObject = Instantiate(messagePrefab, content.transform);
+        messageObject.transform.SetSiblingIndex(0);
+
 
         //this spawns it in a content ui object, which is in a view port which is in a scroll view, so changes to the scroll view will affect the content object
 
@@ -40,6 +43,29 @@ public class SendMessage : Order
         messageObject.transform.Find("FromField/FromField").GetComponent<TMPro.TextMeshProUGUI>().text = from;
         messageObject.transform.Find("SubjectField/SubjectField").GetComponent<TMPro.TextMeshProUGUI>().text = subject;
         messageObject.transform.Find("Panel/ContentsField").GetComponent<TMPro.TextMeshProUGUI>().text = message;
+
+        //get the BasicFlowEngine 
+        BasicFlowEngine engine = GetEngine();
+
+        var boolVar = engine.GetVariable("isInInbox");
+
+        //check if it's true or false, if it is, then get the Notification object in the ModernFrame
+        if (boolVar != null)
+        {
+            if (boolVar.Evaluate(ComparisonOperator.Equals, true))
+            {
+                GameObject notification = GameObject.Find("ModernFrame/FooterPanel/InboxButton/Notification");
+                //enable the notification object
+                notification.SetActive(false);
+
+            }
+            else
+            {                 //if it's false, then get the Notification object in the ModernFrame
+                GameObject notification = GameObject.Find("ModernFrame/FooterPanel/InboxButton/Notification");
+                //disable the notification object
+                notification.SetActive(true);
+            }
+        }
 
 
         //this code gets executed as the order is called
