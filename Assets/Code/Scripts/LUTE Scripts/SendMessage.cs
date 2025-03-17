@@ -1,5 +1,6 @@
 using LoGaCulture.LUTE;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [OrderInfo("AgesOfAvebury",
               "Send Message",
@@ -20,11 +21,33 @@ public class SendMessage : Order
     [SerializeField]
     private GameObject messagePrefab;
 
+    [SerializeField]
+    private VisualTreeAsset mailDoc;
+
 
     public override void OnEnter()
     {
         //get the ModernInboxCanvas/Scroll View/Viewport/Content object and spawn the message prefab as a child
         //GameObject content = GameObject.Find("ModernInboxCanvas/Scroll View/Viewport/Content");
+
+
+        //create an instance of the mailDoc and edit the text fields
+        VisualElement mailElement = mailDoc.CloneTree();
+        if (mailElement != null) {
+            mailElement.Q<TextElement>("FromField").text = from;
+
+            Debug.Log(mailElement.Q<TextElement>("FromField").text);
+
+            mailElement.Q<TextElement>("SubjectField").text = subject;
+            mailElement.Q<TextElement>("EmailBody").text = message;
+        }
+
+        InitialiseEverything.modernScreen.GetComponent<ModernScreenScript>().addMessage(mailElement);
+
+        Continue();
+
+        return;
+
 
         GameObject content = InitialiseEverything.inboxCanvas.transform.Find("Scroll View/Viewport/Content").gameObject;
 

@@ -4,12 +4,33 @@
         <engine:VisualElement name="Header" style="flex-grow: 0.1; -unity-background-image-tint-color: rgb(255, 255, 255); background-color: rgb(204, 123, 35);">
             <engine:Label text="National Trust LandSurvey" name="Title" class="title" style="-unity-text-align: middle-center; -unity-font-definition: url(&quot;project://database/Assets/Art/Fonts/Roboto/Roboto-Regular.ttf?fileID=12800000&amp;guid=3e9faab9c0117d44dbe2811e2112d022&amp;type=3#Roboto-Regular&quot;);" />
         </engine:VisualElement>
-        <engine:VisualElement name="MainScreen" style="flex-grow: 1; flex-basis: 60%;" />
+        <engine:VisualElement name="MainScreen" style="flex-grow: 1; flex-basis: 60%;">
+            <engine:VisualElement style="flex-grow: 1; background-color: rgb(255, 255, 255); padding-right: 20px; padding-left: 20px;">
+                <engine:VisualElement name="VisualElement" style="flex-grow: 1; background-color: rgb(204, 123, 35); border-top-left-radius: 22px; border-top-right-radius: 22px; border-bottom-right-radius: 22px; border-bottom-left-radius: 22px; justify-content: center; max-width: 50%; max-height: 5%; margin-top: 20px; margin-bottom: 20px; height: 100%;">
+                    <engine:Label text="Latest Messages" style="align-items: center; justify-content: space-between; align-self: center; align-content: center; -unity-text-align: middle-center; white-space: pre; font-size: 50px; -unity-font-definition: url(&quot;project://database/Assets/Art/Fonts/Roboto/Roboto-Regular.ttf?fileID=12800000&amp;guid=3e9faab9c0117d44dbe2811e2112d022&amp;type=3#Roboto-Regular&quot;); -unity-font-style: normal;" />
+                </engine:VisualElement>
+                <engine:ScrollView name="MailScroll" vertical-scroller-visibility="Hidden" horizontal-scroller-visibility="Hidden" touch-scroll-type="Elastic" style="flex-grow: 1;">
+                    <engine:VisualElement name="EmailList" class="email-list" style="padding-top: 0;" />
+                </engine:ScrollView>
+            </engine:VisualElement>
+        </engine:VisualElement>
         <engine:VisualElement name="Footer" style="flex-grow: 0.15; flex-direction: row; -unity-background-image-tint-color: rgb(255, 0, 0); align-self: stretch; justify-content: flex-start; align-items: center; align-content: auto; flex-shrink: 0; flex-wrap: nowrap; flex-basis: 12%; opacity: 1; background-color: rgb(229, 199, 147); margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; background-size: 100% 100%;">
-            <engine:Button enabled="true" icon-image="project://database/Assets/Art/Icons/MenuIcon.png?fileID=2800000&amp;guid=7e4028f55a331b84aafde34e7bebebb6&amp;type=3#MenuIcon" name="MenuButton" class="screenButtons" style="opacity: 1; top: initial;" />
-            <engine:Button icon-image="project://database/Assets/Art/Icons/MessageIcon.png?fileID=2800000&amp;guid=f6dd136b1a6104f4999703f9d1bad3bd&amp;type=3#MessageIcon" name="MailButton" class="screenButtons" />
-            <engine:Button parse-escape-sequences="false" icon-image="project://database/Assets/Art/Icons/NavIcon.png?fileID=2800000&amp;guid=2e7ecc4605cac67489b70ac160fbb20a&amp;type=3#NavIcon" name="MapButton" class="screenButtons" />
-            <engine:Button icon-image="project://database/Assets/Art/Icons/ScanIcon.png?fileID=2800000&amp;guid=70e54701c29e6d74cb2f1498d0bab855&amp;type=3#ScanIcon" name="ScannerButton" class="screenButtons" />
+            <engine:VisualElement name="MainMenuElement" class="buttonElement">
+                <engine:Button enabled="true" icon-image="project://database/Assets/Art/Icons/MenuIcon.png?fileID=2800000&amp;guid=7e4028f55a331b84aafde34e7bebebb6&amp;type=3#MenuIcon" name="MenuButton" class="screenButtons" style="opacity: 1; top: initial;" />
+                <engine:Label text="Menu&#10;" name="MenuText" class="menuText buttonText" />
+            </engine:VisualElement>
+            <engine:VisualElement name="MailElement" class="buttonElement" style="flex-grow: 1;">
+                <engine:Button icon-image="project://database/Assets/Art/Icons/MessageIcon.png?fileID=2800000&amp;guid=f6dd136b1a6104f4999703f9d1bad3bd&amp;type=3#MessageIcon" name="MailButton" class="screenButtons" />
+                <engine:Label text="Inbox" name="MailText" class="buttonText" />
+            </engine:VisualElement>
+            <engine:VisualElement name="MapElement" class="buttonElement" style="flex-grow: 1;">
+                <engine:Button parse-escape-sequences="false" icon-image="project://database/Assets/Art/Icons/NavIcon.png?fileID=2800000&amp;guid=2e7ecc4605cac67489b70ac160fbb20a&amp;type=3#NavIcon" name="MapButton" class="screenButtons" />
+                <engine:Label text="Map" name="MapText" class="buttonText" />
+            </engine:VisualElement>
+            <engine:VisualElement name="ScannerElement" class="buttonElement" style="flex-grow: 1;">
+                <engine:Button icon-image="project://database/Assets/Art/Icons/ScanIcon.png?fileID=2800000&amp;guid=70e54701c29e6d74cb2f1498d0bab855&amp;type=3#ScanIcon" name="ScannerButton" class="screenButtons" />
+                <engine:Label text="Scanner" name="ScannerText" class="buttonText" />
+            </engine:VisualElement>
         </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>

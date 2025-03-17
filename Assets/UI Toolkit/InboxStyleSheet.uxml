@@ -1,0 +1,16 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/MailSheet.uss?fileID=7433441132597879392&amp;guid=e7e3ac67e16485b4691154777950391f&amp;type=3#MailSheet" />
+    <engine:VisualElement name="EmailContainer" class="email-container" style="margin-top: 20px;">
+        <engine:VisualElement class="email-row">
+            <engine:Label text="From:" class="email-label" />
+            <engine:Label name="FromField" text="From" class="email-display" />
+        </engine:VisualElement>
+        <engine:VisualElement class="email-row">
+            <engine:Label text="Subject:" class="email-label" />
+            <engine:Label name="SubjectField" text="Subject" class="email-display" />
+        </engine:VisualElement>
+        <engine:VisualElement name="EmailBodyContainer" class="email-body">
+            <engine:Label name="EmailBody" class="email-textarea" style="padding-top: 29px; padding-right: 29px; padding-bottom: 29px; padding-left: 29px; height: 100%; min-width: 100%;" />
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>
