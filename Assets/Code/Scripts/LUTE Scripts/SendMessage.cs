@@ -32,24 +32,24 @@ public class SendMessage : Order
 
 
         //create an instance of the mailDoc and edit the text fields
-        VisualElement mailElement = mailDoc.CloneTree();
-        if (mailElement != null) {
-            mailElement.Q<TextElement>("FromField").text = from;
+        //VisualElement mailElement = mailDoc.CloneTree();
+        //if (mailElement != null) {
+        //    mailElement.Q<TextElement>("FromField").text = from;
 
-            Debug.Log(mailElement.Q<TextElement>("FromField").text);
+        //    Debug.Log(mailElement.Q<TextElement>("FromField").text);
 
-            mailElement.Q<TextElement>("SubjectField").text = subject;
-            mailElement.Q<TextElement>("EmailBody").text = message;
-        }
+        //    mailElement.Q<TextElement>("SubjectField").text = subject;
+        //    mailElement.Q<TextElement>("EmailBody").text = message;
+        //}
 
-        InitialiseEverything.modernScreen.GetComponent<ModernScreenScript>().addMessage(mailElement);
+        //InitialiseEverything.modernScreen.GetComponent<ModernScreenScript>().addMessage(mailElement);
 
-        Continue();
+        //Continue();
 
-        return;
+        //return;
 
 
-        GameObject content = InitialiseEverything.inboxCanvas.transform.Find("Scroll View/Viewport/Content").gameObject;
+        GameObject content = InitialiseEverything._inboxCanvas.transform.Find("ModernInbox/Scroll View/Viewport/Content").gameObject;
 
         GameObject messageObject = Instantiate(messagePrefab, content.transform);
         messageObject.transform.SetSiblingIndex(0);
@@ -73,22 +73,22 @@ public class SendMessage : Order
         var boolVar = engine.GetVariable("isInInbox");
 
         //check if it's true or false, if it is, then get the Notification object in the ModernFrame
-        if (boolVar != null)
-        {
-            if (boolVar.Evaluate(ComparisonOperator.Equals, true))
-            {
-                GameObject notification = GameObject.Find("ModernFrame/FooterPanel/InboxButton/Notification");
-                //enable the notification object
-                notification.SetActive(false);
+        //if (boolVar != null)
+        //{
+        //    if (boolVar.Evaluate(ComparisonOperator.Equals, true))
+        //    {
+        //        GameObject notification = GameObject.Find("ModernFrame/FooterPanel/InboxButton/Notification");
+        //        //enable the notification object
+        //        notification.SetActive(false);
 
-            }
-            else
-            {                 //if it's false, then get the Notification object in the ModernFrame
-                GameObject notification = GameObject.Find("ModernFrame/FooterPanel/InboxButton/Notification");
-                //disable the notification object
-                notification.SetActive(true);
-            }
-        }
+        //    }
+        //    else
+        //    {                 //if it's false, then get the Notification object in the ModernFrame
+        //        GameObject notification = GameObject.Find("ModernFrame/FooterPanel/InboxButton/Notification");
+        //        //disable the notification object
+        //        notification.SetActive(true);
+        //    }
+        //}
 
 
         //this code gets executed as the order is called
