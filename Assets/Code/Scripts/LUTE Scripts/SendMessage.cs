@@ -1,6 +1,6 @@
 using LoGaCulture.LUTE;
 using UnityEngine;
-using UnityEngine.UIElements;
+
 
 [OrderInfo("AgesOfAvebury",
               "Send Message",
@@ -21,8 +21,6 @@ public class SendMessage : Order
     [SerializeField]
     private GameObject messagePrefab;
 
-    [SerializeField]
-    private VisualTreeAsset mailDoc;
 
 
     public override void OnEnter()
