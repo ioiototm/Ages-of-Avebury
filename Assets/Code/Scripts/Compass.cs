@@ -9,16 +9,33 @@ public class Compass : MonoBehaviour
 
     private bool locationServiceStarted = false;
 
+    enum TimePeriod
+    {
+        Modern,
+        Neolithic,
+        MiddleAges
+    }
+
+    [Header("Current Time Period")]
+    [SerializeField] TimePeriod timePeriod = TimePeriod.Modern;
+
+    [Header("UI Elements")]
     [SerializeField] RawImage compassImage;
 
     private float currentAngle = 0f; // We'll lerp toward this
 
-    // Example target location (tokyo)
+    // Example target location (Tokyo)
     [Header("Target Location (Lat, Lon)")]
     [SerializeField] private Vector2 targetLatLon = new Vector2(35.6895f, 139.6917f);
 
+    // TEMP: Hard-coded test location if you can’t test with real GPS
+    [SerializeField] private Vector2 testPosition = new Vector2(50.936673298842f, -1.3958901038337264f);
+
     [Header("Smoothing")]
     [SerializeField] private float rotationSpeed = 2f;
+
+    [Header("Neolithic Light (3D)")]
+    [SerializeField] private GameObject neolithicLight;  // e.g. a point light or some 3D object
 
     void Start()
     {
@@ -58,39 +75,76 @@ public class Compass : MonoBehaviour
         locationServiceStarted = true;
     }
 
- private void Update()
+    private void Update()
     {
-        // If not running on a device with location, bail
-        if (Input.location.status != LocationServiceStatus.Running)
-            return;
+        // If not running on a device, comment this out or handle gracefully
+        // if (Input.location.status != LocationServiceStatus.Running) return;
 
-        // 1) Get current position
+        // 1) Get current user position (or your test position for debugging)
         var currentData = Input.location.lastData;
-        Vector2 currentLatLon = new Vector2(currentData.latitude, currentData.longitude);
+        Vector2 currentLatLon = new Vector2(testPosition.x, testPosition.y); // Debug override
 
         // 2) Calculate bearing from current to target
         float bearingToTarget = (float)CalculateBearing(currentLatLon, targetLatLon);
 
-        // 3) If you want the arrow to account for the phone's orientation:
+        // 3) Subtract device's heading if you want the phone orientation
         float deviceHeading = Input.compass.magneticHeading; // can be 0 in Editor
         float relativeAngle = bearingToTarget - deviceHeading;
 
-        // 4) Decide how to apply that angle to your UI:
-        //    Typically, 0° on a top-facing compass means "North = up".
-        //    We'll invert so that a positive angle rotates clockwise:
+        // 4) Typically 0°=up, rotate clockwise
         float targetAngle = -relativeAngle;
 
-        // 5) Smoothly Lerp from currentAngle to targetAngle
+        // 5) Smoothly Lerp
         currentAngle = Mathf.LerpAngle(currentAngle, targetAngle, Time.deltaTime * rotationSpeed);
 
-        // 6) Apply rotation to the UI compass
-        compassImage.rectTransform.localEulerAngles = new Vector3(0f, 0f, currentAngle);
+        // 6) Switch visuals by timePeriod
+        switch (timePeriod)
+        {
+            case TimePeriod.Modern:
+            case TimePeriod.MiddleAges:
+                // Normal compass arrow
+                if (compassImage != null)
+                {
+                    compassImage.rectTransform.localEulerAngles = new Vector3(0f, 0f, currentAngle);
+                }
+              //  break;
+
+            //case TimePeriod.Neolithic:
+                // Instead of rotating a UI arrow, place a real 3D light on the screen edge
+                if (neolithicLight != null)
+                {
+                    float halfW = Screen.width * 0.5f;
+                    float halfH = Screen.height * 0.5f;
+
+                    float normalizedAngle = (currentAngle + 360f) % 360f;
+
+                    // 1) We get that 2D center-based coordinate
+                    Vector2 edgePosCentered = GetRectEdgePosition(normalizedAngle, halfW, halfH);
+                   
+                    // 2) Shift for actual Screen coords (0,0 at bottom-left)
+                    float screenX = -edgePosCentered.x + halfW;
+                    float screenY = edgePosCentered.y + halfH;
+
+                    // 3) Decide how far from the camera we want the object
+                    //    If you're doing a big 3D scene, pick a distance that
+                    //    places the light in front of the camera, e.g. 2f.
+                    float distanceFromCamera = 2f;
+
+                    // 4) Convert to a point in front of camera
+                    Vector2 screenPos = new Vector2(screenX, screenY);
+                    Vector3 worldPos = Camera.main.ScreenToWorldPoint(screenPos);
+
+                    // 5) Move your 3D light to that world position
+                    worldPos.z = neolithicLight.transform.position.z; // Keep the Z position
+                    neolithicLight.transform.position = worldPos;
+                }
+                break;
+        }
     }
 
-    // fromLatLon & toLatLon as: (latitude, longitude)
+    // same bearing function as before
     public static double CalculateBearing(Vector2 fromLatLon, Vector2 toLatLon)
     {
-        // Convert degrees to radians
         double fromLat = fromLatLon.x * Mathf.Deg2Rad;
         double fromLon = fromLatLon.y * Mathf.Deg2Rad;
         double toLat = toLatLon.x * Mathf.Deg2Rad;
@@ -98,14 +152,56 @@ public class Compass : MonoBehaviour
 
         double y = Math.Sin(toLon - fromLon) * Math.Cos(toLat);
         double x = Math.Cos(fromLat) * Math.Sin(toLat)
-                 - Math.Sin(fromLat) * Math.Cos(toLat) * Math.Cos(toLon - fromLon);
+                    - Math.Sin(fromLat) * Math.Cos(toLat) * Math.Cos(toLon - fromLon);
 
-        double bearing = Math.Atan2(y, x);
-        bearing = bearing * Mathf.Rad2Deg;
-
-        // Convert range from [-180,180] to [0,360]
+        double bearing = Math.Atan2(y, x) * Mathf.Rad2Deg;
         bearing = (bearing + 360.0) % 360.0;
 
         return bearing;
+    }
+
+    // your "edge of rectangle" function
+    private Vector2 GetRectEdgePosition(float angleDeg, float halfW, float halfH)
+    {
+        float rad = angleDeg * Mathf.Deg2Rad;
+        float dx = Mathf.Sin(rad); // 0°=up => y=cos, x=sin
+        float dy = Mathf.Cos(rad);
+
+        float tMin = float.PositiveInfinity;
+
+        // left edge
+        if (dx < 0f)
+        {
+            float t = -halfW / dx;
+            if (t > 0f && t < tMin) tMin = t;
+        }
+        // right edge
+        else if (dx > 0f)
+        {
+            float t = halfW / dx;
+            if (t > 0f && t < tMin) tMin = t;
+        }
+
+        // bottom edge
+        if (dy < 0f)
+        {
+            float t = -halfH / dy;
+            if (t > 0f && t < tMin) tMin = t;
+        }
+        // top edge
+        else if (dy > 0f)
+        {
+            float t = halfH / dy;
+            if (t > 0f && t < tMin) tMin = t;
+        }
+
+        if (tMin < float.PositiveInfinity)
+        {
+            float xPos = dx * tMin;
+            float yPos = dy * tMin;
+            return new Vector2(xPos, yPos);
+        }
+
+        return Vector2.zero;
     }
 }
