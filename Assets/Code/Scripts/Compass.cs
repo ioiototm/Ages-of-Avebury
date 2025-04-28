@@ -2,6 +2,7 @@ using UnityEngine;
 using LoGaCulture.LUTE;
 using System;
 using UnityEngine.UI;
+using Mapbox.Unity.Location;
 
 public class Compass : MonoBehaviour
 {
@@ -28,6 +29,9 @@ public class Compass : MonoBehaviour
     [Header("Target Location (Lat, Lon)")]
     [SerializeField] private Vector2 targetLatLon = new Vector2(35.6895f, 139.6917f);
 
+
+    LocationVariable targetLocation;
+
     // TEMP: Hard-coded test location if you can’t test with real GPS
     [SerializeField] private Vector2 testPosition = new Vector2(50.936673298842f, -1.3958901038337264f);
 
@@ -37,10 +41,25 @@ public class Compass : MonoBehaviour
     [Header("Neolithic Light (3D)")]
     [SerializeField] private GameObject neolithicLight;  // e.g. a point light or some 3D object
 
+
+    ILocationProvider locationProvider;
+
     void Start()
     {
         Debug.Log("Compass Script Started");
-        StartCoroutine(StartLocationService());
+
+        var mapManager = main.GetMapManager();
+        locationProvider = LocationProviderFactory.Instance.DefaultLocationProvider;
+
+
+        //get the "CurrentLocation" variable from the map manager
+        var lastSeenLocation = main.GetVariable<LocationVariable>("LastSeenLocation");
+
+        targetLocation = main.GetVariable<LocationVariable>("TargetLocation");
+
+        Debug.Log("Target Location: " + targetLocation.name);
+
+        //StartCoroutine(StartLocationService());
     }
 
     System.Collections.IEnumerator StartLocationService()
@@ -81,8 +100,29 @@ public class Compass : MonoBehaviour
         // if (Input.location.status != LocationServiceStatus.Running) return;
 
         // 1) Get current user position (or your test position for debugging)
+
+        //if(Input.location.status == LocationServiceStatus.Stopped)
+        //{
+        //    Debug.LogWarning("Location service stopped.");
+        //    //disable this script 
+        //    this.enabled = false;
+        //    return;
+        //}
+
+
+
+        //convert the targetLocation Value Postion from a stirng lat,lon to a Vector2
+        string[] latLon = targetLocation.Value.Position.Split(',');
+        float lat = float.Parse(latLon[0]);
+        float lon = float.Parse(latLon[1]);
+        targetLatLon = new Vector2(lat, lon);
+
         var currentData = Input.location.lastData;
-        Vector2 currentLatLon = new Vector2(testPosition.x, testPosition.y); // Debug override
+        var currentLatLonMapbox = locationProvider.CurrentLocation.LatitudeLongitude;
+
+        
+
+           Vector2 currentLatLon = new Vector2((float)currentLatLonMapbox.x, (float)currentLatLonMapbox.y);
 
         // 2) Calculate bearing from current to target
         float bearingToTarget = (float)CalculateBearing(currentLatLon, targetLatLon);
