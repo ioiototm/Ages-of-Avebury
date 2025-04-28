@@ -20,6 +20,8 @@ public class SelfieSegmentationSample : MonoBehaviour
 
     public GameObject xrObject;
 
+  
+
     private void Start()
     {
         segmentation = new SelfieSegmentation(options);
@@ -27,6 +29,7 @@ public class SelfieSegmentationSample : MonoBehaviour
         {
             source.OnTexture.AddListener(OnTextureUpdate);
         }
+
     }
 
     private void OnDestroy()
@@ -177,6 +180,62 @@ public class SelfieSegmentationSample : MonoBehaviour
 
     }
 
+    Coroutine runningCorouine = null;
+
+    private IEnumerator DrawContourWithRenderer(List<Vector2> contour, Camera cam, int pointsPerFrame = 1)
+    {
+
+        //if the coroutine is running, don't start a new one
+        if (runningCorouine != null)
+        {
+            yield break;
+        }
+
+        // 1) Destroy old line
+        GameObject prev = GameObject.Find("ContourLine");
+        if (prev != null) Destroy(prev);
+
+        // 2) New LineRenderer, start open
+        GameObject go = new GameObject("ContourLine");
+        LineRenderer lr = go.AddComponent<LineRenderer>();
+        lr.material = new Material(Shader.Find("Sprites/Default"));
+        lr.widthMultiplier = 0.05f;
+        lr.loop = false;                  // no auto-close
+                                          // ← we’ll adjust positionCount each iteration
+
+        // 3) Draw each point in chunks
+        for (int i = 0; i < contour.Count; i++)
+        {
+            // bump up the count so only [0…i] are shown
+            lr.positionCount = i + 1;
+
+            // compute world pos (your scale/offset)
+            Vector2 p2 = contour[i] * 0.04f;
+            p2.x -= 3;
+            Vector3 wp = new Vector3(p2.x, p2.y, -1f);
+
+            lr.SetPosition(i, wp);
+
+            // after drawing a few, wait a frame
+            if ((i + 1) % pointsPerFrame == 0)
+                yield return new WaitForSeconds(0.1f);
+        }
+
+        // 4) (Optional) Now close the loop in one go:
+        // — either toggle the loop flag:
+        // lr.loop = true;
+
+        // — or manually add the final segment:
+        // lr.positionCount = contour.Count + 1;
+        // Vector2 f = contour[0] * 0.04f; f.x -= 3;
+        // lr.SetPosition(contour.Count, new Vector3(f.x, f.y, -1f));
+
+        yield return new WaitForSeconds(1);
+
+        runningCorouine = null; // Reset coroutine reference
+    }
+
+
 
 
     private void OnTextureUpdate(Texture texture)
@@ -209,7 +268,15 @@ public class SelfieSegmentationSample : MonoBehaviour
         if (!hasMadeStone)
         {
             contour = ContourTracing.TraceContour(maskPixels, maskTex.width, maskTex.height);
-            DrawContourWithRenderer(contour, Camera.main);
+            //DrawContourWithRenderer(contour, Camera.main);
+            //contourDrawer.DrawContour(contour, Camera.main);
+
+            if(runningCorouine == null)
+            {
+                runningCorouine = StartCoroutine(DrawContourWithRenderer(contour, Camera.main, 15));
+            }
+
+
         }
         // 3) Marching Squares
 
@@ -1056,3 +1123,4 @@ public class SelfieSegmentationSample : MonoBehaviour
 
 
 }
+
