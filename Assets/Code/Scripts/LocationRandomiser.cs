@@ -17,6 +17,7 @@ public class LocationRandomiser : MonoBehaviour
 
     //public LUTELocationInfo currentLocation;
     public LocationVariable targetLocation;
+    public LocationVariable lastSeenLocation;
 
 
     public  bool southQuadrant = false;
@@ -39,11 +40,14 @@ public class LocationRandomiser : MonoBehaviour
 
         instance = this;
 
+        
+
         LUTEMapManager mapManager = basicFlowEngine.GetMapManager();
 
         locationInfos = Resources.LoadAll<LUTELocationInfo>("Locations");
 
         targetLocation = basicFlowEngine.GetVariable<LocationVariable>("TargetLocation");
+        lastSeenLocation = basicFlowEngine.GetVariable<LocationVariable>("LastSeenLocation");
 
         //currentLocation = locationInfos[0];
 
@@ -66,6 +70,44 @@ public class LocationRandomiser : MonoBehaviour
 
     }
 
+    public LUTELocationInfo GetNextNormalLocation()
+    {
+        //get the last seen location
+        lastSeenLocation = basicFlowEngine.GetVariable<LocationVariable>("LastSeenLocation");
+        //the next normal location is, if the current location is in the format of "1.1-NameOfPlace", the next one will be "2.1-NameOfPlace", or 1.2 goes to 2.2
+        //so, get the id of the current location
+        string id_full = lastSeenLocation.Value.name.Split('-')[0];
+        //split by the dot
+        string id = id_full.Split('.')[0];
+        //increment the id by 1
+        int newId = int.Parse(id) + 1;
+
+        //get the whole new id string with the sub id (sometimes the sub id is not there, so be sure to not do it if it is not there
+        string newId_full = newId.ToString();
+        //check if the current id has a sub id
+        if (id_full.Contains("."))
+        {
+            //get the sub id
+            string subId = id_full.Split('.')[1];
+            //add it to the new id
+            newId_full += "." + subId;
+        }
+        //get the new id
+
+
+
+        //filter locations based on quadrant, assume south quadrant
+        string quadrant = southQuadrant ? "south" : "north";
+        LUTELocationInfo[] filteredLocations = Array.FindAll(locationInfos, x => x.name.ToLower().Contains(quadrant));
+        //get all locations with the same id within the filtered locations
+        LUTELocationInfo[] locationsWithSameId = Array.FindAll(filteredLocations, x => x.name.StartsWith(newId_full.ToString()));
+
+        //pick the first one that in the array
+        return locationsWithSameId[0];
+
+
+    }
+
 
     public void UnreachableTargetLocation()
     {
@@ -77,9 +119,9 @@ public class LocationRandomiser : MonoBehaviour
         //if the target location is null, then pick a random one by getting the last seen location and adding one
         if (targetLocation == null)
         {
-            var lastSeenLoc = basicFlowEngine.GetVariable<LocationVariable>("LastSeenLocation");
+            lastSeenLocation = basicFlowEngine.GetVariable<LocationVariable>("LastSeenLocation");
 
-            targetLocation.Value = RandomiseNextLocation(lastSeenLoc.Value);
+            targetLocation.Value = RandomiseNextLocation(lastSeenLocation.Value);
 
 
         }
@@ -90,7 +132,7 @@ public class LocationRandomiser : MonoBehaviour
 
         targetLocation.Value = randomNext;
         //print the name of the location
-        Debug.Log("Current Location: " + targetLocation.name);
+        Debug.Log("Current Location: " + targetLocation.Value.name);
 
 
     }

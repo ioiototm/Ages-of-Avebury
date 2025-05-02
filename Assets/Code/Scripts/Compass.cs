@@ -117,7 +117,18 @@ public class Compass : MonoBehaviour
         float lon = float.Parse(latLon[1]);
         targetLatLon = new Vector2(lat, lon);
 
-        var currentData = Input.location.lastData;
+        LocationInfo currentData;
+
+        if (Input.location.status == LocationServiceStatus.Stopped)
+        {
+            currentData = new LocationInfo();
+        }
+        else
+        {
+            currentData = Input.location.lastData;
+        }
+
+        
         var currentLatLonMapbox = locationProvider.CurrentLocation.LatitudeLongitude;
 
         

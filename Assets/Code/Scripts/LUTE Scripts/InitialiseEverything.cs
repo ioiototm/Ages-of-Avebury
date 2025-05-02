@@ -34,6 +34,15 @@ public class InitialiseEverything : Order
         _menuCanvas.SetActive(true);
         _mapCanvas.SetActive(false);
 
+
+        //get the TargetLocation and LastSeenLocation location variables from the flow engine
+
+        var targetLocation = GetEngine().GetVariable<LocationVariable>("TargetLocation");
+        var lastSeenLocation = GetEngine().GetVariable<LocationVariable>("LastSeenLocation");
+
+        targetLocation.Value = GetEngine().GetVariable<LocationVariable>("StartingLocation1").Value;
+        lastSeenLocation.Value = targetLocation.Value;
+
         // Continue to the next order
         Continue();
     }
