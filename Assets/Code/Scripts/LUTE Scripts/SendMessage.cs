@@ -65,10 +65,24 @@ public class SendMessage : Order
         messageObject.transform.Find("SubjectField/SubjectField").GetComponent<TMPro.TextMeshProUGUI>().text = subject;
         messageObject.transform.Find("Panel/ContentsField").GetComponent<TMPro.TextMeshProUGUI>().text = message;
 
+
+
+        //Debug.Log("Setting from to " + from + " subject to " + subject + " message to " + message);
         //get the BasicFlowEngine 
         BasicFlowEngine engine = GetEngine();
 
-        var boolVar = engine.GetVariable("isInInbox");
+
+
+        BooleanVariable isInInbox = engine.GetVariable<BooleanVariable>("isInInbox");
+
+
+        if (!isInInbox.Value)
+        {
+            //get the ModernFrame/FooterPanel/InboxButton/Notification object and enable it
+            GameObject notification = GameObject.Find("ModernInterface/ModernFrame/FooterPanel/InboxButton/Notification");
+            //enable the notification object
+            notification.SetActive(true);
+        }
 
         //check if it's true or false, if it is, then get the Notification object in the ModernFrame
         //if (boolVar != null)
