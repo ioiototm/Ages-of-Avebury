@@ -1,5 +1,7 @@
+using JetBrains.Annotations;
 using LoGaCulture.LUTE;
 using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -102,6 +104,34 @@ public class LocationRandomiser : MonoBehaviour
         //get all locations with the same id within the filtered locations
         LUTELocationInfo[] locationsWithSameId = Array.FindAll(filteredLocations, x => x.name.StartsWith(newId_full.ToString()));
 
+        //go to all location variables, 
+        List<LocationVariable> locationVariables = basicFlowEngine.GetVariables<LocationVariable>();
+        // get the locationvariable name that has the same id
+        //basically, the locaitno variable is in the format of "NamerOfPlaceX" where x is the order of each location variable, so we want to get the new location variable name
+
+        //we want to get that location variable that matches the newId, and replace the value it's pointing at with the locationsWithSameId[index]
+
+        LocationVariable locationVariable = null;
+        foreach (var locationVar in locationVariables)
+        {
+            //get the name of the location variable
+            string name = locationVar.Key;
+            //check if it contains the new id
+            if (name.Contains(id.ToString()))
+            {
+                //if it does, set the location variable to that
+                locationVariable = locationVar;
+                break;
+            }
+        }
+
+        //locationVariable.Value = locationsWithSameId[0];
+
+
+        //print the location Value name of both the locationVariable and the lastseen location
+        Debug.Log("Location Variable: " + locationVariable.Value.name);
+        Debug.Log("Last Seen Location: " + lastSeenLocation.Value.name);
+
         //pick the first one that in the array
         return locationsWithSameId[0];
 
@@ -109,32 +139,82 @@ public class LocationRandomiser : MonoBehaviour
     }
 
 
+    private int numberOfTries = 0;
+
+    public List<InterfaceGameEvent> interfaceGameEvent;
+
     public void UnreachableTargetLocation()
     {
 
 
-        //get the "CurrentLocation" variable from the basic flow engine
-        LocationVariable targetLocation = basicFlowEngine.GetVariable<LocationVariable>("TargetLocation");
+        Animator animator = GameObject.Find("ICantGetThere").GetComponent<Animator>();
 
-        //if the target location is null, then pick a random one by getting the last seen location and adding one
-        if (targetLocation == null)
+        animator.Play("ICGTClose");
+
+
+        if (numberOfTries == 0)
         {
-            lastSeenLocation = basicFlowEngine.GetVariable<LocationVariable>("LastSeenLocation");
 
-            targetLocation.Value = RandomiseNextLocation(lastSeenLocation.Value);
+            //get the "CurrentLocation" variable from the basic flow engine
+            LocationVariable targetLocation = basicFlowEngine.GetVariable<LocationVariable>("TargetLocation");
 
+            //if the target location is null, then pick a random one by getting the last seen location and adding one
+            if (targetLocation == null)
+            {
+                lastSeenLocation = basicFlowEngine.GetVariable<LocationVariable>("LastSeenLocation");
+
+                targetLocation.Value = RandomiseNextLocation(lastSeenLocation.Value);
+
+
+            }
+
+
+            var randomNext = RandomiseCurrentLocation(targetLocation.Value);
+
+
+            targetLocation.Value = randomNext;
+            numberOfTries++;
+            //print the name of the location
+            Debug.Log("Current Location: " + targetLocation.Value.name);
+        }
+        else
+        {
+            numberOfTries = 0;
+
+            //get the "CurrentLocation" variable from the basic flow engine
+            LocationVariable targetLocation = basicFlowEngine.GetVariable<LocationVariable>("TargetLocation");
+
+            //if the target location is null, then pick a random one by getting the last seen location and adding one
+            if (targetLocation == null)
+            {
+                lastSeenLocation = basicFlowEngine.GetVariable<LocationVariable>("LastSeenLocation");
+                targetLocation.Value = RandomiseNextLocation(lastSeenLocation.Value);
+            }
+
+            lastSeenLocation.Value = targetLocation.Value;
+
+            var randomNext = GetNextNormalLocation();
+
+            
+
+            targetLocation.Value = randomNext;
+
+            //get the id of target location
+            string id_full = lastSeenLocation.Value.name.Split('-')[0];
+            //split by the dot
+            string id = id_full.Split('.')[0];
+
+            //to int
+            int newId = int.Parse(id)-2;
+
+            //raise the event
+            interfaceGameEvent[newId].Raise();
+
+
+            //print the name of the location
+            Debug.Log("Current Location: " + targetLocation.Value.name);
 
         }
-
-
-        var randomNext = RandomiseCurrentLocation(targetLocation.Value);
-
-
-        targetLocation.Value = randomNext;
-        //print the name of the location
-        Debug.Log("Current Location: " + targetLocation.Value.name);
-
-
     }
 
     public LUTELocationInfo RandomiseNextLocation(LUTELocationInfo currentLocation)
@@ -157,7 +237,33 @@ public class LocationRandomiser : MonoBehaviour
         {
             index = UnityEngine.Random.Range(0, locationsWithSameId.Length);
         }
-       return locationsWithSameId[index];
+
+        ////go to all location variables, 
+        //List<LocationVariable> locationVariables = basicFlowEngine.GetVariables<LocationVariable>();
+        //// get the locationvariable name that has the same id
+        ////basically, the locaitno variable is in the format of "NamerOfPlaceX" where x is the order of each location variable, so we want to get the new location variable name
+
+        ////we want to get that location variable that matches the newId, and replace the value it's pointing at with the locationsWithSameId[index]
+
+        //LocationVariable locationVariable = null;
+        //foreach (var locationVar in locationVariables)
+        //{
+        //    //get the name of the location variable
+        //    string name = locationVar.Key;
+        //    //check if it contains the new id
+        //    if (name.Contains(id.ToString()))
+        //    {
+        //        //if it does, set the location variable to that
+        //        locationVariable = locationVar;
+        //        break;
+        //    }
+        //}
+
+        //locationVariable.Value = locationsWithSameId[index];
+
+
+
+        return locationsWithSameId[index];
 
     }
 
@@ -178,6 +284,30 @@ public class LocationRandomiser : MonoBehaviour
         {
             index = UnityEngine.Random.Range(0, locationsWithSameId.Length);
         }
+
+        //go to all location variables, 
+        List<LocationVariable> locationVariables = basicFlowEngine.GetVariables<LocationVariable>();
+        // get the locationvariable name that has the same id
+        //basically, the locaitno variable is in the format of "NamerOfPlaceX" where x is the order of each location variable, so we want to get the new location variable name
+
+        //we want to get that location variable that matches the newId, and replace the value it's pointing at with the locationsWithSameId[index]
+
+        LocationVariable locationVariable = null;
+        foreach (var locationVar in locationVariables)
+        {
+            //get the name of the location variable
+            string name = locationVar.Key;
+            //check if it contains the new id
+            if (name.Contains(id.ToString()))
+            {
+                //if it does, set the location variable to that
+                locationVariable = locationVar;
+                break;
+            }
+        }
+
+        locationVariable.Value = locationsWithSameId[index];
+
         return locationsWithSameId[index];
 
     }
