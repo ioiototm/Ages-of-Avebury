@@ -54,7 +54,7 @@ public class Glitching : MonoBehaviour
         Vector2d playerLocation = _mapManager.TrackerPos();
 
         //print the player location and portal location
-        Debug.Log("Player location: " + playerLocation + " Portal location: " + portalLocation.Position);
+        //Debug.Log("Player location: " + playerLocation + " Portal location: " + portalLocation.Position);
 
         // Extract portal GPS coordinates
         if (!TryParsePortalPosition(out float portalLat, out float portalLon)) return;
@@ -62,7 +62,7 @@ public class Glitching : MonoBehaviour
         // Calculate distance using the Haversine formula (in metres)
         float distance = HaversineDistance((float)playerLocation.x, (float)playerLocation.y, portalLat, portalLon);
 
-        Debug.Log($"Distance to portal: {distance}m");
+        //Debug.Log($"Distance to portal: {distance}m");
 
         // 0 when far, 1 when hugging the portal
         float t = Mathf.InverseLerp(startEffectAt, 0f, distance);
