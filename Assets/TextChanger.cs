@@ -5,8 +5,9 @@ using System.Collections;
 
 public class LocationClickHandler : MonoBehaviour, IPointerClickHandler
 {
-    public TextMeshProUGUI messageText;  // Assign in Inspector
-    public Animator animator;            // Assign in Inspector
+    public TextMeshProUGUI messageText;    // Assign in Inspector
+    public Animator animator;              // Assign in Inspector
+    public GameObject cantGetThereObject;  // Assign in Inspector (formerly found by name)
 
     private int clickCount = 0;
 
@@ -16,7 +17,7 @@ public class LocationClickHandler : MonoBehaviour, IPointerClickHandler
 
         if (clickCount == 1)
         {
-            messageText.text = "Location updated!";
+            messageText.text = "I can't get there either!";
         }
         else if (clickCount == 2)
         {
@@ -45,15 +46,13 @@ public class LocationClickHandler : MonoBehaviour, IPointerClickHandler
 
         messageText.text = "I can't get there!";
 
-        // Find and hide the GameObject named "ICantGetThere"
-        GameObject target = GameObject.Find("ICantGetThere");
-        if (target != null)
+        if (cantGetThereObject != null)
         {
-            target.SetActive(false);
+            cantGetThereObject.SetActive(false);
         }
         else
         {
-            Debug.LogWarning("GameObject 'ICantGetThere' not found.");
+            Debug.LogWarning("GameObject 'ICantGetThere' not assigned.");
         }
     }
 
