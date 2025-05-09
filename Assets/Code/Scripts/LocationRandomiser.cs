@@ -205,7 +205,7 @@ public class LocationRandomiser : MonoBehaviour
             string id = id_full.Split('.')[0];
 
             //to int
-            int newId = int.Parse(id)-2;
+            int newId = int.Parse(id)-1;
 
             //raise the event
             interfaceGameEvent[newId].Raise();
@@ -280,11 +280,15 @@ public class LocationRandomiser : MonoBehaviour
         LUTELocationInfo[] locationsWithSameId = Array.FindAll(filteredLocations, x => x.name.StartsWith(id));
         //pick a random one that is not the current one  
         int index = UnityEngine.Random.Range(0, locationsWithSameId.Length);
-        while (locationsWithSameId[index] == currentLocation)
-        {
-            index = UnityEngine.Random.Range(0, locationsWithSameId.Length);
-        }
 
+        if (locationsWithSameId.Length != 0)
+        {
+
+            while (locationsWithSameId[index] == currentLocation)
+            {
+                index = UnityEngine.Random.Range(0, locationsWithSameId.Length);
+            }
+        }
         //go to all location variables, 
         List<LocationVariable> locationVariables = basicFlowEngine.GetVariables<LocationVariable>();
         // get the locationvariable name that has the same id
@@ -305,7 +309,11 @@ public class LocationRandomiser : MonoBehaviour
                 break;
             }
         }
-
+        if(locationsWithSameId.Length == 0)
+        {
+            Debug.Log("No locations with the same id found");
+            return currentLocation;
+        }
         locationVariable.Value = locationsWithSameId[index];
 
         return locationsWithSameId[index];
