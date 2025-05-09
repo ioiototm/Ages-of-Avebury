@@ -1,3 +1,5 @@
+using LoGaCulture.LUTE;
+using System.Linq;
 using UnityEngine;
 
 [OrderInfo("AgesOfAvebury",
@@ -19,8 +21,11 @@ public class InitialiseEverything : Order
     public static GameObject _inboxCanvas;
     public static GameObject _menuCanvas;
     public static GameObject _mapCanvas;
+    public static GameObject _scannerCanvas;
 
     public static GameObject modernScreen;
+    public static GameObject neolithicScreen;
+    public static GameObject middleAgesScreen;
 
     public override void OnEnter()
     {
@@ -28,11 +33,22 @@ public class InitialiseEverything : Order
         _inboxCanvas = inboxCanvas ? inboxCanvas : GameObject.Find("ModernInboxCanvas");
         _menuCanvas = menuCanvas ? menuCanvas : GameObject.Find("ModernMenuCanvas");
         _mapCanvas = mapCanvas ? mapCanvas : GameObject.Find("ModernMapCanvas");
+        _scannerCanvas = GameObject.Find("ModernScanner");
 
         // Disable the inbox and enable the menu
         _inboxCanvas.SetActive(false);
-        _menuCanvas.SetActive(true);
-        _mapCanvas.SetActive(false);
+        _menuCanvas.SetActive(false);
+        _mapCanvas.SetActive(true);
+        _scannerCanvas.SetActive(false);
+
+
+        modernScreen = GameObject.Find("ModernInterface");
+        neolithicScreen = GameObject.Find("NeolithicInterface");
+        middleAgesScreen = GameObject.Find("MiddlePeriodInterface");
+
+        modernScreen.SetActive(true);
+        neolithicScreen.SetActive(false);
+        middleAgesScreen.SetActive(false);
 
 
         //get the TargetLocation and LastSeenLocation location variables from the flow engine
@@ -42,6 +58,52 @@ public class InitialiseEverything : Order
 
         targetLocation.Value = GetEngine().GetVariable<LocationVariable>("StartingLocation1").Value;
         lastSeenLocation.Value = targetLocation.Value;
+
+
+        //get the map manager
+        var mapManager = GetEngine().GetMapManager();
+
+        //get all the location variables in the flow engine
+        var locationVariables = GetEngine().GetVariables<LocationVariable>();
+
+        //go through each location variable name that has a number in it
+        foreach (var locationVariable in locationVariables)
+        {
+
+            var name = locationVariable.Key;
+
+            //the names are random but have a number somewhere, so check if the name contains any numbers, in any place
+
+            // Check if the name contains any number  
+            if (name.Any(char.IsDigit))
+            {
+
+                locationVariable.Value.LocationStatus = LocationStatus.Unvisited;
+
+
+                //if the digit is not 1, then hide it
+                if (!name.Contains("1"))
+                {
+                    //hide the location marker
+                    mapManager.HideLocationMarker(locationVariable);
+                    
+                }
+                else
+                {
+                    //show the location marker
+                    mapManager.ShowLocationMarker(locationVariable);
+                }
+
+
+
+            }
+
+
+
+        }
+
+
+
 
         // Continue to the next order
         Continue();
