@@ -1,4 +1,5 @@
 using LoGaCulture.LUTE;
+using System.Collections;
 using UnityEngine;
 
 
@@ -12,6 +13,29 @@ public class StoneCreation : Order
     [SerializeField]
     SelfieSegmentationSample selfieSegmentationSample;
 
+    [SerializeField]
+    GameObject makeStoneButton;
+
+
+    //a function that will be called when the user has pressed the button and created the stone
+    public void CreateStone()
+    {
+        // Add your stone creation logic here
+        Debug.Log("Stone Created!");
+        makeStoneButton.SetActive(false);
+
+        selfieSegmentationSample.gameObject.SetActive(false);
+
+
+
+        StartCoroutine(waitForABit());
+    }
+
+    IEnumerator waitForABit()
+    {
+        yield return new WaitForSeconds(3f);
+        Continue();
+    }
 
 
     public override void OnEnter()
@@ -24,6 +48,8 @@ public class StoneCreation : Order
         }
 
         selfieSegmentationSample.gameObject.SetActive(true);
+
+        makeStoneButton.SetActive(true);
         //To continue or not depending on if this order takes care of everything or diffrent orders take care of the rest
         //Continue();
     }

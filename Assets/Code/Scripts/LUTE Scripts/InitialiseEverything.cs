@@ -27,6 +27,8 @@ public class InitialiseEverything : Order
     public static GameObject neolithicScreen;
     public static GameObject middleAgesScreen;
 
+    public static GameObject neolithicMakeStoneButton;
+
     public override void OnEnter()
     {
         // Use provided GameObjects if available, otherwise find them in the scene
@@ -45,6 +47,11 @@ public class InitialiseEverything : Order
         modernScreen = GameObject.Find("ModernInterface");
         neolithicScreen = GameObject.Find("NeolithicInterface");
         middleAgesScreen = GameObject.Find("MiddlePeriodInterface");
+
+
+
+        neolithicMakeStoneButton = GameObject.Find("MakeStone");
+        neolithicMakeStoneButton.SetActive(false);
 
         modernScreen.SetActive(true);
         neolithicScreen.SetActive(false);

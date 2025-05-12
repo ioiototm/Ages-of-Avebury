@@ -38,6 +38,8 @@ public class ChangeToNeolithic : Order
             neolithicInterfaceEvent.Raise();
         }
 
+        XRManager.Instance.SetXRActive(false);
+
 
         Continue();
     }
