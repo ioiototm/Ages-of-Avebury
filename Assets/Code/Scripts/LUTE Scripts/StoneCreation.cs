@@ -20,12 +20,7 @@ public class StoneCreation : Order
     //a function that will be called when the user has pressed the button and created the stone
     public void CreateStone()
     {
-        // Add your stone creation logic here
-        Debug.Log("Stone Created!");
-        makeStoneButton.SetActive(false);
-
-        selfieSegmentationSample.gameObject.SetActive(false);
-
+     
 
 
         StartCoroutine(waitForABit());
@@ -34,6 +29,22 @@ public class StoneCreation : Order
     IEnumerator waitForABit()
     {
         yield return new WaitForSeconds(3f);
+
+        // Add your stone creation logic here
+        Debug.Log("Stone Created!");
+        makeStoneButton.SetActive(false);
+
+        selfieSegmentationSample.gameObject.SetActive(false);
+
+        GameObject stoneObject = GameObject.Find("StoneObject");
+        stoneObject.SetActive(false);
+
+        GameObject contourLine = GameObject.Find("ContourLine");
+        contourLine.SetActive(false);
+
+
+
+
         Continue();
     }
 

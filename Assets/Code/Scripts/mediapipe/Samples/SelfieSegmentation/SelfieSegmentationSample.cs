@@ -303,8 +303,8 @@ public class SelfieSegmentationSample : MonoBehaviour
         bool isUsingBottomMeshIn3D = true;
         bool isUdingColliders = true;
 
-        GameObject polyExtruderGO = new GameObject("PolyExtruder");
-        polyExtruderGO.transform.parent = this.transform;
+        GameObject polyExtruderGO = new GameObject("StoneObject");
+        //polyExtruderGO.transform.parent = this.transform;
 
 
 
