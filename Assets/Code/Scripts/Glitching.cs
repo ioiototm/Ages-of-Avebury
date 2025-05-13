@@ -79,11 +79,24 @@ public class Glitching : MonoBehaviour
         glitchMat.SetFloat(noiseProp, noise);
         glitchMat.SetFloat(glitchProp, glitch);
 
+        //if the distance is under 15 meters, print it
+        if (distance <= 15f)
+        {
+            Debug.Log("Distance to portal: " + distance);
+        }
+
         // Trigger once when super-close
         if (!_activated && distance <= activateAt)
         {
             _activated = true;
             OnActivate?.Invoke();
+
+            BasicFlowEngine flowEngine = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>();
+            flowEngine.ExecuteNode("Change to Neolithic");
+
+            //disable this game object
+            gameObject.SetActive(false);
+
         }
     }
 
@@ -123,5 +136,18 @@ public class Glitching : MonoBehaviour
 
         float c = 2 * Mathf.Atan2(Mathf.Sqrt(a), Mathf.Sqrt(1 - a));
         return R * c; // Distance in meters
+    }
+
+
+    //on disable, set the glitch mat to 0
+    private void OnDisable()
+    {
+        if (glitchMat)
+        {
+            glitchMat.SetFloat(scanProp, -1);
+            glitchMat.SetFloat(flickerProp, -1);
+            glitchMat.SetFloat(noiseProp, -1);
+            glitchMat.SetFloat(glitchProp, -1);
+        }
     }
 }

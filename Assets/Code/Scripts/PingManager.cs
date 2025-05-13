@@ -5,7 +5,7 @@ using UnityEngine.UI;                      // For the Button
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 
-public class PingScanner : MonoBehaviour
+public class PingManager : MonoBehaviour
 {
     [Header("Assign in Inspector")]
     [Tooltip("Prefab to drop on the detected plane (your ripple / ping).")]

@@ -13,19 +13,21 @@ public class HiddenItemScanner : MonoBehaviour
     [Header("Item Settings")]
     [SerializeField] private GameObject objectToSpawn;
     [SerializeField] private LUTELocationInfo targetLocation;
-    [SerializeField] private float detectionRadius = 10f; // in meters
+    [SerializeField] private float detectionRadius = 1000f; // in meters
     [SerializeField] private float discoveryRadius = 3f; // in meters - when to spawn the item
 
     [Header("Ping Settings")]
     [SerializeField] private GameObject pingPrefab;
     [SerializeField] private GameObject directionalPingPrefab; // Ping that points toward item
     [SerializeField] private float pingLifetime = 3f;
+    [SerializeField] private float directionalPingDelay = 0.7f; // Delay before showing directional pings
+    [SerializeField] private float directionalPingDistance = 0.5f; // Distance to place directional pings
 
     [Header("AR Settings")]
     [SerializeField] private ARRaycastManager raycastManager;
     [SerializeField] private ARPlaneManager planeManager;
     [SerializeField] private PlaneAlignment desiredAlignment = PlaneAlignment.HorizontalUp;
-    
+
     [Header("UI Elements")]
     [SerializeField] private Button scanButton;
     [SerializeField] private Text feedbackText;
@@ -45,20 +47,20 @@ public class HiddenItemScanner : MonoBehaviour
         {
             Debug.LogError("BasicFlowEngine not found!");
         }
-        
+
         // Set up button listener
         if (scanButton != null)
         {
             scanButton.onClick.AddListener(Scan);
         }
-        
+
         // Initialize target location
         if (targetLocation != null)
         {
             string position = targetLocation.Position;
             string[] latLon = position.Split(',');
-            
-            if (latLon.Length == 2 && double.TryParse(latLon[0], out double lat) && 
+
+            if (latLon.Length == 2 && double.TryParse(latLon[0], out double lat) &&
                 double.TryParse(latLon[1], out double lon))
             {
                 targetLatLon = new Vector2d(lat, lon);
@@ -73,10 +75,10 @@ public class HiddenItemScanner : MonoBehaviour
         {
             Debug.LogError("Target location not assigned!");
         }
-        
+
         // Set up AR components if not assigned
         SetupARComponents();
-        
+
         if (feedbackText != null)
         {
             feedbackText.text = "Tap Scan to begin searching";
@@ -87,11 +89,24 @@ public class HiddenItemScanner : MonoBehaviour
     {
         if (itemDiscovered || targetLocation == null)
             return;
-            
+
+
+        //check if the arraycast manager is null
+        if (raycastManager == null)
+        {
+            raycastManager = GameObject.Find("XR Origin (Mobile AR)").GetComponent<ARRaycastManager>();
+        }
+
+        //check if the plane manager is null
+        if (planeManager == null)
+        {
+            planeManager = GameObject.Find("XR Origin (Mobile AR)").GetComponent<ARPlaneManager>();
+        }
+
         // Check if within detection range
         CheckDistanceToTarget();
     }
-    
+
     private void CheckDistanceToTarget()
     {
         // Get current location from MapManager
@@ -101,14 +116,17 @@ public class HiddenItemScanner : MonoBehaviour
             if (mapManager != null)
             {
                 Vector2d currentLocation = mapManager.TrackerPos();
-                
+
                 // Calculate distance to target
                 double distanceInMeters = CalculateDistance(currentLocation, targetLatLon);
-                
+
                 // Update detection state
                 bool wasInRange = isWithinDetectionRange;
                 isWithinDetectionRange = distanceInMeters <= detectionRadius;
-                
+
+                wasInRange = true;
+
+
                 // If we just entered range, notify the user
                 if (isWithinDetectionRange && !wasInRange && feedbackText != null)
                 {
@@ -118,7 +136,7 @@ public class HiddenItemScanner : MonoBehaviour
                 {
                     feedbackText.text = "No signals detected in this area";
                 }
-                
+
                 // Check if we're close enough to discover the item
                 if (distanceInMeters <= discoveryRadius && !itemDiscovered)
                 {
@@ -135,15 +153,17 @@ public class HiddenItemScanner : MonoBehaviour
     {
         if (itemDiscovered)
             return;
-            
+
         // Get current location and device heading
         var mapManager = flowEngine.GetMapManager();
         Vector2d currentLocation = mapManager.TrackerPos();
         float deviceHeading = Input.compass.trueHeading;
-        
+
         // Calculate distance to target
         double distanceInMeters = CalculateDistance(currentLocation, targetLatLon);
-        
+
+        isWithinDetectionRange = true;
+
         if (distanceInMeters <= discoveryRadius)
         {
             // We're close enough to discover the item!
@@ -154,13 +174,13 @@ public class HiddenItemScanner : MonoBehaviour
             // We're in detection range but not close enough to discover
             // Determine direction to target
             string direction = DetermineDirection(currentLocation, targetLatLon, deviceHeading);
-            
+
             // Play animation if available
             PlayScanAnimation(direction);
-            
+
             // Place ping on AR plane
             PlacePingOnPlane(direction);
-            
+
             // Update feedback text
             if (feedbackText != null)
             {
@@ -171,43 +191,43 @@ public class HiddenItemScanner : MonoBehaviour
         {
             // Just place a standard ping with no direction
             PlacePingOnPlane(null);
-            
+
             if (feedbackText != null)
             {
                 feedbackText.text = "No signals detected in this area";
             }
         }
     }
-    
+
     private IEnumerator DiscoverItem()
     {
         itemDiscovered = true;
-        
+
         if (feedbackText != null)
         {
             feedbackText.text = "Item found!";
         }
-        
+
         // Place a ping on the plane
         PlacePingOnPlane(null);
-        
+
         // Wait a moment for dramatic effect
         yield return new WaitForSeconds(1.5f);
-        
+
         // Spawn the hidden item on the AR plane
         Pose itemPose = GetCenterScreenPose();
         if (itemPose != null && objectToSpawn != null)
         {
             GameObject spawnedObject = Instantiate(objectToSpawn, itemPose.position, itemPose.rotation);
-            
+
             // Adjust orientation if needed
             spawnedObject.transform.rotation = Quaternion.Euler(0, spawnedObject.transform.rotation.eulerAngles.y, 0);
-            
+
             if (feedbackText != null)
             {
                 feedbackText.text = $"You found: {objectToSpawn.name}!";
             }
-            
+
             // Optionally notify the BasicFlowEngine that the item was discovered
             if (flowEngine != null)
             {
@@ -226,24 +246,25 @@ public class HiddenItemScanner : MonoBehaviour
             itemDiscovered = false; // Allow retry
         }
     }
-    
+
     private void PlacePingOnPlane(string direction)
     {
         StartCoroutine(PlacePingCoroutine(direction));
     }
-    
+
     private IEnumerator PlacePingCoroutine(string direction)
     {
         Pose pose = GetCenterScreenPose();
         if (pose != null)
         {
-            GameObject pingObj;
-            
+            // Start with placing the main ping
+            GameObject mainPing;
+
             if (direction != null && directionalPingPrefab != null)
             {
                 // Use directional ping if we have a direction
-                pingObj = Instantiate(directionalPingPrefab, pose.position, pose.rotation);
-                
+                mainPing = Instantiate(directionalPingPrefab, pose.position, pose.rotation);
+
                 // Rotate the ping to point in the correct direction
                 float rotationAngle = 0;
                 switch (direction)
@@ -252,72 +273,119 @@ public class HiddenItemScanner : MonoBehaviour
                     case "right": rotationAngle = 90f; break;
                     case "ahead": rotationAngle = 0f; break;
                 }
-                
-                pingObj.transform.Rotate(90, rotationAngle, 0); // Adjust based on your model orientation
+
+                mainPing.transform.Rotate(90, rotationAngle, 0); // Adjust based on your model orientation
             }
             else
             {
                 // Use regular ping
-                pingObj = Instantiate(pingPrefab, pose.position, pose.rotation);
-                pingObj.transform.rotation = Quaternion.Euler(90, pingObj.transform.rotation.eulerAngles.y, 0);
+                mainPing = Instantiate(pingPrefab, pose.position, pose.rotation);
+                mainPing.transform.rotation = Quaternion.Euler(90, mainPing.transform.rotation.eulerAngles.y, 0);
             }
-            
-            // Destroy ping after lifetime
-            Destroy(pingObj, pingLifetime);
+
+            // Destroy main ping after lifetime
+            Destroy(mainPing, pingLifetime);
+
+            // Wait a moment before showing directional pings
+            yield return new WaitForSeconds(directionalPingDelay);
+
+            // Now place additional directional pings if we have a direction
+            if (direction != null)
+            {
+                // Forward vector based on camera's forward direction projected onto the horizontal plane
+                Vector3 forwardDir = Camera.main.transform.forward;
+                forwardDir.y = 0;
+                forwardDir.Normalize();
+
+                // Right vector perpendicular to forward
+                Vector3 rightDir = Vector3.Cross(Vector3.up, forwardDir).normalized;
+
+                // Positions for directional pings
+                Vector3 leftPosition = pose.position - rightDir * directionalPingDistance;
+                Vector3 rightPosition = pose.position + rightDir * directionalPingDistance;
+                Vector3 forwardPosition = pose.position + forwardDir * directionalPingDistance;
+
+                GameObject additionalPing = null;
+
+                // Create additional ping based on the direction
+                switch (direction)
+                {
+                    case "left":
+                        // Place additional ping to the left
+                        additionalPing = Instantiate(pingPrefab, leftPosition, pose.rotation);
+                        break;
+
+                    case "right":
+                        // Place additional ping to the right
+                        additionalPing = Instantiate(pingPrefab, rightPosition, pose.rotation);
+                        break;
+
+                    case "ahead":
+                        // Place additional ping ahead
+                        additionalPing = Instantiate(pingPrefab, forwardPosition, pose.rotation);
+                        break;
+                }
+
+                if (additionalPing != null)
+                {
+                    additionalPing.transform.rotation = Quaternion.Euler(90, additionalPing.transform.rotation.eulerAngles.y, 0);
+                    Destroy(additionalPing, pingLifetime - directionalPingDelay);
+                }
+            }
         }
-        
+
         yield return null;
     }
-    
+
     private Pose GetCenterScreenPose()
     {
         if (raycastManager == null)
             return new Pose();
-            
+
         Vector2 screenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
         var hits = new List<ARRaycastHit>();
-        
+
         if (raycastManager.Raycast(screenCenter, hits, TrackableType.Planes))
         {
             var hit = hits[0];
-            
+
             // Check for desired plane alignment if needed
             if (planeManager != null && planeManager.GetPlane(hit.trackableId).alignment != desiredAlignment)
             {
                 return new Pose();
             }
-            
+
             return hit.pose;
         }
-        
+
         return new Pose();
     }
-    
+
     private void PlayScanAnimation(string direction)
     {
         if (scannerAnimator == null)
             return;
-            
+
         switch (direction)
         {
             case "left":
                 scannerAnimator.Play("ScanLeftAnimation");
                 break;
-                
+
             case "right":
                 scannerAnimator.Play("ScanRightAnimation");
                 break;
-                
+
             case "ahead":
                 scannerAnimator.Play("ScanForwardAnimation");
                 break;
-                
+
             default:
                 scannerAnimator.Play("ScanAnimation");
                 break;
         }
     }
-    
+
     private void SetupARComponents()
     {
         // Find AR components if not assigned
@@ -325,13 +393,13 @@ public class HiddenItemScanner : MonoBehaviour
         {
             raycastManager = FindObjectOfType<ARRaycastManager>();
         }
-        
+
         if (planeManager == null)
         {
             planeManager = FindObjectOfType<ARPlaneManager>();
         }
     }
-    
+
     public double CalculateDistance(Vector2d from, Vector2d to)
     {
         // Haversine formula for calculating distance between two coordinates
@@ -341,14 +409,14 @@ public class HiddenItemScanner : MonoBehaviour
         double df = (to.x - from.x) * Mathf.Deg2Rad;
         double dl = (to.y - from.y) * Mathf.Deg2Rad;
 
-        double a = Math.Sin(df/2) * Math.Sin(df/2) +
+        double a = Math.Sin(df / 2) * Math.Sin(df / 2) +
                    Math.Cos(f1) * Math.Cos(f2) *
-                   Math.Sin(dl/2) * Math.Sin(dl/2);
-        double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1-a));
+                   Math.Sin(dl / 2) * Math.Sin(dl / 2);
+        double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
 
         return R * c; // Distance in meters
     }
-    
+
     public double CalculateBearing(Vector2d from, Vector2d to)
     {
         double lat1 = from.x * Mathf.Deg2Rad;
