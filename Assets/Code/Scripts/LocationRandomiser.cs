@@ -16,6 +16,9 @@ public class LocationRandomiser : MonoBehaviour
 
      LUTELocationInfo[] locationInfos;
 
+    [SerializeField]
+    bool debugMode = true;
+
 
     //public LUTELocationInfo currentLocation;
     public LocationVariable targetLocation;
@@ -100,6 +103,13 @@ public class LocationRandomiser : MonoBehaviour
 
         //filter locations based on quadrant, assume south quadrant
         string quadrant = southQuadrant ? "south" : "north";
+
+        if(debugMode)
+        {
+            quadrant = "campus";
+        }
+
+        //
         LUTELocationInfo[] filteredLocations = Array.FindAll(locationInfos, x => x.name.ToLower().Contains(quadrant));
         //get all locations with the same id within the filtered locations
         LUTELocationInfo[] locationsWithSameId = Array.FindAll(filteredLocations, x => x.name.StartsWith(newId_full.ToString()));
@@ -228,11 +238,25 @@ public class LocationRandomiser : MonoBehaviour
         int newId = int.Parse(id) + 1;
         //filter locations based on quadrant
         string quadrant = southQuadrant ? "south" : "north";
+
+        if (debugMode)
+        {
+            quadrant = "campus";
+        }
+
+
         LUTELocationInfo[] filteredLocations = Array.FindAll(locationInfos, x => x.name.ToLower().Contains(quadrant));
         //get all locations with the same id within the filtered locations
         LUTELocationInfo[] locationsWithSameId = Array.FindAll(filteredLocations, x => x.name.StartsWith(newId.ToString()));
         //pick a random one that is not the current one
         int index = UnityEngine.Random.Range(0, locationsWithSameId.Length);
+
+        if (locationsWithSameId.Length == 1)
+        {
+            Debug.Log("Only one location with the same id found");
+            return locationsWithSameId[0];
+        }
+
         while (locationsWithSameId[index] == currentLocation)
         {
             index = UnityEngine.Random.Range(0, locationsWithSameId.Length);
@@ -275,11 +299,22 @@ public class LocationRandomiser : MonoBehaviour
         string id = id_full.Split('.')[0];
         //filter locations based on quadrant  
         string quadrant = southQuadrant ? "south" : "north";
+
+        if (debugMode)
+        {
+            quadrant = "campus";
+        }
+
         LUTELocationInfo[] filteredLocations = Array.FindAll(locationInfos, x => x.name.ToLower().Contains(quadrant));
         //get all locations with the same id within the filtered locations  
         LUTELocationInfo[] locationsWithSameId = Array.FindAll(filteredLocations, x => x.name.StartsWith(id));
         //pick a random one that is not the current one  
         int index = UnityEngine.Random.Range(0, locationsWithSameId.Length);
+
+        if(locationsWithSameId.Length == 1) {
+            Debug.Log("Only one location with the same id found");
+            return locationsWithSameId[0];
+        }
 
         if (locationsWithSameId.Length != 0)
         {
@@ -374,6 +409,12 @@ public class LocationRandomiser : MonoBehaviour
 
             //filter locations based on quadrant  
             string quadrant = southQuadrant ? "south" : "north";
+
+            if (debugMode)
+            {
+                quadrant = "campus";
+            }
+
             LUTELocationInfo[] filteredLocations = Array.FindAll(locationInfos, x => x.name.ToLower().Contains(quadrant));
 
             //get all locations with the same id within the filtered locations  

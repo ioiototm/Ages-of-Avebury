@@ -16,14 +16,14 @@ public class HiddenItemScanner : MonoBehaviour
     [SerializeField] private GameObject objectToSpawn;
     [SerializeField] private LUTELocationInfo targetLocation;
     [SerializeField] private float detectionRadius = 1000f; // in meters
-    [SerializeField] private float discoveryRadius = 3f; // in meters - when to spawn the item
+    [SerializeField] private float discoveryRadius = 10f; // in meters - when to spawn the item
 
     [Header("Ping Settings")]
     [SerializeField] private GameObject pingPrefab;
     [SerializeField] private GameObject directionalPingPrefab; // Ping that points toward item
     [SerializeField] private float pingLifetime = 3f;
     [SerializeField] private float directionalPingDelay = 0.7f; // Delay before showing directional pings
-    [SerializeField] private float directionalPingDistance = 0.5f; // Distance to place directional pings
+    [SerializeField] private float directionalPingDistance = 1f; // Distance to place directional pings
 
     [Header("AR Settings")]
     [SerializeField] private ARRaycastManager raycastManager;
@@ -40,6 +40,9 @@ public class HiddenItemScanner : MonoBehaviour
     private Vector2d targetLatLon;
     private bool itemDiscovered = false;
     private bool isWithinDetectionRange = false;
+
+
+    private int pingAmmount = 0;
 
     private bool isActive = false;
 
@@ -203,6 +206,21 @@ public class HiddenItemScanner : MonoBehaviour
             return;
 
 
+        pingAmmount++;
+
+        Debug.Log($"Ping ammount: {pingAmmount}");
+
+        if (pingAmmount > 10)
+        {
+            pingAmmount = 0;
+
+
+            Debug.Log("Ping ammount reset");
+
+            //spawn the item anyway
+            StartCoroutine(DiscoverItem());
+            return;
+        }
 
         // Get current location and device heading
         var mapManager = flowEngine.GetMapManager();
