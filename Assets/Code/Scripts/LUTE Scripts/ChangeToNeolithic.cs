@@ -40,6 +40,11 @@ public class ChangeToNeolithic : Order
 
         XRManager.Instance.SetXRActive(false);
 
+        GameObject.Find("Copper Pipe(Clone)").SetActive(false);
+        GameObject.Find("Pit(Clone)").SetActive(false);
+        GameObject.Find("Stone 7_LP(Clone)").SetActive(false);
+        GameObject.Find("Stone III_LP(Clone)").SetActive(false);
+
 
         Continue();
     }

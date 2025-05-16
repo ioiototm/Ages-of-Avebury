@@ -28,7 +28,11 @@ public class StoneCreation : Order
 
     IEnumerator waitForABit()
     {
-        yield return new WaitForSeconds(3f);
+
+
+
+
+        yield return new WaitForSeconds(10f);
 
         // Add your stone creation logic here
         Debug.Log("Stone Created!");
@@ -36,12 +40,14 @@ public class StoneCreation : Order
 
         selfieSegmentationSample.gameObject.SetActive(false);
 
-        GameObject stoneObject = GameObject.Find("StoneObject");
-        stoneObject.SetActive(false);
+    
 
         GameObject contourLine = GameObject.Find("ContourLine");
         contourLine.SetActive(false);
 
+
+        //GameObject stoneObject = GameObject.Find("StoneObject");
+        //stoneObject.SetActive(false);
 
 
 

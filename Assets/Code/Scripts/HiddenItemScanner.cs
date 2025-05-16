@@ -10,6 +10,8 @@ using UnityEngine.XR.ARSubsystems;
 
 public class HiddenItemScanner : MonoBehaviour
 {
+    public event Action<GameObject> OnItemDiscovered;
+
     [Header("Item Settings")]
     [SerializeField] private GameObject objectToSpawn;
     [SerializeField] private LUTELocationInfo targetLocation;
@@ -38,6 +40,51 @@ public class HiddenItemScanner : MonoBehaviour
     private Vector2d targetLatLon;
     private bool itemDiscovered = false;
     private bool isWithinDetectionRange = false;
+
+    private bool isActive = false;
+
+    public void SetItemToSpawn(GameObject item)
+    {
+        objectToSpawn = item;
+        itemDiscovered = false;
+    }
+
+    public void SetIsActive(bool active)
+    {
+        isActive = active;
+        if (isActive)
+        {
+            // Reset item discovered state
+            itemDiscovered = false;
+            isWithinDetectionRange = false;
+            // Reset feedback text
+            if (feedbackText != null)
+            {
+                feedbackText.text = "Tap Scan to begin searching";
+            }
+        }
+    }
+
+
+    public void SetLocation(LUTELocationInfo location)
+    {
+        targetLocation = location;
+        if (targetLocation != null)
+        {
+            string position = targetLocation.Position;
+            string[] latLon = position.Split(',');
+            if (latLon.Length == 2 && double.TryParse(latLon[0], out double lat) &&
+                double.TryParse(latLon[1], out double lon))
+            {
+                targetLatLon = new Vector2d(lat, lon);
+                Debug.Log($"Target location set to: {targetLatLon.x}, {targetLatLon.y}");
+            }
+            else
+            {
+                Debug.LogError("Invalid target location format!");
+            }
+        }
+    }
 
     void Start()
     {
@@ -89,7 +136,8 @@ public class HiddenItemScanner : MonoBehaviour
     {
         if (itemDiscovered || targetLocation == null)
             return;
-
+        if (!isActive)
+            return;
 
         //check if the arraycast manager is null
         if (raycastManager == null)
@@ -154,6 +202,8 @@ public class HiddenItemScanner : MonoBehaviour
         if (itemDiscovered)
             return;
 
+
+
         // Get current location and device heading
         var mapManager = flowEngine.GetMapManager();
         Vector2d currentLocation = mapManager.TrackerPos();
@@ -161,16 +211,24 @@ public class HiddenItemScanner : MonoBehaviour
 
         // Calculate distance to target
         double distanceInMeters = CalculateDistance(currentLocation, targetLatLon);
+        //distanceInMeters = 2;
 
         isWithinDetectionRange = true;
 
         if (distanceInMeters <= discoveryRadius)
         {
+
+            if(!isActive)
+            {
+                return;
+            }
             // We're close enough to discover the item!
             StartCoroutine(DiscoverItem());
         }
-        else if (isWithinDetectionRange)
+        else if (isWithinDetectionRange && isActive)
         {
+
+
             // We're in detection range but not close enough to discover
             // Determine direction to target
             string direction = DetermineDirection(currentLocation, targetLatLon, deviceHeading);
@@ -221,7 +279,9 @@ public class HiddenItemScanner : MonoBehaviour
             GameObject spawnedObject = Instantiate(objectToSpawn, itemPose.position, itemPose.rotation);
 
             // Adjust orientation if needed
-            spawnedObject.transform.rotation = Quaternion.Euler(0, spawnedObject.transform.rotation.eulerAngles.y, 0);
+            //spawnedObject.transform.rotation = Quaternion.Euler(-90, spawnedObject.transform.rotation.eulerAngles.y, 0);
+
+      
 
             if (feedbackText != null)
             {
@@ -234,7 +294,12 @@ public class HiddenItemScanner : MonoBehaviour
                 // Example: Update location status or execute a node
                 targetLocation.LocationStatus = LocationStatus.Visited;
                 // flowEngine.ExecuteNode("ItemDiscovered");
+
+
             }
+
+            // Notify listeners about the discovered item
+            OnItemDiscovered?.Invoke(spawnedObject);
         }
         else
         {
@@ -260,28 +325,9 @@ public class HiddenItemScanner : MonoBehaviour
             // Start with placing the main ping
             GameObject mainPing;
 
-            if (direction != null && directionalPingPrefab != null)
-            {
-                // Use directional ping if we have a direction
-                mainPing = Instantiate(directionalPingPrefab, pose.position, pose.rotation);
-
-                // Rotate the ping to point in the correct direction
-                float rotationAngle = 0;
-                switch (direction)
-                {
-                    case "left": rotationAngle = -90f; break;
-                    case "right": rotationAngle = 90f; break;
-                    case "ahead": rotationAngle = 0f; break;
-                }
-
-                mainPing.transform.Rotate(90, rotationAngle, 0); // Adjust based on your model orientation
-            }
-            else
-            {
-                // Use regular ping
-                mainPing = Instantiate(pingPrefab, pose.position, pose.rotation);
-                mainPing.transform.rotation = Quaternion.Euler(90, mainPing.transform.rotation.eulerAngles.y, 0);
-            }
+            // Use regular ping for the main ping
+            mainPing = Instantiate(pingPrefab, pose.position, pose.rotation);
+            mainPing.transform.rotation = Quaternion.Euler(90, mainPing.transform.rotation.eulerAngles.y, 0);
 
             // Destroy main ping after lifetime
             Destroy(mainPing, pingLifetime);
@@ -289,48 +335,39 @@ public class HiddenItemScanner : MonoBehaviour
             // Wait a moment before showing directional pings
             yield return new WaitForSeconds(directionalPingDelay);
 
-            // Now place additional directional pings if we have a direction
+            // Now place a directional ping if we have a direction
             if (direction != null)
             {
-                // Forward vector based on camera's forward direction projected onto the horizontal plane
-                Vector3 forwardDir = Camera.main.transform.forward;
-                forwardDir.y = 0;
-                forwardDir.Normalize();
+                // Get current location and calculate bearing to target
+                var mapManager = flowEngine.GetMapManager();
+                Vector2d currentLocation = mapManager.TrackerPos();
+                double bearingToTarget = CalculateBearing(currentLocation, targetLatLon);
+                float deviceHeading = Input.compass.trueHeading;
 
-                // Right vector perpendicular to forward
-                Vector3 rightDir = Vector3.Cross(Vector3.up, forwardDir).normalized;
+                // Calculate relative angle (similar to Compass.cs)
+                float relativeAngle = (float)bearingToTarget - deviceHeading;
+                float normalizedAngle = (relativeAngle + 360f) % 360f;
 
-                // Positions for directional pings
-                Vector3 leftPosition = pose.position - rightDir * directionalPingDistance;
-                Vector3 rightPosition = pose.position + rightDir * directionalPingDistance;
-                Vector3 forwardPosition = pose.position + forwardDir * directionalPingDistance;
+                // Convert angle to radians for position calculation
+                float rad = normalizedAngle * Mathf.Deg2Rad;
 
-                GameObject additionalPing = null;
+                // Calculate direction vector (similar to Compass's GetRectEdgePosition logic)
+                float dx = Mathf.Sin(rad);
+                float dz = Mathf.Cos(rad);
+                Vector3 directionVector = new Vector3(dx, 0, dz).normalized;
 
-                // Create additional ping based on the direction
-                switch (direction)
-                {
-                    case "left":
-                        // Place additional ping to the left
-                        additionalPing = Instantiate(pingPrefab, leftPosition, pose.rotation);
-                        break;
+                // Place the ping at specified distance in the direction of the target
+                Vector3 pingPosition = pose.position + directionVector * directionalPingDistance;
 
-                    case "right":
-                        // Place additional ping to the right
-                        additionalPing = Instantiate(pingPrefab, rightPosition, pose.rotation);
-                        break;
+                // Instantiate the directional ping
+                GameObject directionalPing = Instantiate(directionalPingPrefab, pingPosition, pose.rotation);
 
-                    case "ahead":
-                        // Place additional ping ahead
-                        additionalPing = Instantiate(pingPrefab, forwardPosition, pose.rotation);
-                        break;
-                }
+                // Orient the ping to point toward the target
+                directionalPing.transform.LookAt(new Vector3(pose.position.x, pingPosition.y, pose.position.z));
+                directionalPing.transform.Rotate(90, 0, 0); // Adjust based on your model orientation
 
-                if (additionalPing != null)
-                {
-                    additionalPing.transform.rotation = Quaternion.Euler(90, additionalPing.transform.rotation.eulerAngles.y, 0);
-                    Destroy(additionalPing, pingLifetime - directionalPingDelay);
-                }
+                // Destroy the directional ping after its lifetime
+                Destroy(directionalPing, pingLifetime - directionalPingDelay);
             }
         }
 

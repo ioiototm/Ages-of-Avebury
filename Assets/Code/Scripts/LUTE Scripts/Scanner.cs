@@ -10,13 +10,39 @@ public class Scanner : Order
 {
 
     [SerializeField]
-    LocationVariable locationOfScanning;
+    HiddenItemScanner scanner;
 
+    [SerializeField]
+    GameObject itemToSpawn;
+
+    [SerializeField]
+    LocationVariable locationInfo;
+
+
+    public void OnItemDiscovered(GameObject gameObject)
+    {
+        // Handle the discovered item here
+        Debug.Log("Item Discovered: " + gameObject.name);
+        scanner.SetIsActive(false);
+        scanner.OnItemDiscovered -= OnItemDiscovered;
+
+       
+
+        
+
+        Continue();
+    }
 
     public override void OnEnter()
     {
+        scanner.OnItemDiscovered += OnItemDiscovered;
+        scanner.SetItemToSpawn(itemToSpawn);
+        scanner.SetIsActive(true);
 
-        Continue();
+        //get the last seen location 
+        BasicFlowEngine engine = GetEngine();
+        var lastSeenLocation = engine.GetVariable<LocationVariable>("LastSeenLocation");
+        scanner.SetLocation(lastSeenLocation.Value);
     }
 
     public override string GetSummary()

@@ -185,6 +185,9 @@ public class SelfieSegmentationSample : MonoBehaviour
     private IEnumerator DrawContourWithRenderer(List<Vector2> contour, Camera cam, int pointsPerFrame = 1)
     {
 
+
+      
+
         //if the coroutine is running, don't start a new one
         if (runningCorouine != null)
         {
@@ -217,8 +220,15 @@ public class SelfieSegmentationSample : MonoBehaviour
             lr.SetPosition(i, wp);
 
             // after drawing a few, wait a frame
-            if ((i + 1) % pointsPerFrame == 0)
+
+            if (pointsPerFrame < 0)
+            {
+
+            }
+            else if ((i + 1) % pointsPerFrame == 0)
+            {
                 yield return new WaitForSeconds(0.1f);
+            }
         }
 
         // 4) (Optional) Now close the loop in one go:
@@ -230,7 +240,17 @@ public class SelfieSegmentationSample : MonoBehaviour
         // Vector2 f = contour[0] * 0.04f; f.x -= 3;
         // lr.SetPosition(contour.Count, new Vector3(f.x, f.y, -1f));
 
-        yield return new WaitForSeconds(1);
+        if(pointsPerFrame < 0)
+        {
+            //end the coroutine
+            yield break;
+        }
+        else
+        {
+            yield return new WaitForSeconds(1);
+        }
+
+    
 
         runningCorouine = null; // Reset coroutine reference
     }
@@ -240,20 +260,7 @@ public class SelfieSegmentationSample : MonoBehaviour
 
     private void OnTextureUpdate(Texture texture)
     {   
-        //Debug.Log("Extracted contour: " + contour.Count + " points.");
-        if(hasMadeStone)
-        {
 
-            //get the game object ContourLine and disable it if it exists
-            GameObject contourLine = GameObject.Find("ContourLine");
-            
-            if (contourLine != null)
-
-                contourLine.SetActive(false);
-
-
-            return;
-        }
         segmentation.Run(texture);
 
         RenderTexture maskTex = segmentation.GetResultTexture();
@@ -264,7 +271,29 @@ public class SelfieSegmentationSample : MonoBehaviour
 
         List<Vector2> contour = new List<Vector2>();
 
+        //Debug.Log("Extracted contour: " + contour.Count + " points.");
+        if (hasMadeStone)
+        {
 
+            //get the game object ContourLine and disable it if it exists
+            GameObject contourLine = GameObject.Find("ContourLine");
+
+            //if (contourLine != null)
+
+            //    contourLine.SetActive(false);
+            contour = ContourTracing.TraceContour(maskPixels, maskTex.width, maskTex.height);
+            //DrawContourWithRenderer(contour, Camera.main);
+            //contourDrawer.DrawContour(contour, Camera.main);
+
+            if (runningCorouine == null)
+            {
+                runningCorouine = StartCoroutine(DrawContourWithRenderer(contour, Camera.main, -1));
+            }
+
+            this.gameObject.SetActive(false);
+
+            return;
+        }
         if (!hasMadeStone)
         {
             contour = ContourTracing.TraceContour(maskPixels, maskTex.width, maskTex.height);
@@ -358,23 +387,31 @@ public class SelfieSegmentationSample : MonoBehaviour
             
 
             //get the game object "rock-preview" and disable it
-            GameObject rockPreview = GameObject.Find("rock-preview");
-            rockPreview.SetActive(false);
+            //GameObject rockPreview = GameObject.Find("rock-preview");
+            //rockPreview.SetActive(false);
 
             hasMadeStone = true;
 
             //destroy the contour line
             GameObject contourLine = GameObject.Find("ContourLine");
             //Destroy(contourLine);
-            contourLine.SetActive(false);
+            //contourLine.SetActive(false);
+
+            polyExtruderGO.gameObject.SetActive(false);
+
+            //draw the contour one last time
+            DrawContourWithRenderer(contour, Camera.main, -1);
+
+            //set this script to false active
+            //this.gameObject.SetActive(false);
 
             DontDestroyOnLoad(gameObject);
 
 
             //load next scene in the build
-            UnityEngine.SceneManagement.SceneManager.LoadScene(1);
+            //UnityEngine.SceneManagement.SceneManager.LoadScene(1);
 
-            StartCoroutine(afterSceneLoad());
+            //StartCoroutine(afterSceneLoad());
 
 
 
