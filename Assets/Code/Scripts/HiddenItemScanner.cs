@@ -233,6 +233,9 @@ public class HiddenItemScanner : MonoBehaviour
 
         isWithinDetectionRange = true;
 
+        //TODO: look into this 
+        //bool locationMet = location.locationRef.Evaluate(ComparisonOperator.Equals, null);
+
         if (distanceInMeters <= discoveryRadius)
         {
 
