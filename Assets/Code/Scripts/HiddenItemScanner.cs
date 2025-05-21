@@ -135,12 +135,30 @@ public class HiddenItemScanner : MonoBehaviour
         }
     }
 
+    public void skipToNeolithic()
+    {
+        // Execute the node to skip to Neolithic
+        var flowEngine = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>();
+        flowEngine.ExecuteNode("Change to Neolithic");
+    }
+
     void Update()
     {
+
+
+        //if key pressed is r, execute node called Change to Neolithic
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            var flowEngine = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>();
+            //call 
+            flowEngine.ExecuteNode("Change to Neolithic");
+
+        }
         if (itemDiscovered || targetLocation == null)
             return;
         if (!isActive)
             return;
+
 
         //check if the arraycast manager is null
         if (raycastManager == null)

@@ -390,6 +390,12 @@ public class LocationRandomiser : MonoBehaviour
         //    }
         //}
 
+
+        //if key is k, unreachable target location
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+             UnreachableTargetLocation();
+        }
         //if press g, go to next location  
         //similar as above, but now it's the next id up, so if the first location had an id of 1.x-, the next one will be 2.x-  
         //so, increment the id by 1, and get all locations with that id  

@@ -1,6 +1,8 @@
 using LoGaCulture.LUTE;
 using Mapbox.Unity.Location;
 using Mapbox.Utils;
+using System;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -31,6 +33,10 @@ public class Glitching : MonoBehaviour
     [Header("Optional Event")]
     public UnityEvent OnActivate; // hook up particle burst, scene load, etc.
 
+
+    [SerializeField]
+    public bool running = false;
+
     private bool _activated;
 
     
@@ -40,6 +46,9 @@ public class Glitching : MonoBehaviour
     private void Start()
     {
         _mapManager = flowEngine.GetMapManager();
+
+
+        glitchMat.SetFloat(scanProp, -5f);
     }
 
     void Update()
@@ -47,11 +56,15 @@ public class Glitching : MonoBehaviour
         if (!portalLocation || !glitchMat) return;
 
 
+        if(!running) return; // Check if the script is running
 
         // Get player location (make sure this is set up in your GPS system)
 
         //use the Mapbox location service to get the player location
         Vector2d playerLocation = _mapManager.TrackerPos();
+
+        //LocationProviderFactory.Instance.DefaultLocationProvider.CurrentLocation.LatitudeLongitude;
+
 
         //print the player location and portal location
         //Debug.Log("Player location: " + playerLocation + " Portal location: " + portalLocation.Position);

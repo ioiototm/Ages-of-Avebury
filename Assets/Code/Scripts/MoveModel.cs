@@ -15,10 +15,10 @@ public class MoveModel : MonoBehaviour
     void Start()
     {
         
-        left = GameObject.Find("Left").GetComponent<Button>();
-        right = GameObject.Find("Right").GetComponent<Button>();
-        up = GameObject.Find("Up").GetComponent<Button>();
-        down = GameObject.Find("Down").GetComponent<Button>();
+        //left = GameObject.Find("Left").GetComponent<Button>();
+        //right = GameObject.Find("Right").GetComponent<Button>();
+        //up = GameObject.Find("Up").GetComponent<Button>();
+        //down = GameObject.Find("Down").GetComponent<Button>();
 
     }
 
@@ -35,9 +35,9 @@ public class MoveModel : MonoBehaviour
         //main object is at x -18.5 z -27.11
         //landscape offset is at x 0.68 y 0.6 (or 1.6 or 2.6 etc)
 
-        float scale = 0.03f;
-        float offsetX = -gameObject.transform.position.x * scale + someOffsetX;
-        float offsetY = gameObject.transform.position.z * scale + someOffsetY;
+        //float scale = 0.03f;
+        //float offsetX = -gameObject.transform.position.x * scale + someOffsetX;
+        //float offsetY = gameObject.transform.position.z * scale + someOffsetY;
 
         //when this main object moves, set the offest so it follows the main object
         //get the material first
@@ -48,14 +48,14 @@ public class MoveModel : MonoBehaviour
         //print(offset);
 
 
-        Debug.Log("OffsetX: " + offsetX + " OffsetY: " + offsetY);
+        //Debug.Log("OffsetX: " + offsetX + " OffsetY: " + offsetY);
 
         //make the buttons work by changing teh offsets
         //lambda expressions for the buttons
-        left.onClick.AddListener(() => Move(-0.001f, 0f));
-        right.onClick.AddListener(() => Move(0.001f, 0f));
-        up.onClick.AddListener(() => Move(0f, 0.001f));
-        down.onClick.AddListener(() => Move(0f, -0.001f));
+        //left.onClick.AddListener(() => Move(-0.001f, 0f));
+        //right.onClick.AddListener(() => Move(0.001f, 0f));
+        //up.onClick.AddListener(() => Move(0f, 0.001f));
+        //down.onClick.AddListener(() => Move(0f, -0.001f));
 
 
         //calculate the new 

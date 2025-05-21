@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 908037693231588034}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.1, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -40,7 +40,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 908037693231588034}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 834333f913a17a64786b18a4543d8fa8, type: 3}
   m_Name: 
@@ -48,6 +48,10 @@ MonoBehaviour:
   landscapeWithMaterial: {fileID: 1606027834862953816}
   someOffsetX: 0.19
   someOffsetY: 0.12
+  left: {fileID: 0}
+  right: {fileID: 0}
+  up: {fileID: 0}
+  down: {fileID: 0}
 --- !u!1 &7693501588908522498
 GameObject:
   m_ObjectHideFlags: 0
@@ -58,7 +62,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7850734758411322202}
   - component: {fileID: 4040943375137357883}
-  - component: {fileID: 8632916392818064264}
+  - component: {fileID: 8947600233138589939}
   m_Layer: 0
   m_Name: Landscape (1)
   m_TagString: Untagged
@@ -89,8 +93,8 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7693501588908522498}
   m_Mesh: {fileID: 3237046608918968389, guid: 3a128854555fb6b41a060b2c2517964f, type: 3}
---- !u!137 &8632916392818064264
-SkinnedMeshRenderer:
+--- !u!23 &8947600233138589939
+MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -104,7 +108,7 @@ SkinnedMeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 3
+  m_RayTracingMode: 2
   m_RayTraceProcedural: 0
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
@@ -133,18 +137,7 @@ SkinnedMeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  serializedVersion: 2
-  m_Quality: 0
-  m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: 3237046608918968389, guid: 3a128854555fb6b41a060b2c2517964f, type: 3}
-  m_Bones: []
-  m_BlendShapeWeights: []
-  m_RootBone: {fileID: 0}
-  m_AABB:
-    m_Center: {x: 0.0057233125, y: 0.04963687, z: 0.013466324}
-    m_Extent: {x: 0.450195, y: 0.6765535, z: 0.01899489}
-  m_DirtyAABB: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1001 &416535667731773403
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -220,6 +213,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
       propertyPath: m_Name
       value: Plinth_LP 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -307,6 +304,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone 5_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0bf97dd083bb1634090f8e9609b63780, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -392,6 +393,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 24e986aa8389e014ab1ea0e3dadaef60, type: 3}
       propertyPath: m_Name
       value: Stone 68_LP
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 24e986aa8389e014ab1ea0e3dadaef60, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -479,6 +484,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone 4_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: fb6ffa42c226b364eb764ca1c4ee9ae5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -564,6 +573,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
       propertyPath: m_Name
       value: Plinth_LP 107
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -651,6 +664,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone 7_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a98d27cc388e3ce468eebb7979225967, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -736,6 +753,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: e76185a71350ec84a9aec4a99699bf24, type: 3}
       propertyPath: m_Name
       value: Stone 207_LP
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e76185a71350ec84a9aec4a99699bf24, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -823,6 +844,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone 105_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 77a792706140e9f45ab6f8bb65058733, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -908,6 +933,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
       propertyPath: m_Name
       value: Plinth_LP 39
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -995,6 +1024,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone VIII_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 38819a00b029d6246920d317bcb0290f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1080,6 +1113,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
       propertyPath: m_Name
       value: Plinth_LP 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1167,6 +1204,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Plinth_LP 43
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1252,6 +1293,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: f02d1aff41aefa342b9d278297e73be0, type: 3}
       propertyPath: m_Name
       value: Stone 1_LP
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f02d1aff41aefa342b9d278297e73be0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1339,6 +1384,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Plinth_LP 37
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1424,6 +1473,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 49003328b54715e4e946e240f93771c3, type: 3}
       propertyPath: m_Name
       value: Stone 14_LP
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 49003328b54715e4e946e240f93771c3, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1511,6 +1564,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CoveStones_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 113b8a2dc0d935b4d8e04d382385dcc5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1596,6 +1653,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: a4efb074c402f204d9d45a046cefb000, type: 3}
       propertyPath: m_Name
       value: Stone 41_LP
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a4efb074c402f204d9d45a046cefb000, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1683,6 +1744,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone 40_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a7c7848f409d7f249826a618d92c8f26, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1768,6 +1833,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: d9f68185dcfaf0c4c8af3556996ba1ba, type: 3}
       propertyPath: m_Name
       value: Stone 98_LP
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d9f68185dcfaf0c4c8af3556996ba1ba, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1855,6 +1924,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone 50_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: cc2cea4bc5b9769449a843537b63c7a0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1940,6 +2013,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
       propertyPath: m_Name
       value: Plinth_LP 104
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2027,6 +2104,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone 24_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2e5f938c68d7ddb4c9a0079474a69118, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2112,6 +2193,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 2e5f8d8f58b587245a68910f47767319, type: 3}
       propertyPath: m_Name
       value: Stone VI_LP
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2e5f8d8f58b587245a68910f47767319, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2199,6 +2284,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone V_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 872f9db5c4a4d4e46abc90f36fa38d18, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2284,6 +2373,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 3544f00b9456f1441bb9990a6e0780a0, type: 3}
       propertyPath: m_Name
       value: Stone 102_LP
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 3544f00b9456f1441bb9990a6e0780a0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2371,6 +2464,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Plinth_LP 15
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2456,6 +2553,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 13db5dfb0cdcb374791e5ec0834db089, type: 3}
       propertyPath: m_Name
       value: Stone 6_LP
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 13db5dfb0cdcb374791e5ec0834db089, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2543,6 +2644,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone 206_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 99e9a5626eafa0d48a8221ec97d911a4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2628,6 +2733,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 554075012f79e5448bd9c71535bef9b7, type: 3}
       propertyPath: m_Name
       value: Ringstone_LP
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 554075012f79e5448bd9c71535bef9b7, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2715,6 +2824,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Plinth_LP I
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2800,6 +2913,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
       propertyPath: m_Name
       value: Plinth_LP 23
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2887,6 +3004,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone 22_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8d678457d9411c74eb2d9f8b04a21f41, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2972,6 +3093,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: e03c5436ea4642c46b326d1cc0a70e60, type: 3}
       propertyPath: m_Name
       value: Stone 44_LP
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e03c5436ea4642c46b326d1cc0a70e60, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3059,6 +3184,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone VII_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: bf3741db846c4524b8472cb85b0d3d4b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3144,6 +3273,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: d25b2d3099dd892439ceaa92f24f48fc, type: 3}
       propertyPath: m_Name
       value: Stone 30_LP
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d25b2d3099dd892439ceaa92f24f48fc, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3231,6 +3364,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone 32_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b6aeb1d0870b2374a9d327e2339f70f4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3316,6 +3453,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 325974f16226fd749aac9460bbafad72, type: 3}
       propertyPath: m_Name
       value: Stone 78_LP
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 325974f16226fd749aac9460bbafad72, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3403,6 +3544,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone 10_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: dee0c8adfd7e0cf41a5f1ca6e4fa8c53, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3488,6 +3633,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
       propertyPath: m_Name
       value: Plinth_LP 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3659,6 +3808,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BuildingsWaterColour
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 86fa295cd6ba7184383076bfab912ecd, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2091978953243409516, guid: 86fa295cd6ba7184383076bfab912ecd, type: 3}
       propertyPath: m_Materials.Array.size
       value: 2
@@ -3781,6 +3934,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone 201_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 1ce7035ae2b72ff428b0a3cd4c274b04, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3866,6 +4023,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
       propertyPath: m_Name
       value: Plinth_LP X
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3953,6 +4114,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone III_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 59246a477fd8da04d892c5c9c7864803, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4038,6 +4203,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 2cd67c76a6739434795765f64da3fce1, type: 3}
       propertyPath: m_Name
       value: Stone 101_LP
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2cd67c76a6739434795765f64da3fce1, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4125,6 +4294,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone 106_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 57a5bca1428e080448c044625eda4138, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4210,6 +4383,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
       propertyPath: m_Name
       value: Plinth_LP IX
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4297,6 +4474,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone 31_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 1dc0d9391402f7249b3b890c37d15f07, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4382,6 +4563,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 61e5c6325eb79994a9597885715a0b9f, type: 3}
       propertyPath: m_Name
       value: Stone 35_LP
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 61e5c6325eb79994a9597885715a0b9f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4469,6 +4654,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Plinth_LP 19
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4554,6 +4743,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: daf3264f3c3345d47ac9f9bc93e38eda, type: 3}
       propertyPath: m_Name
       value: Stone 36_LP
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: daf3264f3c3345d47ac9f9bc93e38eda, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4641,6 +4834,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone 77_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 87adc62471a8d7c4c9a9fe025ff3f0fe, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4726,6 +4923,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 6d612b563aea3304ca802a822abe80e6, type: 3}
       propertyPath: m_Name
       value: Stone 73_LP
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 6d612b563aea3304ca802a822abe80e6, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4813,6 +5014,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone 42_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b9544e93aa722b047a05307a01256f55, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4849,7 +5054,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 3a128854555fb6b41a060b2c2517964f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.4
+      value: 0.45
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 3a128854555fb6b41a060b2c2517964f, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4887,6 +5092,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -7990799402119229968, guid: 3a128854555fb6b41a060b2c2517964f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -7925246741021816340, guid: 3a128854555fb6b41a060b2c2517964f, type: 3}
       propertyPath: m_Materials.Array.size
       value: 2
@@ -4899,6 +5108,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
       objectReference: {fileID: 2100000, guid: aa9e76623a9361a4488cfad29d2d017a, type: 2}
+    - target: {fileID: -7233144217404448742, guid: 3a128854555fb6b41a060b2c2517964f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -3809945072200597350, guid: 3a128854555fb6b41a060b2c2517964f, type: 3}
       propertyPath: m_Materials.Array.size
       value: 2
@@ -4914,6 +5127,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 3a128854555fb6b41a060b2c2517964f, type: 3}
       propertyPath: m_Name
       value: Landsacpe_test
+      objectReference: {fileID: 0}
+    - target: {fileID: 1378922297957006227, guid: 3a128854555fb6b41a060b2c2517964f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1925486480200133037, guid: 3a128854555fb6b41a060b2c2517964f, type: 3}
       propertyPath: m_Materials.Array.size
@@ -4939,6 +5156,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
       objectReference: {fileID: 2100000, guid: aa9e76623a9361a4488cfad29d2d017a, type: 2}
+    - target: {fileID: 4128551757998953265, guid: 3a128854555fb6b41a060b2c2517964f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7895107055033521790, guid: 3a128854555fb6b41a060b2c2517964f, type: 3}
       propertyPath: m_LocalScale.z
       value: 100
@@ -5188,15 +5409,15 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: -4007543208646099642, guid: 3a128854555fb6b41a060b2c2517964f, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1743509235154481097}
+      addedObject: {fileID: 6910070801273219040}
   m_SourcePrefab: {fileID: 100100000, guid: 3a128854555fb6b41a060b2c2517964f, type: 3}
 --- !u!1 &1606027834862953816 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -4007543208646099642, guid: 3a128854555fb6b41a060b2c2517964f, type: 3}
   m_PrefabInstance: {fileID: 6785685908793055262}
   m_PrefabAsset: {fileID: 0}
---- !u!137 &1743509235154481097
-SkinnedMeshRenderer:
+--- !u!23 &6910070801273219040
+MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -5210,7 +5431,7 @@ SkinnedMeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 3
+  m_RayTracingMode: 2
   m_RayTraceProcedural: 0
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
@@ -5239,18 +5460,7 @@ SkinnedMeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  serializedVersion: 2
-  m_Quality: 0
-  m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: 3237046608918968389, guid: 3a128854555fb6b41a060b2c2517964f, type: 3}
-  m_Bones: []
-  m_BlendShapeWeights: []
-  m_RootBone: {fileID: 0}
-  m_AABB:
-    m_Center: {x: 0.0057233125, y: 0.04963687, z: 0.013466324}
-    m_Extent: {x: 0.450195, y: 0.6765535, z: 0.01899489}
-  m_DirtyAABB: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!4 &6458478648348819445 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 3a128854555fb6b41a060b2c2517964f, type: 3}
@@ -5331,6 +5541,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: acf46474fe1e25d4da89790b4b095836, type: 3}
       propertyPath: m_Name
       value: Stone 33_LP
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: acf46474fe1e25d4da89790b4b095836, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5418,6 +5632,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Plinth_LP II
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5503,6 +5721,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: c2443d413daecb244a1b3836a9a1d202, type: 3}
       propertyPath: m_Name
       value: Stone 46_LP
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c2443d413daecb244a1b3836a9a1d202, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5590,6 +5812,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone 8_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 526202b978333464ab6ba07449186f64, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5675,6 +5901,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
       propertyPath: m_Name
       value: Plinth_LP 109
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5762,6 +5992,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone 9_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 41b14d318a7235a46ab8212d2aef218e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5847,6 +6081,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
       propertyPath: m_Name
       value: Plinth_LP 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5934,6 +6172,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Plinth_LP 108
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6019,6 +6261,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 211bb9640a6571147b1ce7f76ef64b03, type: 3}
       propertyPath: m_Name
       value: Stone 34_LP
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 211bb9640a6571147b1ce7f76ef64b03, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6106,6 +6352,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone 16_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9fa02c658e3e7894cae352db31a66a9f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6192,6 +6442,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone 210_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 18e82ef3f9ec4ab4f89a5983f4adc24e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6277,6 +6531,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
       propertyPath: m_Name
       value: Plinth_LP 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6368,6 +6626,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone 12_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f305b8429c838e148aecb0520bb0d6d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6453,6 +6715,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
       propertyPath: m_Name
       value: Plinth_LP XII
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6540,6 +6806,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone 38_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8d2fae1236e64c94293c617eaa629f0f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6625,6 +6895,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: e704508a6558b9d4ca2b2dfb80326a87, type: 3}
       propertyPath: m_Name
       value: Stone IV_LP
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e704508a6558b9d4ca2b2dfb80326a87, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6712,6 +6986,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Plinth_LP 45 A
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6797,6 +7075,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 5e5a854c752a8d646b3c0140139c8f80, type: 3}
       propertyPath: m_Name
       value: Obelisk_LP
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5e5a854c752a8d646b3c0140139c8f80, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6884,6 +7166,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Stone 103_LP
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a78c50c4f07e7594190d25324bf3346c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6969,6 +7255,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
       propertyPath: m_Name
       value: Plinth_LP 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7056,6 +7346,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Plinth_LP 3
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7142,6 +7436,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Plinth_LP XI
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7227,6 +7525,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
       propertyPath: m_Name
       value: Plinth_LP 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 196aaab8d4eba444fa55a0f9f5ef33d0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
