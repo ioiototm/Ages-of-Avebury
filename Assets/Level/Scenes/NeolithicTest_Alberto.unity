@@ -369,6 +369,14 @@ GameObject:
   - component: {fileID: 883459966}
   - component: {fileID: 883459967}
   - component: {fileID: 883459968}
+  - component: {fileID: 883459972}
+  - component: {fileID: 883459976}
+  - component: {fileID: 883459978}
+  - component: {fileID: 883459981}
+  - component: {fileID: 883459982}
+  - component: {fileID: 883459985}
+  - component: {fileID: 883459984}
+  - component: {fileID: 883459983}
   m_Layer: 0
   m_Name: BasicFlowEngine
   m_TagString: Untagged
@@ -1303,16 +1311,17 @@ MonoBehaviour:
   description: 
   hideComponents: 0
   localizationId: 
-  selectedOrders:
-  - {fileID: 883459966}
+  selectedOrders: []
   selectedNodes:
-  - {fileID: 883459957}
+  - {fileID: 883459972}
   nodeViewHeight: 385
   hideOrders: []
   variables:
   - {fileID: 883459955}
   - {fileID: 883459954}
   - {fileID: 883459963}
+  - {fileID: 883459978}
+  - {fileID: 883459981}
   variablesExpanded: 1
   variablesScrollPos: {x: 0, y: 0}
   mapLocations: []
@@ -1323,8 +1332,8 @@ MonoBehaviour:
   showHandlerInfoOnGraph: 1
   showAnnotations: 1
   labelTint: {r: 1, g: 1, b: 1, a: 1}
-  zoom: 0.79
-  scrollPos: {x: -77.72074, y: 133.30911}
+  zoom: 1
+  scrollPos: {x: 24.329308, y: 100.85628}
   version: 1
   sidesOfDie: 6
   postcards: []
@@ -1674,7 +1683,7 @@ MonoBehaviour:
   hoverStartTime: 0
   targetUnlockNode: {fileID: 0}
   targetKeyNode: {fileID: 0}
-  showDesc: 1
+  showDesc: 0
   saveable: 0
   updateLocationStatusToComplete: 1
   NodeComplete: 0
@@ -1738,8 +1747,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeRect:
     serializedVersion: 2
-    x: 215.10728
-    y: 102.65197
+    x: 217.10725
+    y: 97.98531
     width: 81.66
     height: 40
   nodeName: Menu
@@ -1750,6 +1759,7 @@ MonoBehaviour:
   - {fileID: 883459966}
   - {fileID: 883459959}
   - {fileID: 883459968}
+  - {fileID: 883459976}
   eventHandler: {fileID: 883459956}
   isGrouped: 0
   groupIndex: -1
@@ -1777,8 +1787,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeRect:
     serializedVersion: 2
-    x: 65.21819
-    y: 50.426422
+    x: 41.218193
+    y: 55.75975
     width: 128.55
     height: 40
   nodeName: Return Button
@@ -1884,6 +1894,176 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   description: Music Volume
+  sliderLabel: 
+  hideIfMoved: 0
+  interactable: 1
+  setMenuDialogue: {fileID: 0}
+  hideThisOption: 0
+--- !u!114 &883459972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 883459887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc9f689a21732a34489f55c1ed82a919, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nodeRect:
+    serializedVersion: 2
+    x: 33.884834
+    y: 153.75975
+    width: 135.18
+    height: 40
+  nodeName: Options Button
+  nodeDescription: Basic building block of a narrative engine
+  groupDescription: A series of nodes that can be executed as a group
+  itemId: 3
+  orderList:
+  - {fileID: 883459982}
+  - {fileID: 883459985}
+  - {fileID: 883459984}
+  - {fileID: 883459983}
+  eventHandler: {fileID: 0}
+  isGrouped: 0
+  groupIndex: -1
+  repeatable: 0
+  tint: {r: 0.88975513, g: 0.41194963, b: 1, a: 1}
+  useCustomTint: 1
+  hoverStartTime: 0
+  targetUnlockNode: {fileID: 0}
+  targetKeyNode: {fileID: 0}
+  showDesc: 0
+  saveable: 0
+  updateLocationStatusToComplete: 1
+  NodeComplete: 0
+--- !u!114 &883459976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 883459887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33c5ebc1795c0734ea5c2c8cab643c7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  text: Option Text
+  description: 
+  targetNode: {fileID: 883459972}
+  hideIfVisited: 0
+  interactable: 1
+  setMenuDialogue: {fileID: 0}
+  hideThisOption: 0
+  closeMenuOnSelect: 0
+  buttonSound: {fileID: 0}
+  saveSettings: 0
+--- !u!114 &883459978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 883459887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: edd739d175bf61648a65eed84911a998, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scope: 2
+  key: OptionsButton
+  propertyReferences: []
+  value: {fileID: 883459972}
+--- !u!114 &883459981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 883459887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: edd739d175bf61648a65eed84911a998, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scope: 2
+  key: Node
+  propertyReferences: []
+  value: {fileID: 0}
+--- !u!114 &883459982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 883459887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2021f0c9db660841814ad9476142337, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  customButtonIcon: {fileID: 0}
+  setIconButton: {fileID: 0}
+  showIcon: 1
+  buttonSound: {fileID: 0}
+  buttonEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  popupWindow: {fileID: -1419411428103537185, guid: 0b98b5c3882241c47a94d8a704c4f2d6, type: 3}
+  allowRedraw: 1
+--- !u!114 &883459983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 883459887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9c47367f78cc654b9441355b7a7bd64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  customButtonIcon: {fileID: 0}
+  setIconButton: {fileID: 0}
+  showIcon: 1
+  buttonSound: {fileID: 0}
+  buttonEvent:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &883459984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 883459887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9ed546b8fa5377419a1ac71448e4121, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  description: 
+  sliderLabel: 
+  hideIfMoved: 0
+  interactable: 1
+  setMenuDialogue: {fileID: 0}
+  hideThisOption: 0
+--- !u!114 &883459985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 883459887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1f681affbe3f204cb3100fb452de332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  description: 
   sliderLabel: 
   hideIfMoved: 0
   interactable: 1
