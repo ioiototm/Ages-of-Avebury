@@ -6,15 +6,17 @@ public class MoveModel : MonoBehaviour
 {
 
     public GameObject landscapeWithMaterial;
+    public GameObject landscapeWithMaterialUnderside;
     public float someOffsetX = 0.42f;
     public float someOffsetY = -0.115f;
+    public float scale = 0.09f;
 
-    public Button left, right, up, down;
+    //public Button left, right, up, down;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+
         //left = GameObject.Find("Left").GetComponent<Button>();
         //right = GameObject.Find("Right").GetComponent<Button>();
         //up = GameObject.Find("Up").GetComponent<Button>();
@@ -35,36 +37,46 @@ public class MoveModel : MonoBehaviour
         //main object is at x -18.5 z -27.11
         //landscape offset is at x 0.68 y 0.6 (or 1.6 or 2.6 etc)
 
-        //float scale = 0.03f;
-        //float offsetX = -gameObject.transform.position.x * scale + someOffsetX;
-        //float offsetY = gameObject.transform.position.z * scale + someOffsetY;
+        
+        float offsetX = -gameObject.transform.position.x * scale + someOffsetX;
+        float offsetY = gameObject.transform.position.z * scale + someOffsetY;
 
         //when this main object moves, set the offest so it follows the main object
         //get the material first
-        Material material = landscapeWithMaterial.GetComponent<Renderer>().material;
+        Material materialUp = landscapeWithMaterial.GetComponent<Renderer>().material;
 
         //get the offset property 
-        //Vector2 offset = material.GetVector("Vector2_E103CB4D");
-        //print(offset);
+        Vector2 offset = materialUp.GetVector("Vector2_E103CB4D");
+        print(offset);
 
 
         //Debug.Log("OffsetX: " + offsetX + " OffsetY: " + offsetY);
 
         //make the buttons work by changing teh offsets
         //lambda expressions for the buttons
-        //left.onClick.AddListener(() => Move(-0.001f, 0f));
-        //right.onClick.AddListener(() => Move(0.001f, 0f));
-        //up.onClick.AddListener(() => Move(0f, 0.001f));
-        //down.onClick.AddListener(() => Move(0f, -0.001f));
+        //left.onClick.AddListener(() => Move(-0.0001f, 0f));
+        //right.onClick.AddListener(() => Move(0.0001f, 0f));
+        //up.onClick.AddListener(() => Move(0f, 0.0001f));
+        //down.onClick.AddListener(() => Move(0f, -0.0001f));
 
 
         //calculate the new 
 
-        //offset.x = offsetX;
-        //offset.y = offsetY;
+        offset.x = offsetX;
+        offset.y = offsetY;
 
         //set the new offset
-        //material.SetVector("Vector2_E103CB4D", offset);
+        materialUp.SetVector("Vector2_E103CB4D", offset);
+
+
+        Material underside = landscapeWithMaterialUnderside.GetComponent<Renderer>().material;
+        //get the offset property
+        Vector2 offsetUnderside = underside.GetVector("Vector2_E103CB4D");
+        //Debug.Log("Underside OffsetX: " + offsetUnderside.x + " Underside OffsetY: " + offsetUnderside.y);
+        //calculate the new offset for the underside
+        offsetUnderside.x = offsetX;
+        offsetUnderside.y = offsetY; 
+        underside.SetVector("Vector2_E103CB4D", offsetUnderside);
 
     }
 
