@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
 using UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets;
+using LoGaCulture.LUTE.Logs;
 
 [RequireComponent(typeof(VirtualTextureSource))]
 public class SelfieSegmentationSample : MonoBehaviour
@@ -201,7 +202,7 @@ public class SelfieSegmentationSample : MonoBehaviour
         // 2) New LineRenderer, start open
         GameObject go = new GameObject("ContourLine");
         LineRenderer lr = go.AddComponent<LineRenderer>();
-        lr.material = new Material(Shader.Find("Sprites/Default"));
+        //lr.material = new Material(Shader.Find("Sprites/Default"));
         lr.widthMultiplier = 0.05f;
         lr.loop = false;                  // no auto-close
                                           // ← we’ll adjust positionCount each iteration
@@ -406,6 +407,21 @@ public class SelfieSegmentationSample : MonoBehaviour
             //this.gameObject.SetActive(false);
 
             DontDestroyOnLoad(gameObject);
+
+
+            var lineRenderer = polyExtruderGO.GetComponent<LineRenderer>();
+
+            //get the list of points
+            Vector3[] points = new Vector3[lineRenderer.positionCount + 1];
+
+         
+
+            lineRenderer.GetPositions(points);
+
+            //go through all the points and save them as a string in the format "x,y,z;x,y,z;etc"
+            string pointsString = string.Join(";", points.Select(p => $"{p.x},{p.y},{p.z}"));
+
+            ConnectionManager.Instance.SaveSharedVariable("stone1", "stone", pointsString);
 
 
             //load next scene in the build
