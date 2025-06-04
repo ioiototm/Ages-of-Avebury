@@ -421,7 +421,7 @@ public class SelfieSegmentationSample : MonoBehaviour
             //go through all the points and save them as a string in the format "x,y,z;x,y,z;etc"
             string pointsString = string.Join(";", points.Select(p => $"{p.x},{p.y},{p.z}"));
 
-            ConnectionManager.Instance.SaveSharedVariable("stone1", "stone", pointsString);
+            //ConnectionManager.Instance.SaveSharedVariable("stone1", "stone", pointsString);
 
 
             //load next scene in the build
