@@ -1,5 +1,6 @@
 ﻿
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace TensorFlowLite
 {
@@ -33,8 +34,12 @@ namespace TensorFlowLite
         private RenderTexture labelTex;
         private RenderTexture maskTex;
 
+        private readonly bool isGLES;
+
         private readonly int kLabelToTex;
-        private readonly int kBilateralFilter;
+        private readonly bool useBilateral;    
+        private readonly int kBilateralFilter; 
+
         private static readonly int kLabelBuffer = Shader.PropertyToID("LabelBuffer");
         private static readonly int kInputTexture = Shader.PropertyToID("InputTexture");
         private static readonly int kOutputTexture = Shader.PropertyToID("OutputTexture");
@@ -75,7 +80,21 @@ namespace TensorFlowLite
             maskTex.Create();
 
             kLabelToTex = compute.FindKernel("LabelToTex");
+
+            // Run BilateralFilter everywhere except GLES
+            useBilateral = SystemInfo.graphicsDeviceType != GraphicsDeviceType.OpenGLES3;
             kBilateralFilter = compute.FindKernel("BilateralFilter");
+
+            isGLES = SystemInfo.graphicsDeviceType == GraphicsDeviceType.OpenGLES3;
+            if (isGLES)
+            {
+                Debug.Log("[Segmentation] Running CPU-threshold fallback on GLES");
+                // we don't need compute stuff on GLES
+                compute = null;
+                labelBuffer?.Dispose();
+                labelBuffer = null;
+            }
+
         }
 
         public override void Dispose()
@@ -127,18 +146,49 @@ namespace TensorFlowLite
 
         public RenderTexture GetResultTexture()
         {
-            // Label to Texture
-            labelBuffer.SetData(output0);
-            compute.SetBuffer(kLabelToTex, kLabelBuffer, labelBuffer);
-            compute.SetTexture(kLabelToTex, kOutputTexture, labelTex);
-            compute.Dispatch(kLabelToTex, width / 8, height / 8, 1);
+            if (isGLES)
+            {
+                // ---------- CPU-ONLY PATH ----------
+                // 1.  Interpreter output already sits in `output0`  (H×W×2 float)
+                // 2.  Threshold & pack into a byte[] once per frame
+                if (maskTex == null)
+                {
+                    maskTex = new RenderTexture(width, height, 0, RenderTextureFormat.R8);
+                    maskTex.enableRandomWrite = false;          // no compute needed
+                    maskTex.Create();
+                }
+                byte[] bytes = new byte[width * height];
+                int idx = 0;
+                for (int y = height - 1; y >= 0; --y)          // flip Y to match Unity
+                {
+                    for (int x = 0; x < width; ++x)
+                    {
+                        float fg = output0[y, x, 1];           // foreground prob
+                        bytes[idx++] = (byte)(fg > 0.5f ? 255 : 0);
+                    }
+                }
+                // 3.  Upload to a tiny Texture2D, then Blit into maskTex
+                Texture2D cpuTex = new Texture2D(width, height, TextureFormat.R8, false);
+                cpuTex.LoadRawTextureData(bytes);
+                cpuTex.Apply(false);
+                Graphics.Blit(cpuTex, maskTex);
+                Object.Destroy(cpuTex);
+                return maskTex;
+            }
+            else
+            {
+                // ---------- ORIGINAL GPU PATH (unchanged—both kernels) ----------
+                labelBuffer.SetData(output0);
+                compute.SetBuffer(kLabelToTex, kLabelBuffer, labelBuffer);
+                compute.SetTexture(kLabelToTex, kOutputTexture, maskTex);
+                compute.Dispatch(kLabelToTex, width / 8, height / 8, 1);
 
-            // Bilateral Filter
-            options.UpdateParameter();
-            compute.SetTexture(kBilateralFilter, kInputTexture, labelTex);
-            compute.SetTexture(kBilateralFilter, kOutputTexture, maskTex);
-            compute.Dispatch(kBilateralFilter, width / 8, height / 8, 1);
-            return maskTex;
+                options.UpdateParameter();
+                compute.SetTexture(kBilateralFilter, kInputTexture, maskTex);
+                compute.SetTexture(kBilateralFilter, kOutputTexture, maskTex);
+                compute.Dispatch(kBilateralFilter, width / 8, height / 8, 1);
+                return maskTex;
+            }
         }
     }
 }

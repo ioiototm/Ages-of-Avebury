@@ -1,62 +1,85 @@
-﻿#pragma kernel LabelToTex
+﻿// ---------- SelfieSegmentation_GLES.compute ----------
+// Two kernels always declared; we’ll simply skip dispatching
+// BilateralFilter on GLES from C#.
+#pragma kernel LabelToTex
 #pragma kernel BilateralFilter
 
-uint Width;
-uint Height;
-Texture2D<float4> InputTexture;
-StructuredBuffer<float2> LabelBuffer;
-RWTexture2D<float4> OutputTexture;
+// Compute shaders need 3.5 for half precision & compute features.
+#pragma target 3.5
 
-// The same paramerters as cv::bilateralFilter
-float sigmaColor = 1.0;
-float sigmaTexel;
-int step = 1;
-int radius = 1;
+// ---------------- constant buffer --------------------
+cbuffer Params
+{
+    uint Width;
+    uint Height;
+    float sigmaColor;
+    float sigmaTexel;
+    int step;
+    int radius;
+};
 
-float Gaussian(float x, float sigma) {
-    float coeff = -0.5 / (sigma * sigma * 4.0 + 0.000001);
+// ---------------- resources --------------------------
+StructuredBuffer<float2> LabelBuffer; // fgProb in .y
+Texture2D<float4> InputTexture; // only used by BilateralFilter
+RWTexture2D<half4> OutputTexture; // FP16 write works on GLES
+
+// ---------------- helpers ----------------------------
+float Gaussian(float x, float s)
+{
+    float coeff = -0.5 / (s * s * 4.0 + 1e-6);
     return exp((x * x) * coeff);
 }
 
-[numthreads(8,8,1)]
-void LabelToTex (uint2 tid : SV_DispatchThreadID)
+// =====================================================
+//  Kernel 0 : LabelBuffer ➜ hard-threshold mask
+// =====================================================
+[numthreads(8, 8, 1)]
+void LabelToTex(uint2 tid : SV_DispatchThreadID)
 {
-    float2 label = LabelBuffer[(Height - 1 - tid.y) * Width + tid.x];
-    OutputTexture[tid] = float4(label.x, label.y, 0, 1);
+    if (tid.x >= Width || tid.y >= Height)
+        return;
+
+    // Buffer was filled bottom-up, so flip Y
+    uint idx = (Height - 1u - tid.y) * Width + tid.x;
+    float2 lbl = LabelBuffer[idx];
+
+    half c = lbl.y > 0.5 ? half(1.0) : half(0.0);
+    OutputTexture[tid] = half4(c, c, c, 1.0); // white = person
 }
 
-// TODO: Implement jointed-bilateral filter
-[numthreads(8,8,1)]
+// =====================================================
+//  Kernel 1 : Optional bilateral smoothing
+//             (will NOT be dispatched on GLES)
+// =====================================================
+[numthreads(8, 8, 1)]
 void BilateralFilter(uint2 tid : SV_DispatchThreadID)
 {
-    float2 center = InputTexture[tid].xy;
+    if (tid.x >= Width || tid.y >= Height)
+        return;
 
-    float2 totalColor = float2(0.0, 0.0);
-    float totalWeight = 0.0;
+    float2 center = InputTexture[tid].xy;
+    float2 sumCol = 0.0;
+    float sumW = 0.0;
 
     for (int y = -radius; y <= radius; y += step)
     {
         for (int x = -radius; x <= radius; x += step)
         {
             uint2 id = uint2(
-                min(max((int)tid.x + x, 0), (int)Width - 1),
-                min(max((int)tid.y + y, 0), (int)Height - 1));
+                clamp(int(tid.x) + x, 0, int(Width - 1)),
+                clamp(int(tid.y) + y, 0, int(Height - 1)));
+
             float2 p = InputTexture[id].xy;
 
-            // space weight * color weight
-            float w = Gaussian(distance((float2)tid, (float2)id) * sigmaTexel, sigmaTexel)
-                * Gaussian(distance(p, center), sigmaColor);
+            float w = Gaussian(distance(float2(tid), float2(id)) * sigmaTexel, sigmaTexel) *
+                      Gaussian(distance(p, center), sigmaColor);
 
-            totalWeight += w;
-            totalColor += p * w;
+            sumW += w;
+            sumCol += p * w;
         }
     }
 
-    float2 color = totalColor / totalWeight;
-    // Threshold the foreground probability
-    float fg = color.y; // foreground prob after filtering
-    float c = fg > 0.5 ? 1.0 : 0.0;
-    OutputTexture[tid] = float4(c, c, c, 1.0); // white = person, black = background
-
-    //OutputTexture[tid] = float4(color.x, color.y, 0, 1);
+    float2 col = sumCol / max(sumW, 1e-6);
+    half c = col.y > 0.5 ? half(1.0) : half(0.0);
+    OutputTexture[tid] = half4(c, c, c, 1.0);
 }
