@@ -1,4 +1,5 @@
 using LoGaCulture.LUTE;
+using LoGaCulture.LUTE.Logs;
 using System.Linq;
 using UnityEngine;
 
@@ -108,6 +109,24 @@ public class InitialiseEverything : Order
 
 
         }
+
+
+
+        ConnectionManager.Instance.FetchSharedVariables("stone1",
+            (variables) =>
+            {
+                if (variables != null && variables.Length > 0)
+                {
+
+                    //go through each variable and just print out the name and value
+                    foreach (var variable in variables)
+                    {
+                        Debug.Log($"Variable created at: {variable.createdAt}, Name: {variable.variableName}");
+                    }
+
+                }
+            },
+            2);
 
 
 

@@ -9,7 +9,7 @@ public class ActivateGlitching : Order
 {
     public override void OnEnter()
     {
-        Glitching glitch = GameObject.Find("Clitch Overlay").GetComponent<Glitching>();
+        Glitching glitch = GameObject.Find("Glitch Overlay").GetComponent<Glitching>();
         if (glitch != null)
         {
             glitch.running = true; // Set the running variable to true to activate the glitch
@@ -19,6 +19,8 @@ public class ActivateGlitching : Order
         {
             Debug.LogError("Glitching component not found on Clitch Overlay.");
         }
+
+        Continue();
     }
 
     public override string GetSummary()
