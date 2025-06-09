@@ -1,5 +1,7 @@
 using LoGaCulture.LUTE;
 using LoGaCulture.LUTE.Logs;
+using Mapbox.Examples;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 
@@ -29,6 +31,10 @@ public class InitialiseEverything : Order
     public static GameObject middleAgesScreen;
 
     public static GameObject neolithicMakeStoneButton;
+
+
+
+    private ImmediatePositionWithLocationProvider centering;
 
     public override void OnEnter()
     {
@@ -86,7 +92,7 @@ public class InitialiseEverything : Order
             if (name.Any(char.IsDigit))
             {
 
-                locationVariable.Value.LocationStatus = LocationStatus.Unvisited;
+                locationVariable.Value.LocationStatus = LoGaCulture.LUTE.LocationStatus.Unvisited;
 
 
                 //if the digit is not 1, then hide it
@@ -112,6 +118,10 @@ public class InitialiseEverything : Order
 
 
 
+        centering = GameObject.Find("PlayerTarget").GetComponent<ImmediatePositionWithLocationProvider>();
+
+
+
         ConnectionManager.Instance.FetchSharedVariables("stone1",
             (variables) =>
             {
@@ -130,9 +140,56 @@ public class InitialiseEverything : Order
 
 
 
+        // Start centering the map to the screen every second
+        StartCoroutine(centerToScreenEverySecond());
+
 
         // Continue to the next order
         Continue();
+    }
+
+    private static bool activelyCentering = true;
+
+    public static void movedMap()
+            {
+        // If the map has been moved, stop actively centering
+        activelyCentering = false;
+        Debug.Log("Map has been moved, stopping active centering.");
+    }
+
+
+    public void centreToScreen()
+    {
+    
+        if (centering != null)
+        {
+            // Center the map to the current location
+            activelyCentering = true;
+            centering.UpdateMapToPlayer();
+            //StartCoroutine(centerToScreenEverySecond());
+            Debug.Log("Centering map to player location.");
+
+        }
+        else
+        {
+            Debug.LogError("ImmediatePositionWithLocationProvider component not found on PlayerTarget.");
+        }
+    }
+
+    IEnumerator centerToScreenEverySecond()
+    {
+
+       
+
+        while (true)
+        {
+            yield return new WaitForSeconds(1f);
+            // Center the map to the current location
+            if (activelyCentering)
+            {
+                centering.UpdateMapToPlayer();
+            }
+        }
     }
 
     public override string GetSummary()

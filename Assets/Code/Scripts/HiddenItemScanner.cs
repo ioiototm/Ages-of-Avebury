@@ -257,12 +257,15 @@ public class HiddenItemScanner : MonoBehaviour
         if (distanceInMeters <= discoveryRadius)
         {
 
-            if(!isActive)
+            if (!isActive)
             {
                 return;
             }
             // We're close enough to discover the item!
-            StartCoroutine(DiscoverItem());
+            if (pingAmmount > 3)
+            {
+                StartCoroutine(DiscoverItem());
+            }
         }
         else if (isWithinDetectionRange && isActive)
         {
