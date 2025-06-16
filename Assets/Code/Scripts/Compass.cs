@@ -20,8 +20,12 @@ public class Compass : MonoBehaviour
     [Header("Current Time Period")]
     [SerializeField] TimePeriod timePeriod = TimePeriod.Modern;
 
-    [Header("UI Elements")]
-    [SerializeField] RawImage compassImage;
+    [Header("UI Elements Modern")]
+    [SerializeField] RawImage compassImageModern;
+
+    //for Middle Ages
+    [Header("UI Elements Middle Ages")]
+    [SerializeField] Image compassImageMiddleAges;
 
     private float currentAngle = 0f; // We'll lerp toward this
 
@@ -40,6 +44,11 @@ public class Compass : MonoBehaviour
 
     [Header("Neolithic Light (3D)")]
     [SerializeField] private GameObject neolithicLight;  // e.g. a point light or some 3D object
+
+
+    //debug bool to use the test position instead of the real GPS location
+    [SerializeField] private bool useTestPosition = false;
+
 
 
     ILocationProvider locationProvider;
@@ -112,7 +121,20 @@ public class Compass : MonoBehaviour
 
 
         //convert the targetLocation Value Postion from a stirng lat,lon to a Vector2
-        string[] latLon = targetLocation.Value.Position.Split(',');
+        //debug flag or not, use test position or target location
+        string[] latLon;
+        //string[] latLon = targetLocation.Value.Position.Split(',');
+
+        if(useTestPosition)
+        {
+            latLon = new string[] { testPosition.x.ToString(), testPosition.y.ToString() };
+        }
+        else
+        {
+            latLon = targetLocation.Value.Position.Split(',');
+        }
+
+
         float lat = float.Parse(latLon[0]);
         float lon = float.Parse(latLon[1]);
         targetLatLon = new Vector2(lat, lon);
@@ -154,13 +176,19 @@ public class Compass : MonoBehaviour
             case TimePeriod.Modern:
             case TimePeriod.MiddleAges:
                 // Normal compass arrow
-                if (compassImage != null)
+                if (compassImageModern != null)
                 {
-                    compassImage.rectTransform.localEulerAngles = new Vector3(0f, 0f, currentAngle);
+                    compassImageModern.rectTransform.localEulerAngles = new Vector3(0f, 0f, currentAngle);
                 }
-              //  break;
 
-            //case TimePeriod.Neolithic:
+                //middle ages compass
+                if (compassImageMiddleAges != null)
+                {
+                    compassImageMiddleAges.rectTransform.localEulerAngles = new Vector3(0f, 0f, currentAngle);
+                }
+                //  break;
+
+                //case TimePeriod.Neolithic:
                 // Instead of rotating a UI arrow, place a real 3D light on the screen edge
                 if (neolithicLight != null)
                 {
