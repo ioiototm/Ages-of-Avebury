@@ -418,7 +418,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8679045381083251891, guid: 561582027eaa2034e8f13c70525f566d, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8679045381083251891, guid: 561582027eaa2034e8f13c70525f566d, type: 3}
       propertyPath: m_AnchorMin.x
@@ -426,7 +426,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8679045381083251891, guid: 561582027eaa2034e8f13c70525f566d, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8679045381083251891, guid: 561582027eaa2034e8f13c70525f566d, type: 3}
       propertyPath: m_SizeDelta.x
@@ -466,11 +466,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8679045381083251891, guid: 561582027eaa2034e8f13c70525f566d, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 8679045381083251891, guid: 561582027eaa2034e8f13c70525f566d, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -1257.4395
       objectReference: {fileID: 0}
     - target: {fileID: 8679045381083251891, guid: 561582027eaa2034e8f13c70525f566d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -7084,7 +7084,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8679045381083251891, guid: 561582027eaa2034e8f13c70525f566d, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8679045381083251891, guid: 561582027eaa2034e8f13c70525f566d, type: 3}
       propertyPath: m_AnchorMin.x
@@ -7092,7 +7092,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8679045381083251891, guid: 561582027eaa2034e8f13c70525f566d, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8679045381083251891, guid: 561582027eaa2034e8f13c70525f566d, type: 3}
       propertyPath: m_SizeDelta.x
@@ -7132,11 +7132,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8679045381083251891, guid: 561582027eaa2034e8f13c70525f566d, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 8679045381083251891, guid: 561582027eaa2034e8f13c70525f566d, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -2217.797
       objectReference: {fileID: 0}
     - target: {fileID: 8679045381083251891, guid: 561582027eaa2034e8f13c70525f566d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -8627,6 +8627,9 @@ GameObject:
   - component: {fileID: 1204840227}
   - component: {fileID: 1204840225}
   - component: {fileID: 1204840228}
+  - component: {fileID: 1204840231}
+  - component: {fileID: 1204840230}
+  - component: {fileID: 1204840229}
   m_Layer: 0
   m_Name: BasicFlowEngine
   m_TagString: Untagged
@@ -8708,10 +8711,11 @@ MonoBehaviour:
   description: 
   hideComponents: 0
   localizationId: 
-  selectedOrders: []
+  selectedOrders:
+  - {fileID: 1204840229}
   selectedNodes:
-  - {fileID: 1204840213}
-  nodeViewHeight: 683
+  - {fileID: 1204840211}
+  nodeViewHeight: 422
   hideOrders: []
   variables:
   - {fileID: 1204839881}
@@ -8738,8 +8742,8 @@ MonoBehaviour:
   showHandlerInfoOnGraph: 1
   showAnnotations: 1
   labelTint: {r: 1, g: 1, b: 1, a: 1}
-  zoom: 0.5500001
-  scrollPos: {x: 85.7471, y: 13.70873}
+  zoom: 0.78999984
+  scrollPos: {x: -405.23676, y: -144.79266}
   version: 1
   sidesOfDie: 6
   postcards: []
@@ -15086,7 +15090,8 @@ MonoBehaviour:
   nodeDescription: Basic building block of a narrative engine
   groupDescription: A series of nodes that can be executed as a group
   itemId: 0
-  orderList: []
+  orderList:
+  - {fileID: 1204840229}
   eventHandler: {fileID: 0}
   isGrouped: 0
   groupIndex: -1
@@ -15122,7 +15127,8 @@ MonoBehaviour:
   nodeDescription: Basic building block of a narrative engine
   groupDescription: A series of nodes that can be executed as a group
   itemId: 0
-  orderList: []
+  orderList:
+  - {fileID: 1204840230}
   eventHandler: {fileID: 0}
   isGrouped: 0
   groupIndex: -1
@@ -15158,7 +15164,8 @@ MonoBehaviour:
   nodeDescription: Basic building block of a narrative engine
   groupDescription: A series of nodes that can be executed as a group
   itemId: 0
-  orderList: []
+  orderList:
+  - {fileID: 1204840231}
   eventHandler: {fileID: 0}
   isGrouped: 0
   groupIndex: -1
@@ -15621,6 +15628,108 @@ MonoBehaviour:
   targetNode: {fileID: 1204840216}
   startIndex: 0
   callMode: 0
+--- !u!114 &1204840229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56d6b77eb00dafe45bc66ef633cccddc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  character: {fileID: 972758852}
+  characterPortrait: {fileID: 6343165780246718044, guid: 76bb8239eac218b4993eac53a1cb57ae, type: 3}
+  characterName: 
+  characterNameColour:
+    serializedVersion: 2
+    rgba: 0
+  storyText: "A place of community, a place we need now\u2026  whatever ancients
+    left these stones here are long gone. We live here and we need to make a place
+    of our own."
+  typingSpeed: 40
+  extendPrevious: 0
+  voiceOverClip: {fileID: 0}
+  showAlways: 1
+  showCount: 1
+  fadeWhenDone: 1
+  allowLineSkip: 1
+  waitForClick: 0
+  timeToWait: 1
+  stopVoiceover: 1
+  waitForVO: 0
+  setDialogueBox: {fileID: 2587815498121076611}
+  showButton: 0
+--- !u!114 &1204840230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56d6b77eb00dafe45bc66ef633cccddc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  character: {fileID: 328964019}
+  characterPortrait: {fileID: -2854143430135178125, guid: 54f6ff6f6a60c2f4d96d511b2f62df7a, type: 3}
+  characterName: 
+  characterNameColour:
+    serializedVersion: 2
+    rgba: 0
+  storyText: "I don't want to send our children away to that rotten city, but there's
+    no space for them here. Our house is cramped. They say we could build more with
+    the stones. Though they are what makes the village so unique\u2026"
+  typingSpeed: 40
+  extendPrevious: 0
+  voiceOverClip: {fileID: 0}
+  showAlways: 1
+  showCount: 1
+  fadeWhenDone: 1
+  allowLineSkip: 1
+  waitForClick: 0
+  timeToWait: 1
+  stopVoiceover: 1
+  waitForVO: 0
+  setDialogueBox: {fileID: 3214201567678313502}
+  showButton: 0
+--- !u!114 &1204840231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56d6b77eb00dafe45bc66ef633cccddc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  character: {fileID: 1809084380}
+  characterPortrait: {fileID: 1864896388875102828, guid: ff489bce97be1ff41a3293c266a6e9b4, type: 3}
+  characterName: 
+  characterNameColour:
+    serializedVersion: 2
+    rgba: 0
+  storyText: 'The Preacher calls them the devil stones. All I knows is they play
+    devil with me plough. Now he''s saying we could smash these old rocks to help
+    build a new bakery. Sounds good to me. '
+  typingSpeed: 40
+  extendPrevious: 0
+  voiceOverClip: {fileID: 0}
+  showAlways: 1
+  showCount: 1
+  fadeWhenDone: 1
+  allowLineSkip: 1
+  waitForClick: 0
+  timeToWait: 1
+  stopVoiceover: 1
+  waitForVO: 0
+  setDialogueBox: {fileID: 3214201567678313502}
+  showButton: 0
 --- !u!1 &1219303569
 GameObject:
   m_ObjectHideFlags: 0
@@ -21107,7 +21216,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8679045381083251891, guid: 561582027eaa2034e8f13c70525f566d, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8679045381083251891, guid: 561582027eaa2034e8f13c70525f566d, type: 3}
       propertyPath: m_AnchorMin.x
@@ -21115,7 +21224,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8679045381083251891, guid: 561582027eaa2034e8f13c70525f566d, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8679045381083251891, guid: 561582027eaa2034e8f13c70525f566d, type: 3}
       propertyPath: m_SizeDelta.x
@@ -21155,11 +21264,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8679045381083251891, guid: 561582027eaa2034e8f13c70525f566d, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 8679045381083251891, guid: 561582027eaa2034e8f13c70525f566d, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -1737.6183
       objectReference: {fileID: 0}
     - target: {fileID: 8679045381083251891, guid: 561582027eaa2034e8f13c70525f566d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -24286,6 +24395,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ded4f20b12c9fec44a4c948cd58186ea, type: 3}
+--- !u!114 &2587815498121076611 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5752408557892195846, guid: ded4f20b12c9fec44a4c948cd58186ea, type: 3}
+  m_PrefabInstance: {fileID: 2587815498121076610}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e04909fb5132ef4d8d22e9189fe6f66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &3214201567678313502 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7323852224155080651, guid: 8b8bfbd1387a1a149955cc28d9d1cf9f, type: 3}
