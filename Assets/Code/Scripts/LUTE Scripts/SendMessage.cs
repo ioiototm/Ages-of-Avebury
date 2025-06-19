@@ -84,6 +84,17 @@ public class SendMessage : Order
             notification.SetActive(true);
         }
 
+
+
+        BooleanVariable unreadMessages = engine.GetVariable<BooleanVariable>("unreadMessages");
+        //set it to true
+        unreadMessages.Value = true;
+
+        BooleanVariable newMessages = engine.GetVariable<BooleanVariable>("newMessages");
+        //set it to true
+        newMessages.Value = true;
+
+
         //check if it's true or false, if it is, then get the Notification object in the ModernFrame
         //if (boolVar != null)
         //{
