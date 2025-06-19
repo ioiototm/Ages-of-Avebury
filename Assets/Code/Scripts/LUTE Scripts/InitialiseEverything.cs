@@ -20,6 +20,9 @@ public class InitialiseEverything : Order
     private GameObject inboxCanvas;
     [SerializeField]
     private GameObject menuCanvas;
+    [SerializeField]
+    private GameObject scannerCanvas;
+
 
     public static GameObject _inboxCanvas;
     public static GameObject _menuCanvas;
@@ -29,6 +32,7 @@ public class InitialiseEverything : Order
     public static GameObject modernScreen;
     public static GameObject neolithicScreen;
     public static GameObject middleAgesScreen;
+
 
     public static GameObject neolithicMakeStoneButton;
 
@@ -42,7 +46,7 @@ public class InitialiseEverything : Order
         _inboxCanvas = inboxCanvas ? inboxCanvas : GameObject.Find("ModernInboxCanvas");
         _menuCanvas = menuCanvas ? menuCanvas : GameObject.Find("ModernMenuCanvas");
         _mapCanvas = mapCanvas ? mapCanvas : GameObject.Find("ModernMapCanvas");
-        _scannerCanvas = GameObject.Find("ModernScanner");
+        _scannerCanvas = scannerCanvas ? scannerCanvas : GameObject.Find("ScannerCanvas");
 
         // Disable the inbox and enable the menu
         _inboxCanvas.SetActive(false);
@@ -122,21 +126,21 @@ public class InitialiseEverything : Order
 
 
 
-        ConnectionManager.Instance.FetchSharedVariables("stone1",
-            (variables) =>
-            {
-                if (variables != null && variables.Length > 0)
-                {
+        //ConnectionManager.Instance.FetchSharedVariables("stone1",
+        //    (variables) =>
+        //    {
+        //        if (variables != null && variables.Length > 0)
+        //        {
 
-                    //go through each variable and just print out the name and value
-                    foreach (var variable in variables)
-                    {
-                        Debug.Log($"Variable created at: {variable.createdAt}, Name: {variable.variableName}");
-                    }
+        //            //go through each variable and just print out the name and value
+        //            foreach (var variable in variables)
+        //            {
+        //                Debug.Log($"Variable created at: {variable.createdAt}, Name: {variable.variableName}");
+        //            }
 
-                }
-            },
-            2);
+        //        }
+        //    },
+        //    2);
 
 
 

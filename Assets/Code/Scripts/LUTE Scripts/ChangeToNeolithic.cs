@@ -40,10 +40,30 @@ public class ChangeToNeolithic : Order
 
         XRManager.Instance.SetXRActive(false);
 
-        GameObject.Find("Copper Pipe(Clone)").SetActive(false);
-        GameObject.Find("Pit(Clone)").SetActive(false);
-        GameObject.Find("Stone 7_LP(Clone)").SetActive(false);
-        GameObject.Find("Stone III_LP(Clone)").SetActive(false);
+        try
+        {
+            GameObject.Find("Copper Pipe(Clone)").SetActive(false);
+            GameObject.Find("Pit(Clone)").SetActive(false);
+            GameObject.Find("Stone 7_LP(Clone)").SetActive(false);
+            GameObject.Find("Stone III_LP(Clone)").SetActive(false);
+
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning("Could not find objects to disable: " + e.Message);
+        }
+
+
+        LUTEMapManager mapManager = GetEngine().GetMapManager();
+
+        LUTELocationInfo[] locationInfos = Resources.LoadAll<LUTELocationInfo>("Locations");
+
+        LocationVariable targetLocation = GetEngine().GetVariable<LocationVariable>("TargetLocation");
+        LocationVariable lastSeenLocation = GetEngine().GetVariable<LocationVariable>("LastSeenLocation");
+
+        //set the target location to the location that has 6 as the ID
+        targetLocation.Value = LocationRandomiser.Instance.GetLocationWithID(6);
+        lastSeenLocation.Value = LocationRandomiser.Instance.GetLocationWithID(5);
 
 
         Continue();

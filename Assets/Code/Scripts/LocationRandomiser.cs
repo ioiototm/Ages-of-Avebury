@@ -291,6 +291,26 @@ public class LocationRandomiser : MonoBehaviour
 
     }
 
+
+    public LUTELocationInfo GetLocationWithID(int id)
+    {
+               //filter locations based on quadrant  
+        string quadrant = southQuadrant ? "south" : "north";
+        if (debugMode)
+        {
+            quadrant = "campus";
+        }
+        LUTELocationInfo[] filteredLocations = Array.FindAll(locationInfos, x => x.name.ToLower().Contains(quadrant));
+        //get all locations with the same id within the filtered locations  
+        LUTELocationInfo[] locationsWithSameId = Array.FindAll(filteredLocations, x => x.name.StartsWith(id.ToString()));
+        if (locationsWithSameId.Length == 0)
+        {
+            Debug.Log("No locations with the same id found");
+            return null;
+        }
+        return locationsWithSameId[0];
+    }
+
     public LUTELocationInfo RandomiseCurrentLocation(LUTELocationInfo currentLocation)
     {
         //get the id of the current location  
