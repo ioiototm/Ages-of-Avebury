@@ -512,7 +512,7 @@ public class SelfieSegmentationSample : MonoBehaviour
         //}
 
 
-        outputView.texture = segmentation.GetResultTexture();
+        //outputView.texture = segmentation.GetResultTexture();
     }
 
     private void GenerateBoxUVs(Mesh mesh)

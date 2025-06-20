@@ -45,7 +45,7 @@ public class LocationRandomiser : MonoBehaviour
 
         instance = this;
 
-        
+
 
         LUTEMapManager mapManager = basicFlowEngine.GetMapManager();
 
@@ -73,7 +73,87 @@ public class LocationRandomiser : MonoBehaviour
 
         //}
 
+
+        //if it's the debug mode, then get all location variables, and get all locations
+        //set each variable to the south quadrant, and set the location to the first one in the list
+        //variables are StartingLocation1, EmptyPit2, Remnant3, BuriedStone4, Portal5,FirstStoneCreation6, SecondStoneCreation7, SocialStoneCreation8
+        //and the locations are in the resources folder, in the format x.y-NameOfPlace, where x is the id of the location, and y is the sub id in case there are multiple places that have the same function
+        //so, if debug on pick the ones that contain campus, otherwise, check if south or north, and filter the locations based on that
+        if (debugMode)
+        {
+            //get all location variables
+            List<LocationVariable> locationVariables = basicFlowEngine.GetVariables<LocationVariable>();
+            //set the value of each variable to the first location in the list that contains campus
+            foreach (var variable in locationVariables)
+            {
+                //get the name of the variable
+                string name = variable.Key;
+                //check if it contains a number
+                if (name.Contains("1") || name.Contains("2") || name.Contains("3") || name.Contains("4") || name.Contains("5") || name.Contains("6") || name.Contains("7") || name.Contains("8"))
+                {
+                    //connect the last digit of the name, to the first digit of the locations
+                    //so, if the name is StartingLocation1, then set the value to the first location in the list that is campus AND has 1 at the start of the name
+                    //get the last digit of the name
+                    string lastDigit = name[name.Length - 1].ToString();
+                    //get the first location in the list that contains campus and has the same id
+                    LUTELocationInfo location = Array.Find(locationInfos, x => x.name.ToLower().Contains("campus") && x.name.StartsWith(lastDigit));
+                    //set the value of the variable to that location
+                    if (location != null)
+                    {
+                        variable.Value = location;
+
+                    }
+                }
+            }
+        }
+        else
+        {
+            //filter locations based on quadrant, assume south quadrant
+            string quadrant = southQuadrant ? "south" : "north";
+            //get all location variables
+            List<LocationVariable> locationVariables = basicFlowEngine.GetVariables<LocationVariable>();
+            //set the value of each variable to the first location in the list that contains the quadrant
+            foreach (var variable in locationVariables)
+            {
+                //get the name of the variable
+                string name = variable.Key;
+                //check if it contains a number
+                if (name.Contains("1") || name.Contains("2") || name.Contains("3") || name.Contains("4") || name.Contains("5") || name.Contains("6") || name.Contains("7") || name.Contains("8"))
+                {
+                    //connect the last digit of the name, to the first digit of the locations
+                    //so, if the name is StartingLocation1, then set the value to the first location in the list that is south AND has 1 at the start of the name
+                    //get the last digit of the name
+                    string lastDigit = name[name.Length - 1].ToString();
+                    //get the first location in the list that contains the quadrant and has the same id
+                    LUTELocationInfo location = Array.Find(locationInfos, x => x.name.ToLower().Contains(quadrant) && x.name.StartsWith(lastDigit));
+                    //set the value of the variable to that location
+                    if (location != null)
+                    {
+                        variable.Value = location;
+
+
+                    }
+                }
+
+                //the first one should be set to the location that has barn in the name
+                if(name.Contains("StartingLocation1"))
+                {
+                    //get the first location in the list that contains barn in the name
+                    LUTELocationInfo location = Array.Find(locationInfos, x => x.name.ToLower().Contains("barn"));
+                    //set the value of the variable to that location
+                    if (location != null)
+                    {
+                        variable.Value = location;
+                        //set the last seen location to that as well
+                        lastSeenLocation.Value = location;
+                        targetLocation.Value = location;
+                    }
+                }
+            }
+        }
+
     }
+
 
     public LUTELocationInfo GetNextNormalLocation()
     {

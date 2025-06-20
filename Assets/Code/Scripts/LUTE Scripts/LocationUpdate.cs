@@ -59,4 +59,21 @@ public class LocationUpdate : Order
         //you can use this to return a summary of the order which is displayed in the inspector of the order
         return "";
     }
+
+
+    //on destroy, go through all of the locations, and set them to not visited
+    private void OnDestroy()
+    {
+        //go through all of the locations and set them to not visited
+
+        //get all the locations from the resources
+        var locations = Resources.LoadAll<LUTELocationInfo>("Locations");
+
+        foreach (var location in locations)
+        {
+            //set the status to unvisited
+            location.LocationStatus = LocationStatus.Unvisited;
+        }
+
+    }
 }

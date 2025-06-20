@@ -42,6 +42,11 @@ public class InitialiseEverything : Order
 
     public override void OnEnter()
     {
+
+
+        Screen.sleepTimeout = SleepTimeout.NeverSleep; // Prevent the screen from sleeping
+
+
         // Use provided GameObjects if available, otherwise find them in the scene
         _inboxCanvas = inboxCanvas ? inboxCanvas : GameObject.Find("ModernInboxCanvas");
         _menuCanvas = menuCanvas ? menuCanvas : GameObject.Find("ModernMenuCanvas");

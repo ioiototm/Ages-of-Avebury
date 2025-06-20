@@ -142,6 +142,13 @@ public class HiddenItemScanner : MonoBehaviour
         flowEngine.ExecuteNode("Change to Neolithic");
     }
 
+    public void skipToMiddleAges()
+    {
+        // Execute the node to skip to Middle Ages
+        var flowEngine = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>();
+        flowEngine.ExecuteNode("Change to Middle");
+    }
+
     void Update()
     {
 
