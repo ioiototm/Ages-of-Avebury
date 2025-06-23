@@ -40,6 +40,75 @@ public class LocationRandomiser : MonoBehaviour
         }
     }
 
+    public void changeQuadrant()
+    {
+        LocationRandomiser.Instance.southQuadrant = !LocationRandomiser.Instance.southQuadrant;
+
+        //filter locations based on quadrant, assume south quadrant
+        string quadrant = southQuadrant ? "south" : "north";
+        //get all location variables
+        List<LocationVariable> locationVariables = basicFlowEngine.GetVariables<LocationVariable>();
+        //set the value of each variable to the first location in the list that contains the quadrant
+        foreach (var variable in locationVariables)
+        {
+            //get the name of the variable
+            string name = variable.Key;
+            //check if it contains a number
+            if (name.Contains("1") || name.Contains("2") || name.Contains("3") || name.Contains("4") || name.Contains("5") || name.Contains("6") || name.Contains("7") || name.Contains("8"))
+            {
+                //connect the last digit of the name, to the first digit of the locations
+                //so, if the name is StartingLocation1, then set the value to the first location in the list that is south AND has 1 at the start of the name
+                //get the last digit of the name
+                string lastDigit = name[name.Length - 1].ToString();
+                //get the first location in the list that contains the quadrant and has the same id
+                LUTELocationInfo location = Array.Find(locationInfos, x => x.name.ToLower().Contains(quadrant) && x.name.StartsWith(lastDigit));
+                //set the value of the variable to that location
+                if (location != null)
+                {
+                    variable.Value = location;
+
+
+                }
+            }
+
+            //the first one should be set to the location that has barn in the name
+            if (name.Contains("StartingLocation1"))
+            {
+                //get the first location in the list that contains barn in the name
+                LUTELocationInfo location = Array.Find(locationInfos, x => x.name.ToLower().Contains("barn"));
+                //set the value of the variable to that location
+                if (location != null)
+                {
+                    variable.Value = location;
+                    //set the last seen location to that as well
+                    lastSeenLocation.Value = location;
+                    targetLocation.Value = location;
+                }
+            }
+
+            var mapManager = basicFlowEngine.GetMapManager();
+
+            //if the digit is not 1, then hide it and it's not 10 or any other number that has a digit in it
+            if (!name.Contains("1") || name.Contains("10") || name.Contains("11") || name.Contains("12") || name.Contains("13") || name.Contains("14") )
+            {
+                //if it's not the LastSeenLocation and TargetLocation
+                if(name.Contains("LastSeenLocation") || name.Contains("TargetLocation"))
+                {
+                    continue;
+                }
+
+                //hide the location marker
+                mapManager.HideLocationMarker(variable);
+
+            }
+            else
+            {
+                //show the location marker
+                mapManager.ShowLocationMarker(variable);
+            }
+        }
+    }
+
     void Start()
     {
 

@@ -129,6 +129,8 @@ public class SelfieSegmentationSample : MonoBehaviour
 
     public void OnClick()
     {
+
+        if(pressedButton == false)
         pressedButton = true;
     }
 
@@ -181,79 +183,55 @@ public class SelfieSegmentationSample : MonoBehaviour
 
     }
 
-    Coroutine runningCorouine = null;
+    Coroutine runningCoroutine = null;
+    private bool forceFinishLine = false;   // <- new
+    private bool pauseAfterFinish = false;  // <- new
 
-    private IEnumerator DrawContourWithRenderer(List<Vector2> contour, Camera cam, int pointsPerFrame = 1)
+    private IEnumerator DrawContourWithRenderer(
+        List<Vector2> contour,
+        Camera cam,
+        int pointsPerFrame = 1,
+        float frameDelay = 0.1f,
+        float endPause = 1f)
     {
+        // Don’t start if still drawing something
+        if (runningCoroutine != null) yield break;
+        runningCoroutine = StartCoroutine(Co());
+        yield return runningCoroutine;   // let the nested Co() run
+        runningCoroutine = null;
+        yield break;                     // nothing more to do
 
-
-      
-
-        //if the coroutine is running, don't start a new one
-        if (runningCorouine != null)
+        IEnumerator Co()
         {
-            yield break;
-        }
+            // 1️⃣ kill any previous line
+            GameObject prev = GameObject.Find("ContourLine");
+            if (prev) Destroy(prev);
 
-        // 1) Destroy old line
-        GameObject prev = GameObject.Find("ContourLine");
-        if (prev != null) Destroy(prev);
+            // 2️⃣ fresh renderer
+            var go = new GameObject("ContourLine");
+            var lr = go.AddComponent<LineRenderer>();
+            lr.material = new Material(Shader.Find("Sprites/Default"));
+            lr.widthMultiplier = 0.05f;
+            lr.loop = false;
 
-        // 2) New LineRenderer, start open
-        GameObject go = new GameObject("ContourLine");
-        LineRenderer lr = go.AddComponent<LineRenderer>();
-        lr.material = new Material(Shader.Find("Sprites/Default"));
-        lr.widthMultiplier = 0.05f;
-        lr.loop = false;                  // no auto-close
-                                          // ← we’ll adjust positionCount each iteration
-
-        // 3) Draw each point in chunks
-        for (int i = 0; i < contour.Count; i++)
-        {
-            // bump up the count so only [0…i] are shown
-            lr.positionCount = i + 1;
-
-            // compute world pos (your scale/offset)
-            Vector2 p2 = contour[i] * 0.04f;
-            p2.x -= 3;
-            Vector3 wp = new Vector3(p2.x, p2.y, -1f);
-
-            lr.SetPosition(i, wp);
-
-            // after drawing a few, wait a frame
-
-            if (pointsPerFrame < 0)
+            // 3️⃣ animate
+            for (int i = 0; i < contour.Count; ++i)
             {
+                lr.positionCount = i + 1;
+                Vector2 p = contour[i] * 0.04f; p.x -= 3;
+                lr.SetPosition(i, new Vector3(p.x, p.y, -1f));
 
+                // — bail out of frame-delay if forceFinishLine was requested
+                if (!forceFinishLine && (i + 1) % pointsPerFrame == 0)
+                    yield return new WaitForSeconds(frameDelay);
             }
-            else if ((i + 1) % pointsPerFrame == 0)
-            {
-                yield return new WaitForSeconds(0.1f);
-            }
+
+            // 4️⃣ optional end pause
+            if (!forceFinishLine || pauseAfterFinish)
+                yield return new WaitForSeconds(endPause);
+
+            // Coroutine ends → runningCoroutine becomes null (see wrapper)
         }
-
-        // 4) (Optional) Now close the loop in one go:
-        // — either toggle the loop flag:
-        // lr.loop = true;
-
-        // — or manually add the final segment:
-        // lr.positionCount = contour.Count + 1;
-        // Vector2 f = contour[0] * 0.04f; f.x -= 3;
-        // lr.SetPosition(contour.Count, new Vector3(f.x, f.y, -1f));
-
-        if(pointsPerFrame < 0)
-        {
-            //end the coroutine
-            yield break;
-        }
-        else
-        {
-            yield return new WaitForSeconds(1);
-        }
-
-    
-
-        runningCorouine = null; // Reset coroutine reference
     }
 
 
@@ -286,9 +264,9 @@ public class SelfieSegmentationSample : MonoBehaviour
             //DrawContourWithRenderer(contour, Camera.main);
             //contourDrawer.DrawContour(contour, Camera.main);
 
-            if (runningCorouine == null)
+            if (runningCoroutine == null)
             {
-                runningCorouine = StartCoroutine(DrawContourWithRenderer(contour, Camera.main, -1));
+                runningCoroutine = StartCoroutine(DrawContourWithRenderer(contour, Camera.main, -1));
             }
 
             this.gameObject.SetActive(false);
@@ -301,9 +279,9 @@ public class SelfieSegmentationSample : MonoBehaviour
             //DrawContourWithRenderer(contour, Camera.main);
             //contourDrawer.DrawContour(contour, Camera.main);
 
-            if(runningCorouine == null)
+            if(runningCoroutine == null)
             {
-                runningCorouine = StartCoroutine(DrawContourWithRenderer(contour, Camera.main, 15));
+                runningCoroutine = StartCoroutine(DrawContourWithRenderer(contour, Camera.main, 15));
             }
 
 
@@ -324,8 +302,10 @@ public class SelfieSegmentationSample : MonoBehaviour
 
 
             //debug draw the contour
-           
 
+
+            forceFinishLine = true;
+            pauseAfterFinish = true;
 
 
             float extrusionHeight = 10.0f;

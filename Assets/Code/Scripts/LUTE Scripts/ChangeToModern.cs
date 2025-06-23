@@ -3,45 +3,45 @@ using UnityEngine;
 
 
 [OrderInfo("AgesOfAvebury",
-              "Change the app to the middle time",
-              "Disables stone and enables middle interface")]
+              "Change the app to the modern time",
+              "Disables stone and enables modern interface")]
 [AddComponentMenu("")]
-public class ChangeToMiddleAges : Order
+public class ChangeToModern : Order
 {
 
     [SerializeField]
-    GameObject neolithicInterface;
-    [SerializeField]
     GameObject middleAgesInterface;
+    [SerializeField]
+    GameObject modernInterface;
 
     [SerializeField]
-    InterfaceGameEvent middleAgesInterfaceEvent;
+    InterfaceGameEvent modernInterfaceEvent;
 
 
     public override void OnEnter()
     {
 
         // Disable the modern interface
-        if (neolithicInterface != null)
-        {
-            neolithicInterface.SetActive(false);
-        }
-        // Enable the neolithic interface
         if (middleAgesInterface != null)
         {
-            middleAgesInterface.SetActive(true);
+            middleAgesInterface.SetActive(false);
+        }
+        // Enable the neolithic interface
+        if (modernInterface != null)
+        {
+            modernInterface.SetActive(true);
         }
 
         // Trigger the neolithic interface event
-        if (middleAgesInterfaceEvent != null)
+        if (modernInterfaceEvent != null)
         {
-            middleAgesInterfaceEvent.Raise();
+            modernInterfaceEvent.Raise();
         }
 
         XRManager.Instance.SetXRActive(false);
 
         Compass compass = GameObject.Find("Compass Test").GetComponent<Compass>();
-        compass.timePeriod = Compass.TimePeriod.MiddleAges;
+        compass.timePeriod = Compass.TimePeriod.Modern;
 
         //GameObject.Find("Copper Pipe(Clone)").SetActive(false);
         //GameObject.Find("Pit(Clone)").SetActive(false);

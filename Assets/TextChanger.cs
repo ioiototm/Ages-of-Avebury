@@ -17,7 +17,7 @@ public class LocationClickHandler : MonoBehaviour, IPointerClickHandler
 
         if (clickCount == 1)
         {
-            messageText.text = "I can't get there either!";
+            StartCoroutine(updateText("I can't get there either!"));
         }
         else if (clickCount == 2)
         {
@@ -36,13 +36,24 @@ public class LocationClickHandler : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    private IEnumerator updateText(string text)
+    {
+        //wait 1 second
+        yield return new WaitForSeconds(1f);
+        messageText.text = text;
+        
+    }
+
     private IEnumerator PlayAnimationAndUpdateText()
     {
+        yield return new WaitForSeconds(3f); // Wait before starting animation
+
         animator.Play("ICGTClose");
 
         // Wait for animation to finish
         float duration = GetAnimationLength("ICGTClose");
-        yield return new WaitForSeconds(duration);
+        yield return new WaitForSeconds(duration + 3);
+
 
         messageText.text = "I can't get there!";
 

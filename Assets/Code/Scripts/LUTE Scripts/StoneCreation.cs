@@ -17,6 +17,8 @@ public class StoneCreation : Order
     GameObject makeStoneButton;
 
 
+
+
     //a function that will be called when the user has pressed the button and created the stone
     public void CreateStone()
     {

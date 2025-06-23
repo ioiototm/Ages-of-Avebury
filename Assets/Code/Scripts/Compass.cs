@@ -1,8 +1,11 @@
-using UnityEngine;
 using LoGaCulture.LUTE;
-using System;
-using UnityEngine.UI;
+using LoGaCulture.LUTE.Logs;
 using Mapbox.Unity.Location;
+using System;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class Compass : MonoBehaviour
 {
@@ -10,7 +13,7 @@ public class Compass : MonoBehaviour
 
     private bool locationServiceStarted = false;
 
-    enum TimePeriod
+    public enum TimePeriod
     {
         Modern,
         Neolithic,
@@ -18,7 +21,7 @@ public class Compass : MonoBehaviour
     }
 
     [Header("Current Time Period")]
-    [SerializeField] TimePeriod timePeriod = TimePeriod.Modern;
+    [SerializeField] public TimePeriod timePeriod = TimePeriod.Modern;
 
     [Header("UI Elements Modern")]
     [SerializeField] RawImage compassImageModern;
@@ -51,7 +54,28 @@ public class Compass : MonoBehaviour
 
 
 
+  
+
+    [SerializeField]
+    LocationVariable NPC8;
+    [SerializeField]
+    LocationVariable NPC9;
+    [SerializeField]
+    LocationVariable NPC10;
+
+    [Serializable]
+    public struct TargetMarker
+    {
+        public LocationVariable location;      // NPC8 / 9 / 10
+        public GameObject icon;           // the blue circle
+        public TMP_Text distanceLabel;  // “42 m”
+    }
+
+    public TargetMarker[] middleAgeTargets;   // size 3 in the Inspector
+
     ILocationProvider locationProvider;
+
+    public static List<List<Vector3>> rocks = new List<List<Vector3>>(); //TODO CHANGE LOCATION LATER
 
     void Start()
     {
@@ -68,7 +92,81 @@ public class Compass : MonoBehaviour
 
         Debug.Log("Target Location: " + targetLocation.name);
 
+
+        //middleAgeTargets = new TargetMarker[3];
+
+        //load the NPC locations from the flow engine
+        //get all the locations 
+        var locationVariables = main.GetVariables<LocationVariable>();
+       
+        foreach (var locationVariable in locationVariables)
+        {
+            if (locationVariable.name.Contains("NPC8"))
+            {
+                NPC8 = locationVariable;
+            }
+            else if (locationVariable.name.Contains("NPC9"))
+            {
+                NPC9 = locationVariable;
+            }
+            else if (locationVariable.name.Contains("NPC10"))
+            {
+                NPC10 = locationVariable;
+            }
+        }
+
+        NPC8 = main.GetVariable<LocationVariable>("NPC8");
+        NPC9 = main.GetVariable<LocationVariable>("NPC9");
+        NPC10 = main.GetVariable<LocationVariable>("NPC10");
+
+        middleAgeTargets[0].location = NPC8;
+        middleAgeTargets[1].location = NPC9;
+        middleAgeTargets[2].location = NPC10;
+
+       StartCoroutine(LoadStonesAfterSeconds());
+
+
         //StartCoroutine(StartLocationService());
+    }
+
+    System.Collections.IEnumerator LoadStonesAfterSeconds()
+    {
+
+        yield return new WaitForSeconds(2f); // Wait for 2 seconds before loading stones
+
+        ConnectionManager.Instance.FetchSharedVariables("stone1",
+           (variables) =>
+           {
+               if (variables != null && variables.Length > 0)
+               {
+
+                   //go through each variable and just print out the name and value
+                   foreach (var variable in variables)
+                   {
+                       Debug.Log($"Variable created at: {variable.createdAt}, Name: {variable.variableName}");
+
+                       var oneRock = InitialiseEverything.ParsePoints(variable.data); // Parse the points from the variable value
+                       if (oneRock.Count > 0)
+                       {
+                           rocks.Add(oneRock);
+                           Debug.Log($"Parsed {oneRock.Count} points from variable {variable.variableName}");
+                       }
+                       else
+                       {
+                           Debug.LogWarning($"No valid points found in variable {variable.variableName}");
+                       }
+                   }
+
+
+
+               }
+           },
+           2);
+
+        Debug.Log("Rocks loaded after 2 seconds.");
+        //end the coroutine
+        yield break;
+
     }
 
     System.Collections.IEnumerator StartLocationService()
@@ -173,8 +271,35 @@ public class Compass : MonoBehaviour
         // 6) Switch visuals by timePeriod
         switch (timePeriod)
         {
-            case TimePeriod.Modern:
+
             case TimePeriod.MiddleAges:
+
+                if (compassImageMiddleAges != null)
+                {
+                    compassImageMiddleAges.rectTransform.localEulerAngles =
+                        new Vector3(0, 0, -deviceHeading);
+                }
+
+                foreach (var m in middleAgeTargets)
+                {
+                    if (m.location == null) continue;
+
+                    Vector2 npcLatLon = ParseLatLon(m.location.Value.Position);
+                    float bearing = (float)CalculateBearing(currentLatLon, npcLatLon);   
+                    float rel = bearing - deviceHeading;                            
+
+                
+                    m.icon.transform.localEulerAngles = new Vector3(0, 0, -rel);
+
+      
+                    float dist = Haversine(currentLatLon, npcLatLon);
+                    m.distanceLabel.text = $"{Mathf.RoundToInt(dist)} m";
+                }
+
+                break;
+            case TimePeriod.Modern:
+            case TimePeriod.Neolithic:
+
                 // Normal compass arrow
                 if (compassImageModern != null)
                 {
@@ -219,6 +344,29 @@ public class Compass : MonoBehaviour
                 }
                 break;
         }
+    }
+
+    private Vector2 ParseLatLon(string csv)
+    {
+        var s = csv.Split(',');
+        return new Vector2(float.Parse(s[0]), float.Parse(s[1]));
+    }
+
+    // quick-n-dirty haversine in metres
+    private float Haversine(Vector2 a, Vector2 b)
+    {
+        const float R = 6371000f;               // Earth radius (m)
+        float dLat = Mathf.Deg2Rad * (b.x - a.x);
+        float dLon = Mathf.Deg2Rad * (b.y - a.y);
+
+        float lat1 = Mathf.Deg2Rad * a.x;
+        float lat2 = Mathf.Deg2Rad * b.x;
+
+        float h = Mathf.Sin(dLat * 0.5f) * Mathf.Sin(dLat * 0.5f) +
+                  Mathf.Cos(lat1) * Mathf.Cos(lat2) *
+                  Mathf.Sin(dLon * 0.5f) * Mathf.Sin(dLon * 0.5f);
+
+        return 2f * R * Mathf.Asin(Mathf.Sqrt(h));
     }
 
     // same bearing function as before

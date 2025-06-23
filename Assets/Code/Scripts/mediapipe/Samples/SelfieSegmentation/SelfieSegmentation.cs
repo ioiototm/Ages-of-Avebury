@@ -146,6 +146,8 @@ namespace TensorFlowLite
 
         public RenderTexture GetResultTexture()
         {
+
+
             if (isGLES)
             {
                 // ---------- CPU-ONLY PATH ----------
@@ -177,16 +179,25 @@ namespace TensorFlowLite
             }
             else
             {
-                // ---------- ORIGINAL GPU PATH (unchanged—both kernels) ----------
                 labelBuffer.SetData(output0);
                 compute.SetBuffer(kLabelToTex, kLabelBuffer, labelBuffer);
-                compute.SetTexture(kLabelToTex, kOutputTexture, maskTex);
-                compute.Dispatch(kLabelToTex, width / 8, height / 8, 1);
+                compute.SetTexture(kLabelToTex, kOutputTexture, labelTex);
+                compute.Dispatch(
+                    kLabelToTex,
+                    Mathf.CeilToInt(width / 8f),
+                    Mathf.CeilToInt(height / 8f),
+                    1);
 
+                // b) Bilateral filter labelTex → maskTex
                 options.UpdateParameter();
-                compute.SetTexture(kBilateralFilter, kInputTexture, maskTex);
+                compute.SetTexture(kBilateralFilter, kInputTexture, labelTex);
                 compute.SetTexture(kBilateralFilter, kOutputTexture, maskTex);
-                compute.Dispatch(kBilateralFilter, width / 8, height / 8, 1);
+                compute.Dispatch(
+                    kBilateralFilter,
+                    Mathf.CeilToInt(width / 8f),
+                    Mathf.CeilToInt(height / 8f),
+                    1);
+
                 return maskTex;
             }
         }

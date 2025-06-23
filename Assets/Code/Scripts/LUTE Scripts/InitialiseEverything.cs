@@ -2,6 +2,8 @@ using LoGaCulture.LUTE;
 using LoGaCulture.LUTE.Logs;
 using Mapbox.Examples;
 using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using UnityEngine;
 
@@ -23,6 +25,9 @@ public class InitialiseEverything : Order
     [SerializeField]
     private GameObject scannerCanvas;
 
+    [SerializeField]
+    private GameObject inboxMiddleCanvas;
+
 
     public static GameObject _inboxCanvas;
     public static GameObject _menuCanvas;
@@ -36,9 +41,14 @@ public class InitialiseEverything : Order
 
     public static GameObject neolithicMakeStoneButton;
 
+    public static GameObject _inboxMiddleCanvas;
+
 
 
     private ImmediatePositionWithLocationProvider centering;
+
+
+     
 
     public override void OnEnter()
     {
@@ -52,6 +62,8 @@ public class InitialiseEverything : Order
         _menuCanvas = menuCanvas ? menuCanvas : GameObject.Find("ModernMenuCanvas");
         _mapCanvas = mapCanvas ? mapCanvas : GameObject.Find("ModernMapCanvas");
         _scannerCanvas = scannerCanvas ? scannerCanvas : GameObject.Find("ScannerCanvas");
+
+        _inboxMiddleCanvas = inboxMiddleCanvas ? inboxMiddleCanvas : GameObject.Find("MiddleInbox");
 
         // Disable the inbox and enable the menu
         _inboxCanvas.SetActive(false);
@@ -105,8 +117,13 @@ public class InitialiseEverything : Order
 
 
                 //if the digit is not 1, then hide it
-                if (!name.Contains("1"))
+                if (!name.Contains("1") || name.Contains("10") || name.Contains("11") || name.Contains("12") || name.Contains("13"))
                 {
+                    //if it's not the LastSeenLocation and TargetLocation
+                    if (name.Contains("LastSeenLocation") || name.Contains("TargetLocation"))
+                    {
+                        continue;
+                    }
                     //hide the location marker
                     mapManager.HideLocationMarker(locationVariable);
                     
@@ -131,21 +148,9 @@ public class InitialiseEverything : Order
 
 
 
-        //ConnectionManager.Instance.FetchSharedVariables("stone1",
-        //    (variables) =>
-        //    {
-        //        if (variables != null && variables.Length > 0)
-        //        {
+        
 
-        //            //go through each variable and just print out the name and value
-        //            foreach (var variable in variables)
-        //            {
-        //                Debug.Log($"Variable created at: {variable.createdAt}, Name: {variable.variableName}");
-        //            }
 
-        //        }
-        //    },
-        //    2);
 
 
 
@@ -155,6 +160,37 @@ public class InitialiseEverything : Order
 
         // Continue to the next order
         Continue();
+    }
+
+    public static List<Vector3> ParsePoints(string data)
+    {
+        var pts = new List<Vector3>();
+        if (string.IsNullOrWhiteSpace(data)) return pts;
+
+        // 1) split on ';'
+        var entries = data.Split(';');
+
+        foreach (var e in entries)
+        {
+            var t = e.Trim();
+            // 2) skip empty or non-numeric junk
+            if (string.IsNullOrEmpty(t) || t == "-") continue;
+
+            // 3) split into three coords
+            var xyz = t.Split(',');
+            if (xyz.Length < 3) continue;
+
+            // 4) try parse each float
+            if (float.TryParse(xyz[0], NumberStyles.Float, CultureInfo.InvariantCulture, out var x) &&
+                float.TryParse(xyz[1], NumberStyles.Float, CultureInfo.InvariantCulture, out var y) &&
+                float.TryParse(xyz[2], NumberStyles.Float, CultureInfo.InvariantCulture, out var z))
+            {
+                pts.Add(new Vector3(x, y,z));
+            }
+            // else skip malformed entry
+        }
+
+        return pts;
     }
 
     private static bool activelyCentering = true;
