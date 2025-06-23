@@ -1,4 +1,4 @@
-using LoGaCulture.LUTE;
+﻿using LoGaCulture.LUTE;
 using LoGaCulture.LUTE.Logs;
 using Mapbox.Unity.Location;
 using System;
@@ -39,7 +39,7 @@ public class Compass : MonoBehaviour
 
     LocationVariable targetLocation;
 
-    // TEMP: Hard-coded test location if you can�t test with real GPS
+    // TEMP: Hard-coded test location if you can’t test with real GPS
     [SerializeField] private Vector2 testPosition = new Vector2(50.936673298842f, -1.3958901038337264f);
 
     [Header("Smoothing")]
@@ -53,8 +53,13 @@ public class Compass : MonoBehaviour
     [SerializeField] private bool useTestPosition = false;
 
 
+    [Header("Middle-Ages Smoothing")]
+    [SerializeField] private float headingSmooth = 6f;      // higher = snappier
+    [SerializeField] private float markerSmooth = 4f;      // per-NPC blobs
+    private float smoothedHeading = 0f;                     // internal
+    private float[] markerAngles = new float[3];           // internal
 
-  
+
 
     [SerializeField]
     LocationVariable NPC8;
@@ -68,7 +73,7 @@ public class Compass : MonoBehaviour
     {
         public LocationVariable location;      // NPC8 / 9 / 10
         public GameObject icon;           // the blue circle
-        public TMP_Text distanceLabel;  // �42 m�
+        public TMP_Text distanceLabel;  // “42 m”
     }
 
     public TargetMarker[] middleAgeTargets;   // size 3 in the Inspector
@@ -203,146 +208,106 @@ public class Compass : MonoBehaviour
 
     private void Update()
     {
-        // If not running on a device, comment this out or handle gracefully
-        // if (Input.location.status != LocationServiceStatus.Running) return;
+        //----------------------------------------------------
+        // 0)  Pull user + target positions
+        //----------------------------------------------------
+        Vector2 currentLatLon =
+            new Vector2((float)locationProvider.CurrentLocation.LatitudeLongitude.x,
+                        (float)locationProvider.CurrentLocation.LatitudeLongitude.y);
 
-        // 1) Get current user position (or your test position for debugging)
+        // fall-back to testPosition if needed
+        Vector2 targetLatLon = useTestPosition ? testPosition
+                                               : ParseLatLon(targetLocation.Value.Position);
 
-        //if(Input.location.status == LocationServiceStatus.Stopped)
-        //{
-        //    Debug.LogWarning("Location service stopped.");
-        //    //disable this script 
-        //    this.enabled = false;
-        //    return;
-        //}
+        //----------------------------------------------------
+        // 1)   Global compass quantities (shared by all modes)
+        //----------------------------------------------------
+        float deviceHeadingRaw = Input.compass.magneticHeading;   // 0-360
+        smoothedHeading = Mathf.LerpAngle(
+            smoothedHeading, deviceHeadingRaw, Time.deltaTime * headingSmooth);
 
-
-
-        //convert the targetLocation Value Postion from a stirng lat,lon to a Vector2
-        //debug flag or not, use test position or target location
-        string[] latLon;
-        //string[] latLon = targetLocation.Value.Position.Split(',');
-
-        if(useTestPosition)
-        {
-            latLon = new string[] { testPosition.x.ToString(), testPosition.y.ToString() };
-        }
-        else
-        {
-            latLon = targetLocation.Value.Position.Split(',');
-        }
-
-
-        float lat = float.Parse(latLon[0]);
-        float lon = float.Parse(latLon[1]);
-        targetLatLon = new Vector2(lat, lon);
-
-        LocationInfo currentData;
-
-        if (Input.location.status == LocationServiceStatus.Stopped)
-        {
-            currentData = new LocationInfo();
-        }
-        else
-        {
-            currentData = Input.location.lastData;
-        }
-
-        
-        var currentLatLonMapbox = locationProvider.CurrentLocation.LatitudeLongitude;
-
-        
-
-           Vector2 currentLatLon = new Vector2((float)currentLatLonMapbox.x, (float)currentLatLonMapbox.y);
-
-        // 2) Calculate bearing from current to target
-        float bearingToTarget = (float)CalculateBearing(currentLatLon, targetLatLon);
-
-        // 3) Subtract device's heading if you want the phone orientation
-        float deviceHeading = Input.compass.magneticHeading; // can be 0 in Editor
-        float relativeAngle = bearingToTarget - deviceHeading;
-
-        // 4) Typically 0�=up, rotate clockwise
-        float targetAngle = -relativeAngle;
-
-        // 5) Smoothly Lerp
-        currentAngle = Mathf.LerpAngle(currentAngle, targetAngle, Time.deltaTime * rotationSpeed);
-
-        // 6) Switch visuals by timePeriod
+        //----------------------------------------------------
+        // 2)   PER-MODE visuals
+        //----------------------------------------------------
         switch (timePeriod)
         {
-
+            /*───────────────────────────────────────────*
+             *            M I D D L E   A G E S          *
+             *───────────────────────────────────────────*/
             case TimePeriod.MiddleAges:
-
-                if (compassImageMiddleAges != null)
                 {
-                    compassImageMiddleAges.rectTransform.localEulerAngles =
-                        new Vector3(0, 0, -deviceHeading);
+                    //------------------ 2-A  Needle (north) ------------------
+                    if (compassImageMiddleAges != null)
+                    {
+                        compassImageMiddleAges.rectTransform.localEulerAngles =
+                            new Vector3(0, 0, -smoothedHeading);
+                    }
+
+                    //------------------ 2-B  NPC blobs -----------------------
+                    for (int i = 0; i < middleAgeTargets.Length; i++)
+                    {
+                        var m = middleAgeTargets[i];
+                        if (m.location == null) continue;
+
+                        Vector2 npcLatLon = ParseLatLon(m.location.Value.Position);
+
+                        // bearing relative to TRUE north
+                        float bearingNpc = (float)CalculateBearing(currentLatLon, npcLatLon);
+
+                        // convert to player-relative (+ve = clockwise on screen)
+                        float rel = bearingNpc - smoothedHeading;
+
+                        // smooth each marker’s own rotation
+                        markerAngles[i] = Mathf.LerpAngle(
+                            markerAngles[i], -rel, Time.deltaTime * markerSmooth);
+
+                        // set rotation
+                        m.icon.transform.localEulerAngles = new Vector3(0, 0, markerAngles[i]);
+
+                        // distance label
+                        float dist = Haversine(currentLatLon, npcLatLon);
+                        m.distanceLabel.text = $"{Mathf.RoundToInt(dist)} m";
+                    }
+                    break;
                 }
 
-                foreach (var m in middleAgeTargets)
-                {
-                    if (m.location == null) continue;
-
-                    Vector2 npcLatLon = ParseLatLon(m.location.Value.Position);
-                    float bearing = (float)CalculateBearing(currentLatLon, npcLatLon);   
-                    float rel = bearing - deviceHeading;                            
-
-                
-                    m.icon.transform.localEulerAngles = new Vector3(0, 0, -rel);
-
-      
-                    float dist = Haversine(currentLatLon, npcLatLon);
-                    m.distanceLabel.text = $"{Mathf.RoundToInt(dist)} m";
-                }
-
-                break;
+            /*───────────────────────────────────────────*
+             *      M O D E R N   &   N E O L I T H I C  *
+             *───────────────────────────────────────────*/
             case TimePeriod.Modern:
             case TimePeriod.Neolithic:
-
-                // Normal compass arrow
-                if (compassImageModern != null)
                 {
-                    compassImageModern.rectTransform.localEulerAngles = new Vector3(0f, 0f, currentAngle);
+                    // 2-A  Smooth arrow to target  (your original logic)
+                    float bearingTarget = (float)CalculateBearing(currentLatLon, targetLatLon);
+                    float relative = bearingTarget - deviceHeadingRaw;
+                    float wantedAngle = -relative;
+
+                    currentAngle = Mathf.LerpAngle(
+                        currentAngle, wantedAngle, Time.deltaTime * rotationSpeed);
+
+                    if (compassImageModern != null)
+                        compassImageModern.rectTransform.localEulerAngles =
+                            new Vector3(0, 0, currentAngle);
+
+                    if (compassImageMiddleAges != null)
+                        compassImageMiddleAges.rectTransform.localEulerAngles =
+                            new Vector3(0, 0, currentAngle);
+
+                    // 2-B  Neolithic edge-light stays unchanged
+                    if (neolithicLight != null)
+                    {
+                        float halfW = Screen.width * 0.5f;
+                        float halfH = Screen.height * 0.5f;
+                        float norm = (currentAngle + 360f) % 360f;
+                        Vector2 edge = GetRectEdgePosition(norm, halfW, halfH);
+
+                        Vector3 world = Camera.main.ScreenToWorldPoint(
+                                            new Vector3(halfW - edge.x, halfH + edge.y, 2f));
+                        world.z = neolithicLight.transform.position.z;
+                        neolithicLight.transform.position = world;
+                    }
+                    break;
                 }
-
-                //middle ages compass
-                if (compassImageMiddleAges != null)
-                {
-                    compassImageMiddleAges.rectTransform.localEulerAngles = new Vector3(0f, 0f, currentAngle);
-                }
-                //  break;
-
-                //case TimePeriod.Neolithic:
-                // Instead of rotating a UI arrow, place a real 3D light on the screen edge
-                if (neolithicLight != null)
-                {
-                    float halfW = Screen.width * 0.5f;
-                    float halfH = Screen.height * 0.5f;
-
-                    float normalizedAngle = (currentAngle + 360f) % 360f;
-
-                    // 1) We get that 2D center-based coordinate
-                    Vector2 edgePosCentered = GetRectEdgePosition(normalizedAngle, halfW, halfH);
-                   
-                    // 2) Shift for actual Screen coords (0,0 at bottom-left)
-                    float screenX = -edgePosCentered.x + halfW;
-                    float screenY = edgePosCentered.y + halfH;
-
-                    // 3) Decide how far from the camera we want the object
-                    //    If you're doing a big 3D scene, pick a distance that
-                    //    places the light in front of the camera, e.g. 2f.
-                    float distanceFromCamera = 2f;
-
-                    // 4) Convert to a point in front of camera
-                    Vector2 screenPos = new Vector2(screenX, screenY);
-                    Vector3 worldPos = Camera.main.ScreenToWorldPoint(screenPos);
-
-                    // 5) Move your 3D light to that world position
-                    worldPos.z = neolithicLight.transform.position.z; // Keep the Z position
-                    neolithicLight.transform.position = worldPos;
-                }
-                break;
         }
     }
 
@@ -391,7 +356,7 @@ public class Compass : MonoBehaviour
     private Vector2 GetRectEdgePosition(float angleDeg, float halfW, float halfH)
     {
         float rad = angleDeg * Mathf.Deg2Rad;
-        float dx = Mathf.Sin(rad); // 0�=up => y=cos, x=sin
+        float dx = Mathf.Sin(rad); // 0°=up => y=cos, x=sin
         float dy = Mathf.Cos(rad);
 
         float tMin = float.PositiveInfinity;

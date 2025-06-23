@@ -65,6 +65,9 @@ public class ChangeToNeolithic : Order
         targetLocation.Value = LocationRandomiser.Instance.GetLocationWithID(6);
         lastSeenLocation.Value = LocationRandomiser.Instance.GetLocationWithID(5);
 
+        Compass compass = GameObject.Find("Compass Test").GetComponent<Compass>();
+        compass.timePeriod = Compass.TimePeriod.Neolithic;
+
 
         Continue();
     }
