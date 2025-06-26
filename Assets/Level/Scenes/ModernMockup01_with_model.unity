@@ -9620,6 +9620,14 @@ GameObject:
   - component: {fileID: 1204840348}
   - component: {fileID: 1204840351}
   - component: {fileID: 1204840350}
+  - component: {fileID: 1204840359}
+  - component: {fileID: 1204840358}
+  - component: {fileID: 1204840357}
+  - component: {fileID: 1204840356}
+  - component: {fileID: 1204840355}
+  - component: {fileID: 1204840354}
+  - component: {fileID: 1204840353}
+  - component: {fileID: 1204840352}
   m_Layer: 0
   m_Name: BasicFlowEngine
   m_TagString: Untagged
@@ -9701,10 +9709,8 @@ MonoBehaviour:
   description: 
   hideComponents: 0
   localizationId: 
-  selectedOrders:
-  - {fileID: 1204840070}
-  selectedNodes:
-  - {fileID: 1204840067}
+  selectedOrders: []
+  selectedNodes: []
   nodeViewHeight: 529
   hideOrders: []
   variables:
@@ -9741,8 +9747,8 @@ MonoBehaviour:
   showHandlerInfoOnGraph: 1
   showAnnotations: 1
   labelTint: {r: 1, g: 1, b: 1, a: 1}
-  zoom: 0.7000001
-  scrollPos: {x: 272.3173, y: 366.52365}
+  zoom: 0.55000025
+  scrollPos: {x: 824.06537, y: -105.27477}
   version: 1
   sidesOfDie: 6
   postcards: []
@@ -9986,6 +9992,7 @@ MonoBehaviour:
   itemId: 1
   orderList:
   - {fileID: 1204839938}
+  - {fileID: 1204840359}
   - {fileID: 1204839958}
   - {fileID: 1204839937}
   eventHandler: {fileID: 0}
@@ -10057,6 +10064,7 @@ MonoBehaviour:
   itemId: 1
   orderList:
   - {fileID: 1204839945}
+  - {fileID: 1204840357}
   - {fileID: 1204839944}
   - {fileID: 1204840175}
   - {fileID: 1204840172}
@@ -10145,6 +10153,7 @@ MonoBehaviour:
   itemId: 1
   orderList:
   - {fileID: 1204839952}
+  - {fileID: 1204840358}
   - {fileID: 1204839950}
   - {fileID: 1204839951}
   eventHandler: {fileID: 0}
@@ -10310,6 +10319,7 @@ MonoBehaviour:
   - {fileID: 1204840194}
   - {fileID: 1204840283}
   - {fileID: 1204839970}
+  - {fileID: 1204840352}
   - {fileID: 1204840179}
   - {fileID: 1204840196}
   - {fileID: 1204840203}
@@ -10399,6 +10409,7 @@ MonoBehaviour:
   itemId: 0
   orderList:
   - {fileID: 1204839974}
+  - {fileID: 1204840353}
   - {fileID: 1204840348}
   eventHandler: {fileID: 0}
   isGrouped: 0
@@ -10457,6 +10468,7 @@ MonoBehaviour:
   orderList:
   - {fileID: 1204839972}
   - {fileID: 1204839980}
+  - {fileID: 1204840354}
   - {fileID: 1204840349}
   - {fileID: 1204839973}
   eventHandler: {fileID: 0}
@@ -12890,6 +12902,7 @@ MonoBehaviour:
   - {fileID: 1204840193}
   - {fileID: 1204840286}
   - {fileID: 1204840076}
+  - {fileID: 1204840356}
   - {fileID: 1204840072}
   eventHandler: {fileID: 1204840073}
   isGrouped: 0
@@ -13059,6 +13072,7 @@ MonoBehaviour:
   - {fileID: 1204840195}
   - {fileID: 1204840284}
   - {fileID: 1204840081}
+  - {fileID: 1204840355}
   - {fileID: 1204840351}
   - {fileID: 1204840350}
   - {fileID: 1204840079}
@@ -20671,6 +20685,126 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectToShow: {fileID: 1958016836}
   delay: 0
+--- !u!114 &1204840352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4766ff83f3bc6044e940ba60aed1f37f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundClip: {fileID: 8300000, guid: 16fba6d30ed741d4a9fdd6e79ee2f3ac, type: 3}
+  volume: 1
+  waitUntilFinished: 0
+--- !u!114 &1204840353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4766ff83f3bc6044e940ba60aed1f37f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundClip: {fileID: 8300000, guid: 16fba6d30ed741d4a9fdd6e79ee2f3ac, type: 3}
+  volume: 1
+  waitUntilFinished: 0
+--- !u!114 &1204840354
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4766ff83f3bc6044e940ba60aed1f37f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundClip: {fileID: 8300000, guid: 16fba6d30ed741d4a9fdd6e79ee2f3ac, type: 3}
+  volume: 1
+  waitUntilFinished: 0
+--- !u!114 &1204840355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4766ff83f3bc6044e940ba60aed1f37f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundClip: {fileID: 8300000, guid: 16fba6d30ed741d4a9fdd6e79ee2f3ac, type: 3}
+  volume: 1
+  waitUntilFinished: 0
+--- !u!114 &1204840356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4766ff83f3bc6044e940ba60aed1f37f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundClip: {fileID: 8300000, guid: 16fba6d30ed741d4a9fdd6e79ee2f3ac, type: 3}
+  volume: 1
+  waitUntilFinished: 0
+--- !u!114 &1204840357
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4766ff83f3bc6044e940ba60aed1f37f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundClip: {fileID: 8300000, guid: 16fba6d30ed741d4a9fdd6e79ee2f3ac, type: 3}
+  volume: 1
+  waitUntilFinished: 0
+--- !u!114 &1204840358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4766ff83f3bc6044e940ba60aed1f37f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundClip: {fileID: 8300000, guid: 16fba6d30ed741d4a9fdd6e79ee2f3ac, type: 3}
+  volume: 1
+  waitUntilFinished: 0
+--- !u!114 &1204840359
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4766ff83f3bc6044e940ba60aed1f37f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundClip: {fileID: 8300000, guid: 16fba6d30ed741d4a9fdd6e79ee2f3ac, type: 3}
+  volume: 1
+  waitUntilFinished: 0
 --- !u!1 &1219303569
 GameObject:
   m_ObjectHideFlags: 0
