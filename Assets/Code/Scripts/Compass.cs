@@ -32,6 +32,8 @@ public class Compass : MonoBehaviour
 
     private float currentAngle = 0f; // We'll lerp toward this
 
+    private float mapAngle = 0f; // For the map rotation
+
     // Example target location (Tokyo)
     [Header("Target Location (Lat, Lon)")]
     [SerializeField] private Vector2 targetLatLon = new Vector2(35.6895f, 139.6917f);
@@ -59,6 +61,9 @@ public class Compass : MonoBehaviour
     private float smoothedHeading = 0f;                     // internal
     private float[] markerAngles = new float[3];           // internal
 
+
+    [SerializeField]
+    GameObject map;
 
 
     [SerializeField]
@@ -103,7 +108,7 @@ public class Compass : MonoBehaviour
         //load the NPC locations from the flow engine
         //get all the locations 
         var locationVariables = main.GetVariables<LocationVariable>();
-       
+
         foreach (var locationVariable in locationVariables)
         {
             if (locationVariable.name.Contains("NPC8"))
@@ -128,7 +133,7 @@ public class Compass : MonoBehaviour
         middleAgeTargets[1].location = NPC9;
         middleAgeTargets[2].location = NPC10;
 
-       StartCoroutine(LoadStonesAfterSeconds());
+        StartCoroutine(LoadStonesAfterSeconds());
 
 
         //StartCoroutine(StartLocationService());
@@ -222,6 +227,10 @@ public class Compass : MonoBehaviour
         //----------------------------------------------------
         // 1)   Global compass quantities (shared by all modes)
         //----------------------------------------------------
+        // Enable compass if not already enabled
+        if (!Input.compass.enabled)
+            Input.compass.enabled = true;
+
         float deviceHeadingRaw = Input.compass.magneticHeading;   // 0-360
         smoothedHeading = Mathf.LerpAngle(
             smoothedHeading, deviceHeadingRaw, Time.deltaTime * headingSmooth);
@@ -279,7 +288,7 @@ public class Compass : MonoBehaviour
                 {
                     // 2-A  Smooth arrow to target  (your original logic)
                     float bearingTarget = (float)CalculateBearing(currentLatLon, targetLatLon);
-                    float relative = bearingTarget - deviceHeadingRaw;
+                    float relative = bearingTarget - smoothedHeading;
                     float wantedAngle = -relative;
 
                     currentAngle = Mathf.LerpAngle(
@@ -292,6 +301,19 @@ public class Compass : MonoBehaviour
                     if (compassImageMiddleAges != null)
                         compassImageMiddleAges.rectTransform.localEulerAngles =
                             new Vector3(0, 0, currentAngle);
+
+                    if (map != null)
+                    {
+                        // Map rotation: We want north to always be at the top of the map
+                        // To achieve this, we need to counter-rotate against the device's orientation
+
+                        // When device points north (0°), map should have 0° rotation
+                        // When device points east (90°), map should have -90° rotation
+                        mapAngle = Mathf.LerpAngle(
+                            mapAngle, -smoothedHeading, Time.deltaTime * rotationSpeed / 2);
+
+                        map.transform.localEulerAngles = new Vector3(0, mapAngle, 0);
+                    }
 
                     // 2-B  Neolithic edge-light stays unchanged
                     if (neolithicLight != null)

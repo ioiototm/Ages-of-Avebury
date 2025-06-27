@@ -1,6 +1,7 @@
 using LoGaCulture.LUTE;
 using LoGaCulture.LUTE.Logs;
 using Mapbox.Examples;
+using Mapbox.Unity.Map;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -42,6 +43,9 @@ public class InitialiseEverything : Order
     public static GameObject neolithicMakeStoneButton;
 
     public static GameObject _inboxMiddleCanvas;
+
+
+    
 
 
 
@@ -210,7 +214,10 @@ public class InitialiseEverything : Order
         {
             // Center the map to the current location
             activelyCentering = true;
+            GetEngine().GetAbstractMap().SetZoom(17f);
             centering.UpdateMapToPlayer();
+
+
             //StartCoroutine(centerToScreenEverySecond());
             Debug.Log("Centering map to player location.");
 
@@ -233,6 +240,7 @@ public class InitialiseEverything : Order
             if (activelyCentering)
             {
                 centering.UpdateMapToPlayer();
+
             }
         }
     }
