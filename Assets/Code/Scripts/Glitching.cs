@@ -10,7 +10,7 @@ using UnityEngine.Events;
 public class Glitching : MonoBehaviour
 {
     [Header("Scene References")]
-    [SerializeField] private LUTELocationInfo portalLocation; // Your LocationVariable (GPS)
+    [SerializeField] public LocationVariable portalLocation; // Your LocationVariable (GPS)
     [SerializeField] private Material glitchMat;              // The fullscreen glitch canvas material
 
     [Header("Distance Settings (metres)")]
@@ -116,13 +116,13 @@ public class Glitching : MonoBehaviour
     private bool TryParsePortalPosition(out float latitude, out float longitude)
     {
         latitude = longitude = 0;
-        if (string.IsNullOrEmpty(portalLocation.Position))
+        if (string.IsNullOrEmpty(portalLocation.Value.Position))
         {
             Debug.LogWarning("Portal location is not set.");
             return false;
         }
 
-        string[] parts = portalLocation.Position.Split(',');
+        string[] parts = portalLocation.Value.Position.Split(',');
         if (parts.Length != 2) return false;
 
         if (float.TryParse(parts[0].Trim(), out latitude) && float.TryParse(parts[1].Trim(), out longitude))

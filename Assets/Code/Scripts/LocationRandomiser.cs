@@ -244,7 +244,7 @@ public class LocationRandomiser : MonoBehaviour
             //get the sub id
             string subId = id_full.Split('.')[1];
             //add it to the new id
-            newId_full += "." + subId;
+            newId_full += ".1";
         }
         //get the new id
 

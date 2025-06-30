@@ -78,7 +78,6 @@ public class Compass : MonoBehaviour
     {
         public LocationVariable location;      // NPC8 / 9 / 10
         public GameObject icon;           // the blue circle
-        public TMP_Text distanceLabel;  // “42 m”
     }
 
     public TargetMarker[] middleAgeTargets;   // size 3 in the Inspector
@@ -246,11 +245,11 @@ public class Compass : MonoBehaviour
             case TimePeriod.MiddleAges:
                 {
                     //------------------ 2-A  Needle (north) ------------------
-                    if (compassImageMiddleAges != null)
-                    {
-                        compassImageMiddleAges.rectTransform.localEulerAngles =
-                            new Vector3(0, 0, -smoothedHeading);
-                    }
+                    //if (compassImageMiddleAges != null)
+                    //{
+                    //    compassImageMiddleAges.rectTransform.localEulerAngles =
+                    //        new Vector3(0, 0, -smoothedHeading);
+                    //}
 
                     //------------------ 2-B  NPC blobs -----------------------
                     for (int i = 0; i < middleAgeTargets.Length; i++)
@@ -275,7 +274,6 @@ public class Compass : MonoBehaviour
 
                         // distance label
                         float dist = Haversine(currentLatLon, npcLatLon);
-                        m.distanceLabel.text = $"{Mathf.RoundToInt(dist)} m";
                     }
                     break;
                 }

@@ -1,3 +1,4 @@
+using LoGaCulture.LUTE;
 using UnityEngine;
 
 
@@ -7,12 +8,29 @@ using UnityEngine;
 [AddComponentMenu("")]
 public class ActivateGlitching : Order
 {
+
+
     public override void OnEnter()
     {
         Glitching glitch = GameObject.Find("Glitch Overlay").GetComponent<Glitching>();
         if (glitch != null)
         {
             glitch.running = true; // Set the running variable to true to activate the glitch
+
+            //get the TragetLocation variable
+            var targetLocation = GetEngine().GetVariable<LocationVariable>("Portal5");
+
+            if (targetLocation != null)
+            {
+                // Set the target location to the current location
+                glitch.portalLocation = targetLocation;
+            }
+            else
+            {
+                Debug.LogWarning("TargetLocation variable not found.");
+            }
+
+
             Debug.Log("Glitching activated.");
         }
         else
