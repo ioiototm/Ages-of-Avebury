@@ -371,7 +371,7 @@ public class LocationRandomiser : MonoBehaviour
 
 
             //print the name of the location
-            Debug.Log("Current Location: " + targetLocation.Value.name);
+            Debug.Log("Next Location is Location: " + targetLocation.Value.name);
 
         }
     }
