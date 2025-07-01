@@ -9833,6 +9833,13 @@ GameObject:
   - component: {fileID: 1204840401}
   - component: {fileID: 1204840400}
   - component: {fileID: 1204840399}
+  - component: {fileID: 1204840407}
+  - component: {fileID: 1204840406}
+  - component: {fileID: 1204840405}
+  - component: {fileID: 1204840404}
+  - component: {fileID: 1204840403}
+  - component: {fileID: 1204840408}
+  - component: {fileID: 1204840409}
   m_Layer: 0
   m_Name: BasicFlowEngine
   m_TagString: Untagged
@@ -9915,8 +9922,10 @@ MonoBehaviour:
   description: 
   hideComponents: 1
   localizationId: 
-  selectedOrders: []
-  selectedNodes: []
+  selectedOrders:
+  - {fileID: 1204840409}
+  selectedNodes:
+  - {fileID: 1204840407}
   nodeViewHeight: 602
   hideOrders: []
   variables:
@@ -9953,8 +9962,8 @@ MonoBehaviour:
   showHandlerInfoOnGraph: 1
   showAnnotations: 1
   labelTint: {r: 1, g: 1, b: 1, a: 1}
-  zoom: 0.6700003
-  scrollPos: {x: 332.15323, y: -139.348}
+  zoom: 0.49000046
+  scrollPos: {x: -44.544144, y: 212.73488}
   version: 1
   sidesOfDie: 6
   postcards: []
@@ -12947,7 +12956,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeRect:
     serializedVersion: 2
-    x: 591.6384
+    x: 593.8123
     y: -163.78079
     width: 117.73
     height: 40
@@ -19726,6 +19735,7 @@ MonoBehaviour:
   itemId: 0
   orderList:
   - {fileID: 1204840336}
+  - {fileID: 1204840406}
   eventHandler: {fileID: 0}
   isGrouped: 0
   groupIndex: -1
@@ -21427,6 +21437,140 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _duration: 1
+--- !u!114 &1204840403
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14cb281fae14f4f4d9a9866b6e86532e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  from: 'National Trust [Avebury@NT.co.uk]'
+  subject: Well done!
+  message: Good work surveyor! Return to the barn to see an updated model of the
+    henge!
+  messagePrefab: {fileID: 2074897074}
+--- !u!114 &1204840404
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40e7ad385acaccf48b9cb2f7fef519f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _duration: 1
+--- !u!114 &1204840405
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14cb281fae14f4f4d9a9866b6e86532e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  from: 'Jane Langston [JLangston@NT.co.uk]'
+  subject: Thank you!
+  message: Thank you for helping me get back home. But now  I know about the portals
+    I've a mind to go back! There is so much that they could have told us...
+  messagePrefab: {fileID: 2074897074}
+--- !u!114 &1204840406
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81000a54f770b444f863e5613d2e29ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetEngine: {fileID: 0}
+  targetNode: {fileID: 1204840407}
+  startIndex: 0
+  callMode: 0
+--- !u!114 &1204840407
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc9f689a21732a34489f55c1ed82a919, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nodeRect:
+    serializedVersion: 2
+    x: 1863.7552
+    y: 327.1253
+    width: 104.4
+    height: 40
+  nodeName: Modern 2
+  nodeDescription: Basic building block of a narrative engine
+  groupDescription: A series of nodes that can be executed as a group
+  itemId: 0
+  orderList:
+  - {fileID: 1204840405}
+  - {fileID: 1204840408}
+  - {fileID: 1204840404}
+  - {fileID: 1204840403}
+  - {fileID: 1204840409}
+  eventHandler: {fileID: 0}
+  isGrouped: 0
+  groupIndex: -1
+  repeatable: 0
+  tint: {r: 0.4669811, g: 1, b: 0.9485022, a: 1}
+  useCustomTint: 1
+  hoverStartTime: 0
+  targetUnlockNode: {fileID: 0}
+  targetKeyNode: {fileID: 0}
+  showDesc: 0
+  saveable: 0
+  updateLocationStatusToComplete: 1
+  NodeComplete: 0
+--- !u!114 &1204840408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4766ff83f3bc6044e940ba60aed1f37f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundClip: {fileID: 8300000, guid: 16fba6d30ed741d4a9fdd6e79ee2f3ac, type: 3}
+  volume: 1
+  waitUntilFinished: 0
+--- !u!114 &1204840409
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4766ff83f3bc6044e940ba60aed1f37f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundClip: {fileID: 8300000, guid: 16fba6d30ed741d4a9fdd6e79ee2f3ac, type: 3}
+  volume: 1
+  waitUntilFinished: 0
 --- !u!1 &1219303569
 GameObject:
   m_ObjectHideFlags: 0
@@ -29446,6 +29590,11 @@ Transform:
   - {fileID: 309341431}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2074897074 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5291527139936943437, guid: 1157706f373e56144a776852409a6e0a, type: 3}
+  m_PrefabInstance: {fileID: 657095228}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2089706259
 GameObject:
   m_ObjectHideFlags: 0
