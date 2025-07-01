@@ -9613,7 +9613,6 @@ GameObject:
   - component: {fileID: 1204840088}
   - component: {fileID: 1204840087}
   - component: {fileID: 1204840086}
-  - component: {fileID: 1204840085}
   - component: {fileID: 1204840084}
   - component: {fileID: 1204840125}
   - component: {fileID: 1204840126}
@@ -9830,6 +9829,10 @@ GameObject:
   - component: {fileID: 1204840380}
   - component: {fileID: 1204840379}
   - component: {fileID: 1204840378}
+  - component: {fileID: 1204840402}
+  - component: {fileID: 1204840401}
+  - component: {fileID: 1204840400}
+  - component: {fileID: 1204840399}
   m_Layer: 0
   m_Name: BasicFlowEngine
   m_TagString: Untagged
@@ -9912,10 +9915,8 @@ MonoBehaviour:
   description: 
   hideComponents: 1
   localizationId: 
-  selectedOrders:
-  - {fileID: 1204840323}
-  selectedNodes:
-  - {fileID: 1204840216}
+  selectedOrders: []
+  selectedNodes: []
   nodeViewHeight: 602
   hideOrders: []
   variables:
@@ -9952,8 +9953,8 @@ MonoBehaviour:
   showHandlerInfoOnGraph: 1
   showAnnotations: 1
   labelTint: {r: 1, g: 1, b: 1, a: 1}
-  zoom: 0.4300004
-  scrollPos: {x: 262.26337, y: 3.248581}
+  zoom: 0.6700003
+  scrollPos: {x: 332.15323, y: -139.348}
   version: 1
   sidesOfDie: 6
   postcards: []
@@ -13325,38 +13326,6 @@ MonoBehaviour:
   targetNode: {fileID: 1204840224}
   startIndex: 0
   callMode: 0
---- !u!114 &1204840085
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1204839864}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56d6b77eb00dafe45bc66ef633cccddc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  character: {fileID: 0}
-  characterPortrait: {fileID: 0}
-  characterName: 
-  characterNameColour:
-    serializedVersion: 2
-    rgba: 0
-  storyText: Farewell
-  typingSpeed: 15
-  extendPrevious: 0
-  voiceOverClip: {fileID: 0}
-  showAlways: 1
-  showCount: 1
-  fadeWhenDone: 1
-  allowLineSkip: 1
-  waitForClick: 0
-  timeToWait: 1
-  stopVoiceover: 1
-  waitForVO: 0
-  setDialogueBox: {fileID: 36597674}
-  showButton: 0
 --- !u!114 &1204840086
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -13378,15 +13347,15 @@ MonoBehaviour:
   storyText: "They span their Wayfinder Rock three times to leave\u2026"
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: 53fb60e35459602478cba2d05c64a6b4, type: 3}
   showAlways: 1
   showCount: 1
-  fadeWhenDone: 1
+  fadeWhenDone: 0
   allowLineSkip: 1
   waitForClick: 0
   timeToWait: 1
-  stopVoiceover: 1
-  waitForVO: 0
+  stopVoiceover: 0
+  waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
 --- !u!114 &1204840087
@@ -13411,15 +13380,15 @@ MonoBehaviour:
     a old axe-sharpener''s block. '
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: 407b3cac2f7fe9142854838585a0e641, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
   allowLineSkip: 1
   waitForClick: 0
   timeToWait: 1
-  stopVoiceover: 1
-  waitForVO: 0
+  stopVoiceover: 0
+  waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
 --- !u!114 &1204840088
@@ -13447,7 +13416,6 @@ MonoBehaviour:
   orderList:
   - {fileID: 1204840087}
   - {fileID: 1204840086}
-  - {fileID: 1204840085}
   - {fileID: 1204840251}
   - {fileID: 1204840084}
   eventHandler: {fileID: 0}
@@ -13500,15 +13468,15 @@ MonoBehaviour:
   storyText: They too helped us raise a stone.
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: 125ba6d4f7756f64b9ce38391295b2d1, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
   allowLineSkip: 1
   waitForClick: 0
   timeToWait: 1
-  stopVoiceover: 1
-  waitForVO: 0
+  stopVoiceover: 0
+  waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
 --- !u!114 &1204840091
@@ -13545,15 +13513,15 @@ MonoBehaviour:
   storyText: There were other strangers to our time before you.
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: 74c4787e27d78184184ea8e7dc25da0f, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
   allowLineSkip: 1
   waitForClick: 0
   timeToWait: 1
-  stopVoiceover: 1
-  waitForVO: 0
+  stopVoiceover: 0
+  waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
 --- !u!114 &1204840093
@@ -13578,15 +13546,15 @@ MonoBehaviour:
     likeness.
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: 0437582c867d7b846af5ff2134354a3a, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
   allowLineSkip: 1
   waitForClick: 0
   timeToWait: 1
-  stopVoiceover: 1
-  waitForVO: 0
+  stopVoiceover: 0
+  waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
 --- !u!114 &1204840094
@@ -13619,6 +13587,8 @@ MonoBehaviour:
   - {fileID: 1204840329}
   - {fileID: 1204840092}
   - {fileID: 1204840090}
+  - {fileID: 1204840400}
+  - {fileID: 1204840399}
   - {fileID: 1204840328}
   - {fileID: 1204840089}
   eventHandler: {fileID: 0}
@@ -13671,15 +13641,15 @@ MonoBehaviour:
   storyText: our mark on the land.
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: a847e740c5c72844ba6260f723a99241, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
   allowLineSkip: 1
   waitForClick: 0
   timeToWait: 1
-  stopVoiceover: 1
-  waitForVO: 0
+  stopVoiceover: 0
+  waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
 --- !u!114 &1204840097
@@ -13716,15 +13686,15 @@ MonoBehaviour:
   storyText: They are our link to the future
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: c269114e5fd7a2a4db8987644059fa6c, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
   allowLineSkip: 1
   waitForClick: 0
   timeToWait: 1
-  stopVoiceover: 1
-  waitForVO: 0
+  stopVoiceover: 0
+  waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
 --- !u!114 &1204840099
@@ -13762,15 +13732,15 @@ MonoBehaviour:
     the stones will remain. '
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: b50c8578aef8a524bafd4f96f91e0e67, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
   allowLineSkip: 1
   waitForClick: 0
   timeToWait: 1
-  stopVoiceover: 1
-  waitForVO: 0
+  stopVoiceover: 0
+  waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
 --- !u!114 &1204840101
@@ -13838,15 +13808,15 @@ MonoBehaviour:
   storyText: The stones will remember that you once were here.
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: acc1ae554d2daa0419d468454708e8b4, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
   allowLineSkip: 1
   waitForClick: 0
   timeToWait: 1
-  stopVoiceover: 1
-  waitForVO: 0
+  stopVoiceover: 0
+  waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
 --- !u!114 &1204840104
@@ -13883,15 +13853,15 @@ MonoBehaviour:
   storyText: The more of you the better
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: f6bbfa91ca7e377439f8107d14125007, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
   allowLineSkip: 1
   waitForClick: 0
   timeToWait: 1
-  stopVoiceover: 1
-  waitForVO: 0
+  stopVoiceover: 0
+  waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
 --- !u!114 &1204840106
@@ -13928,15 +13898,15 @@ MonoBehaviour:
   storyText: Stand where the stone should be.
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: 1a12f5b4ffae95d4aba68880a37d7208, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
   allowLineSkip: 1
   waitForClick: 0
   timeToWait: 1
-  stopVoiceover: 1
-  waitForVO: 0
+  stopVoiceover: 0
+  waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
 --- !u!114 &1204840108
@@ -13967,6 +13937,8 @@ MonoBehaviour:
   - {fileID: 1204840105}
   - {fileID: 1204840104}
   - {fileID: 1204840103}
+  - {fileID: 1204840402}
+  - {fileID: 1204840401}
   - {fileID: 1204840133}
   - {fileID: 1204840290}
   eventHandler: {fileID: 0}
@@ -14003,15 +13975,15 @@ MonoBehaviour:
   storyText: ' And you will help!'
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: 63a48b55bfeefb6459592ace533edc16, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
   allowLineSkip: 1
   waitForClick: 0
   timeToWait: 1
-  stopVoiceover: 1
-  waitForVO: 0
+  stopVoiceover: 0
+  waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
 --- !u!114 &1204840111
@@ -14050,15 +14022,15 @@ MonoBehaviour:
 '
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: e011f65381aa99b4b8004a649668285c, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
   allowLineSkip: 1
   waitForClick: 0
   timeToWait: 1
-  stopVoiceover: 1
-  waitForVO: 0
+  stopVoiceover: 0
+  waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
 --- !u!114 &1204840113
@@ -14095,15 +14067,15 @@ MonoBehaviour:
   storyText: ' Rock bones, chalk flesh.'
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: 036171859135fb3429e18d9c4baf4a32, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
   allowLineSkip: 1
   waitForClick: 0
   timeToWait: 1
-  stopVoiceover: 1
-  waitForVO: 0
+  stopVoiceover: 0
+  waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
 --- !u!114 &1204840115
@@ -14140,15 +14112,15 @@ MonoBehaviour:
   storyText: The ditch sinks to the world below, the stones are fingers to sky.
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: 0d16b9161786bd0488c10fe4cc7a329d, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
   allowLineSkip: 1
   waitForClick: 0
   timeToWait: 1
-  stopVoiceover: 1
-  waitForVO: 0
+  stopVoiceover: 0
+  waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
 --- !u!114 &1204840117
@@ -14218,15 +14190,15 @@ MonoBehaviour:
   storyText: Go to the glow.
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: 5805dbd798e7eac4698e03b7ce10733c, type: 3}
   showAlways: 1
   showCount: 1
-  fadeWhenDone: 1
+  fadeWhenDone: 0
   allowLineSkip: 1
   waitForClick: 0
   timeToWait: 1
-  stopVoiceover: 1
-  waitForVO: 0
+  stopVoiceover: 0
+  waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
 --- !u!114 &1204840120
@@ -14250,15 +14222,15 @@ MonoBehaviour:
   storyText: 'The rising begins. '
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: b463619f1026da441b584e64c5f57a51, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
   allowLineSkip: 1
   waitForClick: 0
   timeToWait: 1
-  stopVoiceover: 1
-  waitForVO: 0
+  stopVoiceover: 0
+  waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
 --- !u!114 &1204840121
@@ -14282,15 +14254,15 @@ MonoBehaviour:
   storyText: "Come join us. \n"
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: 3c4e08473dfdd7844be6b1689e555de4, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
   allowLineSkip: 1
   waitForClick: 0
   timeToWait: 1
-  stopVoiceover: 1
-  waitForVO: 0
+  stopVoiceover: 0
+  waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
 --- !u!114 &1204840122
@@ -14314,15 +14286,15 @@ MonoBehaviour:
   storyText: 'Come, follow the light. '
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: 7ac08943f17cc064297c658fc6cdd680, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
   allowLineSkip: 1
   waitForClick: 0
   timeToWait: 1
-  stopVoiceover: 1
-  waitForVO: 0
+  stopVoiceover: 0
+  waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
 --- !u!114 &1204840123
@@ -14346,15 +14318,15 @@ MonoBehaviour:
   storyText: 'Another stranger with a Wayfinding Rock. '
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: 5d8673dd70018fa4ca216fcdb49e5380, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
   allowLineSkip: 1
   waitForClick: 0
   timeToWait: 1
-  stopVoiceover: 1
-  waitForVO: 0
+  stopVoiceover: 0
+  waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
 --- !u!114 &1204840124
@@ -19714,7 +19686,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40e7ad385acaccf48b9cb2f7fef519f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _duration: 1
+  _duration: 2
 --- !u!114 &1204840336
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -21346,6 +21318,115 @@ MonoBehaviour:
   waitForVO: 1
   setDialogueBox: {fileID: 710210518713652324}
   showButton: 0
+--- !u!114 &1204840399
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56d6b77eb00dafe45bc66ef633cccddc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  character: {fileID: 0}
+  characterPortrait: {fileID: 0}
+  characterName: 
+  characterNameColour:
+    serializedVersion: 2
+    rgba: 0
+  storyText: It is in the likeness of those who have now left this land.
+  typingSpeed: 15
+  extendPrevious: 0
+  voiceOverClip: {fileID: 8300000, guid: baa14987eda507545ad570b936608950, type: 3}
+  showAlways: 1
+  showCount: 1
+  fadeWhenDone: 1
+  allowLineSkip: 1
+  waitForClick: 0
+  timeToWait: 1
+  stopVoiceover: 0
+  waitForVO: 1
+  setDialogueBox: {fileID: 36597674}
+  showButton: 0
+--- !u!114 &1204840400
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56d6b77eb00dafe45bc66ef633cccddc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  character: {fileID: 0}
+  characterPortrait: {fileID: 0}
+  characterName: 
+  characterNameColour:
+    serializedVersion: 2
+    rgba: 0
+  storyText: 'Here, gaze upon the stone that was raised before you. '
+  typingSpeed: 15
+  extendPrevious: 0
+  voiceOverClip: {fileID: 8300000, guid: d20bfaa9fc75f7240b7dcf8eff5af8bb, type: 3}
+  showAlways: 1
+  showCount: 1
+  fadeWhenDone: 1
+  allowLineSkip: 1
+  waitForClick: 0
+  timeToWait: 1
+  stopVoiceover: 0
+  waitForVO: 1
+  setDialogueBox: {fileID: 36597674}
+  showButton: 0
+--- !u!114 &1204840401
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56d6b77eb00dafe45bc66ef633cccddc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  character: {fileID: 0}
+  characterPortrait: {fileID: 0}
+  characterName: 
+  characterNameColour:
+    serializedVersion: 2
+    rgba: 0
+  storyText: When you are happy with your stone shape, press the icon.
+  typingSpeed: 15
+  extendPrevious: 0
+  voiceOverClip: {fileID: 8300000, guid: 31b51850c8a8a8e41b16e75585e3138b, type: 3}
+  showAlways: 1
+  showCount: 1
+  fadeWhenDone: 1
+  allowLineSkip: 1
+  waitForClick: 0
+  timeToWait: 1
+  stopVoiceover: 0
+  waitForVO: 1
+  setDialogueBox: {fileID: 36597674}
+  showButton: 0
+--- !u!114 &1204840402
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40e7ad385acaccf48b9cb2f7fef519f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _duration: 1
 --- !u!1 &1219303569
 GameObject:
   m_ObjectHideFlags: 0
