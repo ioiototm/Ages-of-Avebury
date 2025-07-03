@@ -300,30 +300,30 @@ public class StoneCreator : MonoBehaviour
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
 
-        Vector2[] uvs = new Vector2[verts.Count];
+        //Vector2[] uvs = new Vector2[verts.Count];
 
-        // pick the widest axis-pair so the texture isn’t squashed
-        Vector3 size = mesh.bounds.size;
-        bool xyIsWider = size.x >= size.z;   // simple heuristic
+        //// pick the widest axis-pair so the texture isn’t squashed
+        //Vector3 size = mesh.bounds.size;
+        //bool xyIsWider = size.x >= size.z;   // simple heuristic
 
-        float minU = xyIsWider ? xmin : zmin;
-        float maxU = xyIsWider ? xmax : zmax;
-        float minV = ymin;
-        float maxV = ymax;
+        //float minU = xyIsWider ? xmin : zmin;
+        //float maxU = xyIsWider ? xmax : zmax;
+        //float minV = ymin;
+        //float maxV = ymax;
 
-        for (int i = 0; i < verts.Count; i++)
-        {
-            Vector3 p = verts[i];
-            float u = xyIsWider
-                      ? Mathf.InverseLerp(xmin, xmax, p.x)  // U = X
-                      : Mathf.InverseLerp(zmin, zmax, p.z); // U = Z
-            float v = Mathf.InverseLerp(ymin, ymax, p.y);   // V = Y
+        //for (int i = 0; i < verts.Count; i++)
+        //{
+        //    Vector3 p = verts[i];
+        //    float u = xyIsWider
+        //              ? Mathf.InverseLerp(xmin, xmax, p.x)  // U = X
+        //              : Mathf.InverseLerp(zmin, zmax, p.z); // U = Z
+        //    float v = Mathf.InverseLerp(ymin, ymax, p.y);   // V = Y
 
-            // optional tiling factor
-            const float TILE = 3.0f;  // stone repeats 3× across each slab
-            uvs[i] = new Vector2(u * TILE, v * TILE);
-        }
-        mesh.uv = uvs;
+        //    // optional tiling factor
+        //    const float TILE = 3.0f;  // stone repeats 3× across each slab
+        //    uvs[i] = new Vector2(u * TILE, v * TILE);
+        //}
+        //mesh.uv = uvs;
 
 
         mf.sharedMesh = mesh;
