@@ -16,7 +16,8 @@ public class StoneCreation : Order
     [SerializeField]
     GameObject makeStoneButton;
 
-
+    [SerializeField]
+    GameObject stoneObject;
 
 
     //a function that will be called when the user has pressed the button and created the stone
@@ -67,6 +68,7 @@ public class StoneCreation : Order
         }
 
         selfieSegmentationSample.gameObject.SetActive(true);
+        selfieSegmentationSample.currentStone = stoneObject;
 
         makeStoneButton.SetActive(true);
         //To continue or not depending on if this order takes care of everything or diffrent orders take care of the rest

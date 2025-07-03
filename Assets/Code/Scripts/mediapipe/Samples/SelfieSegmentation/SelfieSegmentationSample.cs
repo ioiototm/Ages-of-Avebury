@@ -21,6 +21,8 @@ public class SelfieSegmentationSample : MonoBehaviour
 
     public GameObject xrObject;
 
+
+    public GameObject currentStone;
   
 
     private void Start()
@@ -314,74 +316,118 @@ public class SelfieSegmentationSample : MonoBehaviour
         bool isUdingColliders = true;
 
         GameObject polyExtruderGO = new GameObject("StoneObject");
-        //polyExtruderGO.transform.parent = this.transform;
+            //polyExtruderGO.transform.parent = this.transform;
 
 
 
-
-            PolyExtruder polyExtruder = polyExtruderGO.AddComponent<PolyExtruder>();
-
-        polyExtruder.isOutlineRendered = true;
-        polyExtruder.outlineWidth = 0.1f;
-        polyExtruder.outlineColor = Color.black;
-        polyExtruder.createPrism(polyExtruderGO.name,extrusionHeight, contour.ToArray(),Color.grey,is3D,isUsingBottomMeshIn3D,isUdingColliders);
-
-
-            //rotate -90 on x
-            polyExtruderGO.transform.Rotate(-90, 0, 0);
+    //        var rockMesh = RockExtruder.ExtrudeRock(
+    //contour.ToArray(),
+    //thickness: 0.2f,
+    //offsetNoiseScale: 2f,
+    //offsetNoiseStrength: 0.02f,
+    //heightNoiseScale: 5f,
+    //heightNoiseStrength: 0.01f);
 
 
 
-            Vector3 offset = new Vector3(-9, -5, 0); // Offset to center it in your view
+        //    PolyExtruder polyExtruder = polyExtruderGO.AddComponent<PolyExtruder>();
 
-            Debug.Log("Countour count " + contour.Count);
+        //polyExtruder.isOutlineRendered = true;
+        //polyExtruder.outlineWidth = 0.1f;
+        //polyExtruder.outlineColor = Color.black;
+        //polyExtruder.createPrism(polyExtruderGO.name,extrusionHeight, contour.ToArray(),Color.grey,is3D,isUsingBottomMeshIn3D,isUdingColliders);
 
 
             
 
 
-            CombineMeshes(polyExtruderGO);
-            //undo the rotation
-            polyExtruderGO.transform.Rotate(90, 0, 0);
-            //set scale 1
-            //get the mesh renderers
-            MeshRenderer[] meshRenderers = polyExtruderGO.GetComponentsInChildren<MeshRenderer>();
-
-            foreach (MeshRenderer meshRenderer in meshRenderers)
-            {
-                meshRenderer.material = stoneMaterial;
-            }
+        //    //rotate -90 on x
+        //    polyExtruderGO.transform.Rotate(-90, 0, 0);
 
 
 
+        //    Vector3 offset = new Vector3(-9, -5, 0); // Offset to center it in your view
 
+        //    Debug.Log("Countour count " + contour.Count);
 
-            //move to -60 on the x
-            polyExtruderGO.transform.position = new Vector3(-15, 0, 20);
-
-            //set the position in the centre of the camera based on the main camera
-            //this game object
-            gameObject.transform.position = Camera.main.transform.position + Camera.main.transform.forward * 2f;
-
-            polyExtruderGO.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
 
             
 
-            //get the game object "rock-preview" and disable it
-            //GameObject rockPreview = GameObject.Find("rock-preview");
-            //rockPreview.SetActive(false);
+
+        //    CombineMeshes(polyExtruderGO);
+
+        //    // grab the mesh we just built
+        //    var mf = polyExtruderGO.GetComponentInChildren<MeshFilter>();
+        //    var rockMesh = mf.mesh;
+
+
+        //    // apply rock‐style noise
+        //    RockExtruder.ApplyNoise(rockMesh,
+        //        outlineNoiseScale: 2f,
+        //        outlineNoiseStrength: 0.05f,
+        //        surfaceNoiseScale: 5f,
+        //        surfaceNoiseStrength: 0.02f
+        //    );
+
+        //    // recompute normals so lighting stays nice
+        //    rockMesh.RecalculateNormals();
+        //    rockMesh.RecalculateBounds();
+
+        //    //set the mesh back
+        //    mf.mesh = rockMesh;
+
+        //    //undo the rotation
+        //    polyExtruderGO.transform.Rotate(90, 0, 0);
+        //    //set scale 1
+        //    //get the mesh renderers
+        //    MeshRenderer[] meshRenderers = polyExtruderGO.GetComponentsInChildren<MeshRenderer>();
+
+        //    foreach (MeshRenderer meshRenderer in meshRenderers)
+        //    {
+        //        meshRenderer.material = stoneMaterial;
+        //    }
+
+
+
+
+
+        //    //move to -60 on the x
+        //    polyExtruderGO.transform.position = new Vector3(-15, 0, 20);
+
+        //    //set the position in the centre of the camera based on the main camera
+        //    //this game object
+        //    gameObject.transform.position = Camera.main.transform.position + Camera.main.transform.forward * 2f;
+
+        //    polyExtruderGO.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+
+            
+
+        //    //get the game object "rock-preview" and disable it
+        //    //GameObject rockPreview = GameObject.Find("rock-preview");
+        //    //rockPreview.SetActive(false);
 
             hasMadeStone = true;
 
-            //destroy the contour line
-            GameObject contourLine = GameObject.Find("ContourLine");
-            //Destroy(contourLine);
-            //contourLine.SetActive(false);
+        //    //destroy the contour line
+        //    GameObject contourLine = GameObject.Find("ContourLine");
+        //    //Destroy(contourLine);
+        //    //contourLine.SetActive(false);
 
-            polyExtruderGO.gameObject.SetActive(false);
+        //    polyExtruderGO.gameObject.SetActive(false);
 
             //draw the contour one last time
             DrawContourWithRenderer(contour, Camera.main, -1);
+
+            
+
+            var stoneCreator = currentStone.GetComponent<StoneCreator>();
+
+            var normalisedContour = NormalizeToBounds(contour, new Vector2(-4, -4), new Vector2(4, 4));
+
+            stoneCreator.outlinePoints = normalisedContour;
+            stoneCreator.GenerateSlab();
+
+
 
             //set this script to false active
             //this.gameObject.SetActive(false);
@@ -493,6 +539,44 @@ public class SelfieSegmentationSample : MonoBehaviour
 
 
         //outputView.texture = segmentation.GetResultTexture();
+    }
+
+    public static List<Vector2> NormalizeToBounds(List<Vector2> input, Vector2 minTarget, Vector2 maxTarget)
+    {
+        // Step 1: Find original bounds
+        Vector2 min = input[0];
+        Vector2 max = input[0];
+        foreach (var p in input)
+        {
+            min = Vector2.Min(min, p);
+            max = Vector2.Max(max, p);
+        }
+
+        Vector2 inputSize = max - min;
+        Vector2 targetSize = maxTarget - minTarget;
+
+        // Avoid divide-by-zero if input shape is flat
+        if (inputSize.x == 0) inputSize.x = 1;
+        if (inputSize.y == 0) inputSize.y = 1;
+
+        // Step 2: Scale and remap
+        List<Vector2> result = new();
+        foreach (var p in input)
+        {
+            Vector2 normalized = new Vector2(
+                (p.x - min.x) / inputSize.x,
+                (p.y - min.y) / inputSize.y
+            );
+
+            Vector2 mapped = new Vector2(
+                minTarget.x + normalized.x * targetSize.x,
+                minTarget.y + normalized.y * targetSize.y
+            );
+
+            result.Add(mapped);
+        }
+
+        return result;
     }
 
     private void GenerateBoxUVs(Mesh mesh)

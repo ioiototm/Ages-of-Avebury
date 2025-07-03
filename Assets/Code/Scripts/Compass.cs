@@ -143,7 +143,7 @@ public class Compass : MonoBehaviour
 
         yield return new WaitForSeconds(2f); // Wait for 2 seconds before loading stones
 
-        ConnectionManager.Instance.FetchSharedVariables("stone1",
+        ConnectionManager.Instance.FetchSharedVariables("Stone",
            (variables) =>
            {
                if (variables != null && variables.Length > 0)
@@ -170,7 +170,7 @@ public class Compass : MonoBehaviour
 
                }
            },
-           2);
+           5);
 
         Debug.Log("Rocks loaded after 2 seconds.");
         //end the coroutine
