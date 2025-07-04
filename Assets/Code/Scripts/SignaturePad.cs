@@ -10,6 +10,9 @@ public class SignaturePad : MonoBehaviour,
     public UILineRenderer linePrefab;          // 🔹 drag InkStroke prefab here
     public float minStrokeLength = 50f;        // pixels
 
+    [Header("Stone Shape")]
+    public UILineRenderer stoneShapeObject;
+
     [Header("Events")]
     [SerializeField]
     public System.Action OnSaveChosen;
@@ -20,6 +23,8 @@ public class SignaturePad : MonoBehaviour,
     List<Vector2> pts = new List<Vector2>();
     Vector2 firstScreenPos;
     float strokeLen;
+
+    bool alreadyChosen = false; // to prevent multiple calls
 
     void Awake() => rt = GetComponent<RectTransform>();
 
@@ -46,6 +51,7 @@ public class SignaturePad : MonoBehaviour,
 
     public void OnPointerDown(PointerEventData ev)
     {
+        if (alreadyChosen) return; // prevent multiple calls
         // new stroke
         currentLine = Instantiate(linePrefab, transform);   // 🔹 child of DrawingSurface
         currentLine.Points = new Vector2[0];
@@ -90,6 +96,8 @@ public class SignaturePad : MonoBehaviour,
         }
         else
             OnBreakChosen?.Invoke();
+
+        alreadyChosen = true; // prevent multiple calls
 
 
     }

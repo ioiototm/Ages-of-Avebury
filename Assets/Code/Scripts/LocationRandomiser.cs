@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 using LoGaCulture.LUTE;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
@@ -56,14 +57,15 @@ public class LocationRandomiser : MonoBehaviour
             //get the name of the variable
             string name = variable.Key;
             //check if it contains a number
-            if (name.Contains("1") || name.Contains("2") || name.Contains("3") || name.Contains("4") || name.Contains("5") || name.Contains("6") || name.Contains("7") || name.Contains("8"))
+            Match match = Regex.Match(name, @"\d+$");
+            if (match.Success)
             {
                 //connect the last digit of the name, to the first digit of the locations
                 //so, if the name is StartingLocation1, then set the value to the first location in the list that is south AND has 1 at the start of the name
                 //get the last digit of the name
-                string lastDigit = name[name.Length - 1].ToString();
+                string number = match.Value;
                 //get the first location in the list that contains the quadrant and has the same id
-                LUTELocationInfo location = Array.Find(locationInfos, x => x.name.ToLower().Contains(quadrant) && x.name.StartsWith(lastDigit));
+                LUTELocationInfo location = Array.Find(locationInfos, x => x.name.ToLower().Contains(quadrant) && x.name.StartsWith(number));
                 //set the value of the variable to that location
                 if (location != null)
                 {
@@ -160,14 +162,15 @@ public class LocationRandomiser : MonoBehaviour
                 //get the name of the variable
                 string name = variable.Key;
                 //check if it contains a number
-                if (name.Contains("1") || name.Contains("2") || name.Contains("3") || name.Contains("4") || name.Contains("5") || name.Contains("6") || name.Contains("7") || name.Contains("8"))
+                Match match = Regex.Match(name, @"\d+$");
+                if (match.Success)
                 {
                     //connect the last digit of the name, to the first digit of the locations
                     //so, if the name is StartingLocation1, then set the value to the first location in the list that is campus AND has 1 at the start of the name
                     //get the last digit of the name
-                    string lastDigit = name[name.Length - 1].ToString();
+                    string number = match.Value;
                     //get the first location in the list that contains campus and has the same id
-                    LUTELocationInfo location = Array.Find(locationInfos, x => x.name.ToLower().Contains("campus") && x.name.StartsWith(lastDigit));
+                    LUTELocationInfo location = Array.Find(locationInfos, x => x.name.ToLower().Contains("campus") && x.name.StartsWith(number));
                     //set the value of the variable to that location
                     if (location != null)
                     {
@@ -189,14 +192,15 @@ public class LocationRandomiser : MonoBehaviour
                 //get the name of the variable
                 string name = variable.Key;
                 //check if it contains a number
-                if (name.Contains("1") || name.Contains("2") || name.Contains("3") || name.Contains("4") || name.Contains("5") || name.Contains("6") || name.Contains("7") || name.Contains("8"))
+                Match match = Regex.Match(name, @"\d+$");
+                if (match.Success)
                 {
                     //connect the last digit of the name, to the first digit of the locations
                     //so, if the name is StartingLocation1, then set the value to the first location in the list that is south AND has 1 at the start of the name
                     //get the last digit of the name
-                    string lastDigit = name[name.Length - 1].ToString();
+                    string number = match.Value;
                     //get the first location in the list that contains the quadrant and has the same id
-                    LUTELocationInfo location = Array.Find(locationInfos, x => x.name.ToLower().Contains(quadrant) && x.name.StartsWith(lastDigit));
+                    LUTELocationInfo location = Array.Find(locationInfos, x => x.name.ToLower().Contains(quadrant) && x.name.StartsWith(number));
                     //set the value of the variable to that location
                     if (location != null)
                     {

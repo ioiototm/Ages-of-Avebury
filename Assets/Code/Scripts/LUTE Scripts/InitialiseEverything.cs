@@ -138,25 +138,11 @@ public class InitialiseEverything : Order
                     mapManager.ShowLocationMarker(locationVariable);
                 }
 
-
-
             }
-
-
 
         }
 
-
-
         centering = GameObject.Find("PlayerTarget").GetComponent<ImmediatePositionWithLocationProvider>();
-
-
-
-        
-
-
-
-
 
         // Start centering the map to the screen every second
         StartCoroutine(centerToScreenEverySecond());

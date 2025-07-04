@@ -1,6 +1,7 @@
 using LoGaCulture.LUTE;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI.Extensions;
 
 
 [OrderInfo("AgesOfAvebury",
@@ -11,6 +12,41 @@ public class DecisionMedieval : Order
 {
     [SerializeField]
     GameObject DecisionPanel;
+
+    
+
+    [SerializeField]
+    GameObject stone;
+
+    [SerializeField]
+    GameObject stoneShapeUI;
+
+
+    //enum to be either stone1, stone2, otherStone, bakery, cottage, church
+    public enum StoneType
+    {
+        Stone1,
+        Stone2,
+        OtherStone
+    }
+
+
+    //a class for a double, stonetype and bool save or not
+    public class StoneDecision
+    {
+        public StoneType Type { get; set; }
+        public bool Save { get; set; }
+        public StoneDecision(StoneType type, bool save)
+        {
+            Type = type;
+            Save = save;
+        }
+    }
+
+    [SerializeField] StoneType stoneType = StoneType.Stone1;
+
+    [SerializeField]
+    StoneDecision decision;
 
     IEnumerator wait()
     {
@@ -30,6 +66,7 @@ public class DecisionMedieval : Order
     {
 
         Debug.Log("Stone saved successfully!");
+        decision.Save = true;
 
         StartCoroutine(wait());
     }
@@ -37,13 +74,15 @@ public class DecisionMedieval : Order
     void breakTheStone()
     {
         Debug.Log("Stone broken successfully!");
+        decision.Save = false;
+
         StartCoroutine(wait());
     }
 
 
     public override void OnEnter()
     {
-       var sign= DecisionPanel.GetComponentInChildren<SignaturePad>();
+       var sign = DecisionPanel.GetComponentInChildren<SignaturePad>();
 
         if (sign != null)
         {
@@ -53,7 +92,23 @@ public class DecisionMedieval : Order
         else
         {
             Debug.LogError("SignaturePad component not found on DecisionPanel.");
+        
         }
+
+
+
+        var outlinePoints = stone.GetComponent<StoneCreator>().outlinePoints;
+
+        //scale them by 5
+        for (int i = 0; i < outlinePoints.Count; i++)
+        {
+            outlinePoints[i] *= 20f;
+        }
+
+        stoneShapeUI.GetComponent<UILineRenderer>().Points = outlinePoints.ToArray();
+
+        decision = new StoneDecision(stoneType, false);
+
         // Set the DecisionPanel active to show it
         DecisionPanel.SetActive(true);
     }

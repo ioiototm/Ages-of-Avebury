@@ -196,7 +196,7 @@ public class Compass : MonoBehaviour
 
                }
            },
-           2);
+           50);
 
         Debug.Log("Rocks loaded after 2 seconds.");
         //end the coroutine

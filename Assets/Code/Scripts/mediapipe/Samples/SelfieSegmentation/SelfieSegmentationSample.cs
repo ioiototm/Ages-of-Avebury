@@ -352,7 +352,7 @@ public class SelfieSegmentationSample : MonoBehaviour
             stoneCreator.gameObject.SetActive(false);
 
 
-            var mapCompletion = GameObject.Find("CompleteMap").GetComponent<MapCompletion>();
+            var mapCompletion = GameObject.Find("MapComplete").GetComponent<MapCompletion>();
 
             if(firstStone)
             {
