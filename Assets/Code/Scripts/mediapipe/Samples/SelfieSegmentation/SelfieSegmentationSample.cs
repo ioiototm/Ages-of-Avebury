@@ -248,7 +248,8 @@ public class SelfieSegmentationSample : MonoBehaviour
         }
     }
 
-
+    [SerializeField]
+    bool firstStone = true;
 
 
     private void OnTextureUpdate(Texture texture)
@@ -351,11 +352,24 @@ public class SelfieSegmentationSample : MonoBehaviour
             stoneCreator.gameObject.SetActive(false);
 
 
+            var mapCompletion = GameObject.Find("CompleteMap").GetComponent<MapCompletion>();
 
-            //set this script to false active
-            //this.gameObject.SetActive(false);
+            if(firstStone)
+            {
+                mapCompletion.createdStone1 = stoneCreator.gameObject;
+            }
+            else
+            {
+                mapCompletion.createdStone2 = stoneCreator.gameObject;
+            }
 
-            DontDestroyOnLoad(gameObject);
+
+
+
+                //set this script to false active
+                //this.gameObject.SetActive(false);
+
+                DontDestroyOnLoad(gameObject);
 
 
             //var lineRenderer = polyExtruderGO.GetComponent<LineRenderer>();

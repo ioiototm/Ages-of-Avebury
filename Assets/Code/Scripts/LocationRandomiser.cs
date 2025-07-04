@@ -28,6 +28,8 @@ public class LocationRandomiser : MonoBehaviour
     public  bool southQuadrant = false;
 
     static LocationRandomiser instance;
+
+    static int currentLocationId = 0;
     public static LocationRandomiser Instance
     {
         get
@@ -354,7 +356,9 @@ public class LocationRandomiser : MonoBehaviour
 
             var randomNext = GetNextNormalLocation();
 
-            
+            currentLocationId++;
+
+
 
             targetLocation.Value = randomNext;
 
@@ -374,6 +378,39 @@ public class LocationRandomiser : MonoBehaviour
             Debug.Log("Next Location is Location: " + targetLocation.Value.name);
 
         }
+    }
+
+    public void skipDirectlyToNextNode()
+    {
+        //get the "CurrentLocation" variable from the basic flow engine
+        LocationVariable targetLocation = basicFlowEngine.GetVariable<LocationVariable>("TargetLocation");
+        //if the target location is null, then pick a random one by getting the last seen location and adding one
+        if (targetLocation == null)
+        {
+            lastSeenLocation = basicFlowEngine.GetVariable<LocationVariable>("LastSeenLocation");
+            targetLocation.Value = RandomiseNextLocation(lastSeenLocation.Value);
+        }
+        lastSeenLocation.Value = targetLocation.Value;
+
+        var randomNext = GetNextNormalLocation();
+
+
+
+        targetLocation.Value = randomNext;
+
+        //get the id of target location
+        string id_full = lastSeenLocation.Value.name.Split('-')[0];
+        //split by the dot
+        string id = id_full.Split('.')[0];
+
+        //to int
+        int newId = int.Parse(id) - 1;
+
+        //raise the event
+        interfaceGameEvent[newId].Raise();
+
+        Debug.Log("Called interface event: " + interfaceGameEvent[newId].name);
+
     }
 
     public LUTELocationInfo RandomiseNextLocation(LUTELocationInfo currentLocation)
@@ -563,7 +600,7 @@ public class LocationRandomiser : MonoBehaviour
         //if key is k, unreachable target location
         if (Input.GetKeyDown(KeyCode.K))
         {
-             UnreachableTargetLocation();
+            skipDirectlyToNextNode();
         }
         //if press g, go to next location  
         //similar as above, but now it's the next id up, so if the first location had an id of 1.x-, the next one will be 2.x-  

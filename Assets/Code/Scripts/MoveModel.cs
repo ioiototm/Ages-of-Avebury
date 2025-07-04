@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,6 +8,8 @@ public class MoveModel : MonoBehaviour
 
     public GameObject landscapeWithMaterial;
     public GameObject landscapeWithMaterialUnderside;
+
+    private GameObject completedMap;
     public float someOffsetX = 0.42f;
     public float someOffsetY = -0.115f;
     public float scale = 0.09f;
@@ -21,6 +24,31 @@ public class MoveModel : MonoBehaviour
         //right = GameObject.Find("Right").GetComponent<Button>();
         //up = GameObject.Find("Up").GetComponent<Button>();
         //down = GameObject.Find("Down").GetComponent<Button>();
+
+        //try to find if there is an object called "MapComplete". if there is, that means the game was completed. 
+        completedMap = GameObject.Find("MapComplete");
+        if (completedMap != null)
+        {
+            GameObject basicFlowEngine = GameObject.Find("BasicFlowEngine");
+
+            basicFlowEngine.GetComponent<PlaceObjectXR>().m_PrefabToPlace = completedMap;
+
+
+            StartCoroutine(spawnEverything());
+
+        }
+    }
+
+    IEnumerator spawnEverything()
+    {
+               yield return new WaitForSeconds(10f);
+
+        var completedMapScript = completedMap.GetComponent<MapCompletion>();
+
+        GameObject spawnedModel = XRObjectManager.Instance.GetObject("Model");
+        completedMapScript.mapWithEmpty = spawnedModel;
+        completedMapScript.completeMap = true;
+
 
     }
 

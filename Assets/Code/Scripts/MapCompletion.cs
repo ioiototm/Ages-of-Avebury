@@ -11,18 +11,27 @@ public class MapCompletion : MonoBehaviour
 
 
     [SerializeField]
-    GameObject mapWithEmpty;
+    public GameObject mapWithEmpty;
 
 
     [SerializeField]
-    bool completeMap = false;
+    public bool completeMap = false;
 
 
     [SerializeField]
     Material stoneMaterial;
 
-
+    [SerializeField]
     List<GameObject> stones = new List<GameObject>();
+
+    [SerializeField]
+    public GameObject createdStone1, createdStone2, foundStone;
+
+    [SerializeField]
+    public bool southQuadrant = false;
+
+    [SerializeField]
+    GameObject bakery, cottage, church;
 
     IEnumerator wait10AndCreateStones()
     {
@@ -45,6 +54,8 @@ public class MapCompletion : MonoBehaviour
             meshRenderer.material = stoneMaterial;
 
             stoneObject.SetActive(false); // Initially set to inactive
+
+            DontDestroyOnLoad(stoneObject); // Ensure the stone persists across scenes
 
             stones.Add(stoneObject);
 
@@ -107,15 +118,16 @@ public class MapCompletion : MonoBehaviour
 
     IEnumerator spawnMap()
     {
-        GameObject map = Instantiate(mapWithEmpty, Vector3.zero, Quaternion.identity);
+        //GameObject map = Instantiate(mapWithEmpty, Vector3.zero, Quaternion.identity);
+        GameObject mapObject = mapWithEmpty.transform.GetChild(1).gameObject;
+
         completeMap = false; // Reset the flag after spawning
                              //this gameobject has a child transform called "New Stones" and under it, all child transforms
                              //go through each one, and spawn a sphere at the position of each child transform
-        Transform newStones = map.transform.Find("New Stones");
-
+        Transform newStones = mapObject.transform.Find("New Stones");
 
         int id = 0;
-        GameObject centreOfMap = map.transform.Find("Centre")?.gameObject;
+        GameObject centreOfMap = mapObject.transform.Find("Centre")?.gameObject;
         if (newStones != null)
         {
             foreach (Transform child in newStones)
@@ -127,6 +139,23 @@ public class MapCompletion : MonoBehaviour
                 sphere.transform.parent = child; // Set parent to New Stones
 
                 id++;
+
+                if(southQuadrant)
+                {
+                    //if it's 81 or 87
+                    if(child.name.Contains("81") || child.name.Contains("87"))
+                    {
+                        continue;
+                    }
+                }
+                else
+                {
+                    //if it's 61 or 53
+                    if (child.name.Contains("61") || child.name.Contains("53"))
+                    {
+                        continue; // Skip these spheres in the north quadrant
+                    }
+                }
 
                 //pick a random stone from the stones, spawn a copy of it at the position of the sphere
                 if (stones.Count > 0)
@@ -155,18 +184,57 @@ public class MapCompletion : MonoBehaviour
 
                 Debug.Log($"Spawned sphere at {child.position} with name {child.name}");
 
-                yield return null; // Yield to avoid freezing the main thread
+                yield return new WaitForSeconds(0.1f); // Yield to avoid freezing the main thread
             }
         }
         else
         {
             Debug.LogError("New Stones transform not found in the map prefab.");
         }
+
+        Transform newBuildings = mapObject.transform.Find("Buildings");
+
+        if (newBuildings != null)
+        {
+
+            //go through each child transform in newBuildings and spawn a building prefab at the position of each child transform
+            //2% chance for a bakery, 98% chance for a cottage, no church
+
+            foreach (Transform child in newBuildings)
+            {
+                GameObject buildingPrefab = null;
+                // Randomly choose a building type
+                float randomValue = Random.Range(0f, 100f);
+                if (randomValue < 2f) // 2% chance for bakery
+                {
+                    buildingPrefab = bakery;
+                }
+                else // 98% chance for cottage
+                {
+                    buildingPrefab = cottage;
+                }
+                if (buildingPrefab != null)
+                {
+                    //instantiate it, and do the child rotation and flip y to 180 from what it is
+                    //basically, the child rotation plus a rotation of 180 degrees on the y-axis
+                    GameObject buildingInstance = Instantiate(buildingPrefab, child.position, child.rotation * Quaternion.Euler(0, 180, 0));
+                    buildingInstance.transform.parent = child; // Set parent to the child transform
+                    Debug.Log($"Spawned {buildingInstance.name} at {child.position}");
+                }
+                else
+                {
+                    Debug.LogWarning("Building prefab is not assigned.");
+                }
+                yield return new WaitForSeconds(0.1f);  // Yield to avoid freezing the main thread
+            }
+        }
     }
 
     void Start()
     {
         StartCoroutine(wait10AndCreateStones());
+
+        DontDestroyOnLoad(this); // Ensure this script persists across scenes
     }
 
     // Update is called once per frame
