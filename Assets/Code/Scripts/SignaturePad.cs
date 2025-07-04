@@ -11,6 +11,7 @@ public class SignaturePad : MonoBehaviour,
     public float minStrokeLength = 50f;        // pixels
 
     [Header("Events")]
+    [SerializeField]
     public System.Action OnSaveChosen;
     public System.Action OnBreakChosen;
 
@@ -68,6 +69,7 @@ public class SignaturePad : MonoBehaviour,
         }
     }
 
+   
     public void OnPointerUp(PointerEventData ev)
     {
         if (strokeLen < minStrokeLength)
@@ -81,7 +83,11 @@ public class SignaturePad : MonoBehaviour,
 
         // decide side (left / right of centre)
         if (localStart.x < 0)
+        {
             OnSaveChosen?.Invoke();
+            var savedStones = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>().GetVariable<IntegerVariable>("SavedStones");
+            savedStones.Value++;
+        }
         else
             OnBreakChosen?.Invoke();
 
