@@ -1,5 +1,7 @@
 using LoGaCulture.LUTE;
+using NUnit.Framework;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -12,31 +14,36 @@ public class LoadAndShowStone : Order
 {
     [SerializeField]
     Camera mainCamera;
+
+    [SerializeField]
+    int waitTime = 5;
     public GameObject SpawnStoneOutline(float width = 0.05f)
     {
         //get a random List<Vector3> from Compass rocks which is List<List<Vector3>>
         //get a random index 
 
-        var randomIndex = Random.Range(0, Compass.rocks.Count);
+        var randomIndex = Random.Range(0, Compass.meshesAndOutlines.Count);
 
-        var pts = Compass.rocks[randomIndex];
+        var pts = Compass.meshesAndOutlines[randomIndex];
 
         GameObject lineGO = new GameObject("RemoteStoneOutline");
 
         // --- Begin Changes ---
                 
         // Calculate bounds of the points
-        var bounds = new Bounds(pts[0], Vector3.zero);
-        for (int i = 1; i < pts.Count; i++)
+        var bounds = new Bounds(pts.outline[0], Vector3.zero);
+        for (int i = 1; i < pts.outline.Count; i++)
         {
-            bounds.Encapsulate(pts[i]);
+            bounds.Encapsulate(pts.outline[i]);
         }
 
         var center = bounds.center;
+
+        var centerVec2 = new Vector2(center.x, center.z);
         var size = bounds.size;
 
         // Normalize points by centering them
-        var normalizedPts = pts.Select(p => p - center).ToList();
+        var normalizedPts = pts.outline.Select(p => p - centerVec2).ToList();
 
         // Find the maximum distance from the center to scale correctly
         float maxDist = 0f;
@@ -68,7 +75,15 @@ public class LoadAndShowStone : Order
         
         // To close the loop, add the first point at the end
         lr.positionCount = normalizedPts.Count;
-        lr.SetPositions(normalizedPts.ToArray());
+
+        List<Vector3> normalizedPtsVec3 = new List<Vector3>();
+
+        //make normalizedPts a List<Vector3>, where y is 1
+        for (int i = 0; i < normalizedPts.Count; i++)
+        {
+            normalizedPtsVec3.Add(new Vector3(normalizedPts[i].x, 1f, normalizedPts[i].y));
+        }
+        lr.SetPositions(normalizedPtsVec3.ToArray());
         lr.loop = true; // Set loop to true to properly close the outline
 
         lr.widthMultiplier = width;
@@ -112,7 +127,7 @@ public class LoadAndShowStone : Order
 
     IEnumerator wait5Seconds()
     {
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(waitTime);
         //destroy the outline
         var outline = GameObject.Find("RemoteStoneOutline");   
         if (outline != null)

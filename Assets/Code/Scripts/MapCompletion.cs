@@ -32,54 +32,72 @@ public class MapCompletion : MonoBehaviour
 
         int id = 0;
 
-        foreach (var rock in Compass.rocks)
+
+        foreach (var stoneMesh in Compass.meshesAndOutlines)
         {
-            if (rock == null || rock.Count == 0)
-            {
-                Debug.LogWarning("Rock or its outline points are null or empty.");
-                continue;
-            }
-            //CreateStoneFromOutline(rock.outlinePoints);
-
-            if (id % 3 == 0)
-                yield return null;
-
             GameObject stoneObject = new GameObject("Stone " + id);
             id++;
 
+            MeshFilter meshFilter = stoneObject.AddComponent<MeshFilter>();
+            meshFilter.sharedMesh = stoneMesh.mesh;
 
-
-            var sc = stoneObject.AddComponent<StoneCreator>();
-
-            //convert List<Vector3> to List<Vector2>, by taking the x and z coordinates
-            var outlinePoints = rock.Select(p => new Vector2(p.x, p.z)).ToList();
-
-            var normalisedContour = SelfieSegmentationSample.NormalizeToBounds(outlinePoints, new Vector2(-4, -4), new Vector2(4, 4));
-
-            sc.outlinePoints = normalisedContour;
-
-            sc.fillResolution = 12;
-            sc.metaballRadius = 0.55f;
-            sc.outlineMetaballRadius = 0.309f;
-            sc.fillDensity = 1.19f;
-            sc.isoLevel = 0.055f;
-            sc.slabThickness = 0.68f;
-
-            sc.autoUpdate = false;
-
-            sc.GenerateSlab();
-
-
-            sc.GetComponent<MeshRenderer>().material = stoneMaterial;
+            MeshRenderer meshRenderer = stoneObject.AddComponent<MeshRenderer>();
+            meshRenderer.material = stoneMaterial;
 
             stoneObject.SetActive(false); // Initially set to inactive
 
-
             stones.Add(stoneObject);
 
-            Debug.Log($"Created stone {stoneObject.name} with {outlinePoints.Count} points.");
-
         }
+
+        //foreach (var rock in Compass.rocks)
+        //{
+        //    if (rock == null || rock.Count == 0)
+        //    {
+        //        Debug.LogWarning("Rock or its outline points are null or empty.");
+        //        continue;
+        //    }
+        //    //CreateStoneFromOutline(rock.outlinePoints);
+
+        //    if (id % 3 == 0)
+        //        yield return null;
+
+        //    GameObject stoneObject = new GameObject("Stone " + id);
+        //    id++;
+
+
+
+        //    var sc = stoneObject.AddComponent<StoneCreator>();
+
+        //    //convert List<Vector3> to List<Vector2>, by taking the x and z coordinates
+        //    var outlinePoints = rock.Select(p => new Vector2(p.x, p.z)).ToList();
+
+        //    var normalisedContour = SelfieSegmentationSample.NormalizeToBounds(outlinePoints, new Vector2(-4, -4), new Vector2(4, 4));
+
+        //    sc.outlinePoints = normalisedContour;
+
+        //    sc.fillResolution = 12;
+        //    sc.metaballRadius = 0.55f;
+        //    sc.outlineMetaballRadius = 0.309f;
+        //    sc.fillDensity = 1.19f;
+        //    sc.isoLevel = 0.055f;
+        //    sc.slabThickness = 0.68f;
+
+        //    sc.autoUpdate = false;
+
+        //    sc.GenerateSlab();
+
+
+        //    sc.GetComponent<MeshRenderer>().material = stoneMaterial;
+
+        //    stoneObject.SetActive(false); // Initially set to inactive
+
+
+        //    stones.Add(stoneObject);
+
+        //    Debug.Log($"Created stone {stoneObject.name} with {outlinePoints.Count} points.");
+
+        //}
 
         
 
@@ -107,10 +125,6 @@ public class MapCompletion : MonoBehaviour
                 sphere.transform.localScale = Vector3.one * 0.1f; // Scale down the sphere
                 sphere.name = child.name; // Name the sphere after the child transform
                 sphere.transform.parent = child; // Set parent to New Stones
-
-                //evey 5 frames, yield return null;
-                if (id % 5 == 0)
-                    yield return null;
 
                 id++;
 
@@ -140,6 +154,8 @@ public class MapCompletion : MonoBehaviour
                 }
 
                 Debug.Log($"Spawned sphere at {child.position} with name {child.name}");
+
+                yield return null; // Yield to avoid freezing the main thread
             }
         }
         else

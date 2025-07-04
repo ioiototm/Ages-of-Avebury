@@ -214,18 +214,30 @@ public class SelfieSegmentationSample : MonoBehaviour
             var lr = go.AddComponent<LineRenderer>();
             lr.material = new Material(Shader.Find("Sprites/Default"));
             lr.widthMultiplier = 0.05f;
-            lr.loop = false;
+            lr.loop = forceFinishLine; // Set to true to connect the last and first points
 
-            // 3️⃣ animate
-            for (int i = 0; i < contour.Count; ++i)
+            // 3️⃣ animate or draw all at once
+            int pointCount = forceFinishLine ? contour.Count : 0;
+            if (forceFinishLine)
             {
-                lr.positionCount = i + 1;
-                Vector2 p = contour[i] * 0.04f; p.x -= 3;
-                lr.SetPosition(i, new Vector3(p.x, p.y, -1f));
+                lr.positionCount = contour.Count;
+                for (int i = 0; i < contour.Count; i++)
+                {
+                    Vector2 p = contour[i] * 0.04f; p.x -= 3;
+                    lr.SetPosition(i, new Vector3(p.x, p.y, -1f));
+                }
+            }
+            else
+            {
+                for (int i = 0; i < contour.Count; ++i)
+                {
+                    lr.positionCount = i + 1;
+                    Vector2 p = contour[i] * 0.04f; p.x -= 3;
+                    lr.SetPosition(i, new Vector3(p.x, p.y, -1f));
 
-                // — bail out of frame-delay if forceFinishLine was requested
-                if (!forceFinishLine && (i + 1) % pointsPerFrame == 0)
-                    yield return new WaitForSeconds(frameDelay);
+                    if ((i + 1) % pointsPerFrame == 0)
+                        yield return new WaitForSeconds(frameDelay);
+                }
             }
 
             // 4️⃣ optional end pause
@@ -309,114 +321,20 @@ public class SelfieSegmentationSample : MonoBehaviour
             forceFinishLine = true;
             pauseAfterFinish = true;
 
-
-            float extrusionHeight = 10.0f;
-        bool is3D = true;
-        bool isUsingBottomMeshIn3D = true;
-        bool isUdingColliders = true;
-
-        GameObject polyExtruderGO = new GameObject("StoneObject");
-            //polyExtruderGO.transform.parent = this.transform;
-
-
-
-    //        var rockMesh = RockExtruder.ExtrudeRock(
-    //contour.ToArray(),
-    //thickness: 0.2f,
-    //offsetNoiseScale: 2f,
-    //offsetNoiseStrength: 0.02f,
-    //heightNoiseScale: 5f,
-    //heightNoiseStrength: 0.01f);
-
-
-
-        //    PolyExtruder polyExtruder = polyExtruderGO.AddComponent<PolyExtruder>();
-
-        //polyExtruder.isOutlineRendered = true;
-        //polyExtruder.outlineWidth = 0.1f;
-        //polyExtruder.outlineColor = Color.black;
-        //polyExtruder.createPrism(polyExtruderGO.name,extrusionHeight, contour.ToArray(),Color.grey,is3D,isUsingBottomMeshIn3D,isUdingColliders);
-
-
-            
-
-
-        //    //rotate -90 on x
-        //    polyExtruderGO.transform.Rotate(-90, 0, 0);
-
-
-
-        //    Vector3 offset = new Vector3(-9, -5, 0); // Offset to center it in your view
-
-        //    Debug.Log("Countour count " + contour.Count);
-
-
-            
-
-
-        //    CombineMeshes(polyExtruderGO);
-
-        //    // grab the mesh we just built
-        //    var mf = polyExtruderGO.GetComponentInChildren<MeshFilter>();
-        //    var rockMesh = mf.mesh;
-
-
-        //    // apply rock‐style noise
-        //    RockExtruder.ApplyNoise(rockMesh,
-        //        outlineNoiseScale: 2f,
-        //        outlineNoiseStrength: 0.05f,
-        //        surfaceNoiseScale: 5f,
-        //        surfaceNoiseStrength: 0.02f
-        //    );
-
-        //    // recompute normals so lighting stays nice
-        //    rockMesh.RecalculateNormals();
-        //    rockMesh.RecalculateBounds();
-
-        //    //set the mesh back
-        //    mf.mesh = rockMesh;
-
-        //    //undo the rotation
-        //    polyExtruderGO.transform.Rotate(90, 0, 0);
-        //    //set scale 1
-        //    //get the mesh renderers
-        //    MeshRenderer[] meshRenderers = polyExtruderGO.GetComponentsInChildren<MeshRenderer>();
-
-        //    foreach (MeshRenderer meshRenderer in meshRenderers)
-        //    {
-        //        meshRenderer.material = stoneMaterial;
-        //    }
-
-
-
-
-
-        //    //move to -60 on the x
-        //    polyExtruderGO.transform.position = new Vector3(-15, 0, 20);
-
-        //    //set the position in the centre of the camera based on the main camera
-        //    //this game object
-        //    gameObject.transform.position = Camera.main.transform.position + Camera.main.transform.forward * 2f;
-
-        //    polyExtruderGO.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-
-            
-
-        //    //get the game object "rock-preview" and disable it
-        //    //GameObject rockPreview = GameObject.Find("rock-preview");
-        //    //rockPreview.SetActive(false);
-
+        
             hasMadeStone = true;
 
-        //    //destroy the contour line
-        //    GameObject contourLine = GameObject.Find("ContourLine");
-        //    //Destroy(contourLine);
-        //    //contourLine.SetActive(false);
-
-        //    polyExtruderGO.gameObject.SetActive(false);
 
             //draw the contour one last time
-            DrawContourWithRenderer(contour, Camera.main, -1);
+            if (runningCoroutine != null)
+            {
+                StopCoroutine(runningCoroutine);
+                runningCoroutine = null;
+            }
+
+            // Fix for the error: Replace the incorrect call to `StartCoroutine` with the correct method signature.
+            StartCoroutine(DrawContourWithRenderer(contour, Camera.main, -1, 0.05f, 0.5f));
+            //StartCoroutine(DrawContourWithRenderer(contour, Camera.main));
 
             
 
@@ -427,6 +345,11 @@ public class SelfieSegmentationSample : MonoBehaviour
             stoneCreator.outlinePoints = normalisedContour;
             stoneCreator.GenerateSlab();
 
+            var mesh = stoneCreator.GetComponent<MeshFilter>().mesh;
+
+            //disable the stone for now
+            stoneCreator.gameObject.SetActive(false);
+
 
 
             //set this script to false active
@@ -435,19 +358,21 @@ public class SelfieSegmentationSample : MonoBehaviour
             DontDestroyOnLoad(gameObject);
 
 
-            var lineRenderer = polyExtruderGO.GetComponent<LineRenderer>();
+            //var lineRenderer = polyExtruderGO.GetComponent<LineRenderer>();
 
             //get the list of points
-            Vector3[] points = new Vector3[lineRenderer.positionCount + 1];
+            //Vector3[] points = new Vector3[lineRenderer.positionCount + 1];
 
          
 
-            lineRenderer.GetPositions(points);
+            //lineRenderer.GetPositions(points);
 
             //go through all the points and save them as a string in the format "x,y,z;x,y,z;etc"
-            string pointsString = string.Join(";", points.Select(p => $"{p.x},{p.y},{p.z}"));
+            //string pointsString = string.Join(";", points.Select(p => $"{p.x},{p.y},{p.z}"));
 
-            ConnectionManager.Instance.SaveSharedVariable("stone1", "stone", pointsString);
+            //ConnectionManager.Instance.SaveSharedVariable("stone1", "stone", pointsString);
+
+            ConnectionManager.Instance.SaveSharedVariable("StoneComplete", "MeshAndOutlineBase64", MeshSerializer.ToBase64(mesh, normalisedContour));
 
 
             //load next scene in the build

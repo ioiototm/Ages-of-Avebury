@@ -85,6 +85,15 @@ public class Compass : MonoBehaviour
     ILocationProvider locationProvider;
 
     public static List<List<Vector3>> rocks = new List<List<Vector3>>(); //TODO CHANGE LOCATION LATER
+    public static List<Mesh> stoneMeshes = new List<Mesh>();
+
+    public class MeshAndOutline
+    {
+        public Mesh mesh;
+        public List<Vector2> outline;
+    }
+
+    public static List<MeshAndOutline> meshesAndOutlines = new List<MeshAndOutline>();
 
     void Start()
     {
@@ -143,7 +152,7 @@ public class Compass : MonoBehaviour
 
         yield return new WaitForSeconds(2f); // Wait for 2 seconds before loading stones
 
-        ConnectionManager.Instance.FetchSharedVariables("Stone",
+        ConnectionManager.Instance.FetchSharedVariables("StoneComplete",
            (variables) =>
            {
                if (variables != null && variables.Length > 0)
@@ -152,25 +161,42 @@ public class Compass : MonoBehaviour
                    //go through each variable and just print out the name and value
                    foreach (var variable in variables)
                    {
-                       Debug.Log($"Variable created at: {variable.createdAt}, Name: {variable.variableName}");
+                       Debug.Log($"Variable created at: {variable.createdAt}, Name: {variable.variableName}, Size : {variable.data.Length/1024f}");
 
-                       var oneRock = InitialiseEverything.ParsePoints(variable.data); // Parse the points from the variable value
-                       if (oneRock.Count > 0)
+                       Mesh stoneMesh = null;
+                       List<Vector2> outline = new List<Vector2>();
+
+                       MeshSerializer.FromBase64(variable.data, out stoneMesh,out outline);
+
+                       if (stoneMesh != null)
                        {
-                           rocks.Add(oneRock);
-                           Debug.Log($"Parsed {oneRock.Count} points from variable {variable.variableName}");
+                           meshesAndOutlines.Add(new MeshAndOutline { mesh = stoneMesh, outline = outline });
+                           Debug.Log($"Loaded stone mesh from variable {variable.variableName}");
                        }
                        else
                        {
-                           Debug.LogWarning($"No valid points found in variable {variable.variableName}");
+                           Debug.LogWarning($"Failed to load mesh from variable {variable.variableName}");
                        }
+
+
+
+                       //var oneRock = InitialiseEverything.ParsePoints(variable.data); // Parse the points from the variable value
+                       //if (oneRock.Count > 0)
+                       //{
+                       //    rocks.Add(oneRock);
+                       //    Debug.Log($"Parsed {oneRock.Count} points from variable {variable.variableName}");
+                       //}
+                       //else
+                       //{
+                       //    Debug.LogWarning($"No valid points found in variable {variable.variableName}");
+                       //}
                    }
 
 
 
                }
            },
-           5);
+           2);
 
         Debug.Log("Rocks loaded after 2 seconds.");
         //end the coroutine
