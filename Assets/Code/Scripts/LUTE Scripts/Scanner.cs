@@ -26,9 +26,9 @@ public class Scanner : Order
         scanner.SetIsActive(false);
         scanner.OnItemDiscovered -= OnItemDiscovered;
 
-       
+       GetEngine().GetVariable<BooleanVariable>("toClearObject").Value = true;
 
-        
+
 
         Continue();
     }

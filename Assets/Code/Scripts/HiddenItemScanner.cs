@@ -12,6 +12,8 @@ public class HiddenItemScanner : MonoBehaviour
 {
     public event Action<GameObject> OnItemDiscovered;
 
+    public GameObject spawnedAndDiscoveredObject;
+
     [Header("Item Settings")]
     [SerializeField] private GameObject objectToSpawn;
     [SerializeField] private LUTELocationInfo targetLocation;
@@ -347,6 +349,8 @@ public class HiddenItemScanner : MonoBehaviour
 
             }
 
+            // Store the discovered object for reference
+            spawnedAndDiscoveredObject = spawnedObject;
             // Notify listeners about the discovered item
             OnItemDiscovered?.Invoke(spawnedObject);
         }
@@ -358,6 +362,20 @@ public class HiddenItemScanner : MonoBehaviour
                 feedbackText.text = "Error placing item. Try scanning a flat surface.";
             }
             itemDiscovered = false; // Allow retry
+        }
+    }
+
+    public void destroyDiscoveredObject()
+    {
+               if (spawnedAndDiscoveredObject != null)
+        {
+            Destroy(spawnedAndDiscoveredObject);
+            spawnedAndDiscoveredObject = null;
+            itemDiscovered = false; // Reset discovery state
+            if (feedbackText != null)
+            {
+                feedbackText.text = "Item destroyed. You can scan again.";
+            }
         }
     }
 

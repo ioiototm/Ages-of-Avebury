@@ -24,7 +24,7 @@ public class SignaturePad : MonoBehaviour,
     Vector2 firstScreenPos;
     float strokeLen;
 
-    bool alreadyChosen = false; // to prevent multiple calls
+    public bool alreadyChosen = false; // to prevent multiple calls
 
     void Awake() => rt = GetComponent<RectTransform>();
 
@@ -62,7 +62,13 @@ public class SignaturePad : MonoBehaviour,
         AddPoint(ev);
     }
 
-    public void OnDrag(PointerEventData ev) => AddPoint(ev);
+    public void OnDrag(PointerEventData ev)
+    {
+        if (alreadyChosen) return; // prevent multiple calls
+        // add point to current stroke
+        AddPoint(ev);
+
+    }
 
     public void deleteSignature()
     {

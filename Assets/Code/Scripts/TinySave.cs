@@ -80,6 +80,24 @@ public class TinySave : MonoBehaviour
     }
 
 
+    private void Start()
+    {
+        if(HasPlayedBefore)
+        {
+            BasicFlowEngine basicFlowEngine = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>();
+            //basicFlowEngine.ExecuteNode("Tutorial");
+        }
+        else
+        {
+            //get the basicflowengine
+            BasicFlowEngine basicFlowEngine = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>();
+            basicFlowEngine.ExecuteNode("FirstPlay");
+
+            //save the game state
+            Save();
+        }
+    }
+
     [Serializable]
     class Wrapper<T> { public List<T> items; }
 }

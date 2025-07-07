@@ -17,6 +17,10 @@ public class LoadAndShowStone : Order
 
     [SerializeField]
     int waitTime = 5;
+
+
+    [SerializeField]
+    StoneCreator stoneCreator;
     public GameObject SpawnStoneOutline(float width = 0.05f)
     {
         //get a random List<Vector3> from Compass rocks which is List<List<Vector3>>
@@ -106,6 +110,9 @@ public class LoadAndShowStone : Order
         lineGO.transform.localScale = new Vector3(scale, scale, scale);
 
         // --- End Changes ---
+
+        stoneCreator.outlinePoints = normalizedPts;
+
 
         return lineGO;
     }

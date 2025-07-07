@@ -22,16 +22,20 @@ public class MapCompletion : MonoBehaviour
     Material stoneMaterial;
 
     [SerializeField]
-    List<GameObject> stones = new List<GameObject>();
+    public List<GameObject> stones = new List<GameObject>();
 
     [SerializeField]
     public GameObject createdStone1, createdStone2, foundStone;
+    [SerializeField]
+    public bool destroyedStone1 = false, destroyedStone2 = false, foundStoneCreated = false;
 
     [SerializeField]
     public bool southQuadrant = false;
 
     [SerializeField]
     GameObject bakery, cottage, church;
+
+    public static bool alreadyLoaded=false;
 
     IEnumerator wait10AndCreateStones()
     {
@@ -55,11 +59,14 @@ public class MapCompletion : MonoBehaviour
 
             stoneObject.SetActive(false); // Initially set to inactive
 
+            //stoneObject.AddComponent<KeepOne>(); // Ensure this stone persists across scenes
             DontDestroyOnLoad(stoneObject); // Ensure the stone persists across scenes
 
             stones.Add(stoneObject);
 
         }
+
+        alreadyLoaded = true; // Set the flag to true after loading the stones
 
         //foreach (var rock in Compass.rocks)
         //{
@@ -110,9 +117,9 @@ public class MapCompletion : MonoBehaviour
 
         //}
 
-        
 
-        
+
+
 
     }
 
@@ -145,6 +152,39 @@ public class MapCompletion : MonoBehaviour
                     //if it's 81 or 87
                     if(child.name.Contains("81") || child.name.Contains("87"))
                     {
+
+                        if (child.name.Contains("81"))
+                        {
+                            //spawn the createdStone1 prefab at the position of the sphere
+                            GameObject stoneCopy = Instantiate(createdStone1, sphere.transform.position, Quaternion.identity, sphere.transform);
+                            stoneCopy.name = "Created Stone 1 " + child.name; // Name the stone copy
+                            stoneCopy.transform.localScale = Vector3.one * 0.05f; // Scale down the stone copy
+                            stoneCopy.SetActive(true); // Activate the stone copy
+
+                            //rotate the stone copy to face the centre of the map
+                            if (centreOfMap != null)
+                            {
+                                Vector3 directionToCentre = (centreOfMap.transform.position - stoneCopy.transform.position).normalized;
+                                Quaternion lookRotation = Quaternion.LookRotation(directionToCentre);
+                                stoneCopy.transform.rotation = lookRotation;
+                            }
+                        }
+                        else if (child.name.Contains("87"))
+                        {
+                            //spawn the createdStone2 prefab at the position of the sphere
+                            GameObject stoneCopy = Instantiate(createdStone2, sphere.transform.position, Quaternion.identity, sphere.transform);
+                            stoneCopy.name = "Created Stone 2 " + child.name; // Name the stone copy
+                            stoneCopy.transform.localScale = Vector3.one * 0.05f; // Scale down the stone copy
+                            stoneCopy.SetActive(true); // Activate the stone copy
+                            //rotate the stone copy to face the centre of the map
+                            if (centreOfMap != null)
+                            {
+                                Vector3 directionToCentre = (centreOfMap.transform.position - stoneCopy.transform.position).normalized;
+                                Quaternion lookRotation = Quaternion.LookRotation(directionToCentre);
+                                stoneCopy.transform.rotation = lookRotation;
+                            }
+                        }
+
                         continue;
                     }
                 }
@@ -153,6 +193,38 @@ public class MapCompletion : MonoBehaviour
                     //if it's 61 or 53
                     if (child.name.Contains("61") || child.name.Contains("53"))
                     {
+
+                        if (child.name.Contains("61"))
+                        {
+                            //spawn the createdStone1 prefab at the position of the sphere
+                            GameObject stoneCopy = Instantiate(createdStone1, sphere.transform.position, Quaternion.identity, sphere.transform);
+                            stoneCopy.name = "Created Stone 1 " + child.name; // Name the stone copy
+                            stoneCopy.transform.localScale = Vector3.one * 0.05f; // Scale down the stone copy
+                            stoneCopy.SetActive(true); // Activate the stone copy
+                            //rotate the stone copy to face the centre of the map
+                            if (centreOfMap != null)
+                            {
+                                Vector3 directionToCentre = (centreOfMap.transform.position - stoneCopy.transform.position).normalized;
+                                Quaternion lookRotation = Quaternion.LookRotation(directionToCentre);
+                                stoneCopy.transform.rotation = lookRotation;
+                            }
+                        }
+                        else if (child.name.Contains("53"))
+                        {
+                            //spawn the createdStone2 prefab at the position of the sphere
+                            GameObject stoneCopy = Instantiate(createdStone2, sphere.transform.position, Quaternion.identity, sphere.transform);
+                            stoneCopy.name = "Created Stone 2 " + child.name; // Name the stone copy
+                            stoneCopy.transform.localScale = Vector3.one * 0.05f; // Scale down the stone copy
+                            stoneCopy.SetActive(true); // Activate the stone copy
+                            //rotate the stone copy to face the centre of the map
+                            if (centreOfMap != null)
+                            {
+                                Vector3 directionToCentre = (centreOfMap.transform.position - stoneCopy.transform.position).normalized;
+                                Quaternion lookRotation = Quaternion.LookRotation(directionToCentre);
+                                stoneCopy.transform.rotation = lookRotation;
+                            }
+                        }
+
                         continue; // Skip these spheres in the north quadrant
                     }
                 }
@@ -161,8 +233,8 @@ public class MapCompletion : MonoBehaviour
                 if (stones.Count > 0)
                 {
                     int randomIndex = Random.Range(0, stones.Count);
-                    GameObject stoneCopy = Instantiate(stones[randomIndex], sphere.transform.position, Quaternion.identity);
-                    stoneCopy.transform.parent = sphere.transform; // Set parent to the sphere
+                    GameObject stoneCopy = Instantiate(stones[randomIndex], sphere.transform.position, Quaternion.identity,sphere.transform);
+                    //stoneCopy.transform.parent = sphere.transform; // Set parent to the sphere
                     stoneCopy.name = "Stone Copy " + child.name; // Name the stone copy
                                                                  //set scale to 0.05f
                     stoneCopy.transform.localScale = Vector3.one * 0.05f; // Scale down the stone copy
@@ -176,6 +248,8 @@ public class MapCompletion : MonoBehaviour
                         Quaternion lookRotation = Quaternion.LookRotation(directionToCentre);
                         stoneCopy.transform.rotation = lookRotation;
                     }
+
+                    Debug.Log("Spawned stone "+ child.name);
                 }
                 else
                 {

@@ -15,7 +15,7 @@ public class LocationRandomiser : MonoBehaviour
     //a list of location variables
     LocationVariable[] locationVariables;
 
-     LUTELocationInfo[] locationInfos;
+    LUTELocationInfo[] locationInfos;
 
     [SerializeField]
     bool debugMode = true;
@@ -26,7 +26,7 @@ public class LocationRandomiser : MonoBehaviour
     public LocationVariable lastSeenLocation;
 
 
-    public  bool southQuadrant = false;
+    public bool southQuadrant = false;
 
     static LocationRandomiser instance;
 
@@ -93,10 +93,10 @@ public class LocationRandomiser : MonoBehaviour
             var mapManager = basicFlowEngine.GetMapManager();
 
             //if the digit is not 1, then hide it and it's not 10 or any other number that has a digit in it
-            if (!name.Contains("1") || name.Contains("10") || name.Contains("11") || name.Contains("12") || name.Contains("13") || name.Contains("14") )
+            if (!name.Contains("1") || name.Contains("10") || name.Contains("11") || name.Contains("12") || name.Contains("13") || name.Contains("14"))
             {
                 //if it's not the LastSeenLocation and TargetLocation
-                if(name.Contains("LastSeenLocation") || name.Contains("TargetLocation"))
+                if (name.Contains("LastSeenLocation") || name.Contains("TargetLocation"))
                 {
                     continue;
                 }
@@ -111,6 +111,18 @@ public class LocationRandomiser : MonoBehaviour
                 mapManager.ShowLocationMarker(variable);
             }
         }
+    }
+
+    
+    //function to set the last seen and target to the first NPC in the specified quadrant
+    public void SetLastSeenAndTargetToFirstNPC()
+    {
+
+
+        lastSeenLocation.Value = GetLocationWithID(7);
+            targetLocation.Value = GetLocationWithID(8);
+
+
     }
 
     void Start()
@@ -211,7 +223,7 @@ public class LocationRandomiser : MonoBehaviour
                 }
 
                 //the first one should be set to the location that has barn in the name
-                if(name.Contains("StartingLocation1"))
+                if (name.Contains("StartingLocation1"))
                 {
                     //get the first location in the list that contains barn in the name
                     LUTELocationInfo location = Array.Find(locationInfos, x => x.name.ToLower().Contains("barn"));
@@ -259,7 +271,7 @@ public class LocationRandomiser : MonoBehaviour
         //filter locations based on quadrant, assume south quadrant
         string quadrant = southQuadrant ? "south" : "north";
 
-        if(debugMode)
+        if (debugMode)
         {
             quadrant = "campus";
         }
@@ -294,11 +306,19 @@ public class LocationRandomiser : MonoBehaviour
 
 
         //print the location Value name of both the locationVariable and the lastseen location
-        Debug.Log("Location Variable: " + locationVariable.Value.name);
-        Debug.Log("Last Seen Location: " + lastSeenLocation.Value.name);
+        //Debug.Log("Location Variable: " + locationVariable.Value.name);
+        //Debug.Log("Last Seen Location: " + lastSeenLocation.Value.name);
 
         //pick the first one that in the array
-        return locationsWithSameId[0];
+        if(locationsWithSameId.Length == 0)
+        {
+            Debug.Log("No locations with the same id found");
+            return lastSeenLocation.Value;
+        }
+        else
+        {
+            return locationsWithSameId[0];
+        }
 
 
     }
@@ -372,7 +392,7 @@ public class LocationRandomiser : MonoBehaviour
             string id = id_full.Split('.')[0];
 
             //to int
-            int newId = int.Parse(id)-1;
+            int newId = int.Parse(id) - 1;
 
             //raise the event
             interfaceGameEvent[newId].Raise();
@@ -484,7 +504,7 @@ public class LocationRandomiser : MonoBehaviour
 
     public LUTELocationInfo GetLocationWithID(int id)
     {
-               //filter locations based on quadrant  
+        //filter locations based on quadrant  
         string quadrant = southQuadrant ? "south" : "north";
         if (debugMode)
         {
@@ -517,11 +537,15 @@ public class LocationRandomiser : MonoBehaviour
 
         LUTELocationInfo[] filteredLocations = Array.FindAll(locationInfos, x => x.name.ToLower().Contains(quadrant));
         //get all locations with the same id within the filtered locations  
-        LUTELocationInfo[] locationsWithSameId = Array.FindAll(filteredLocations, x => x.name.StartsWith(id));
+        LUTELocationInfo[] locationsWithSameId = Array.FindAll(filteredLocations, x => {
+            string[] parts = x.name.Split('-', '.');
+            return parts.Length > 0 && parts[0] == id;
+        });
         //pick a random one that is not the current one  
         int index = UnityEngine.Random.Range(0, locationsWithSameId.Length);
 
-        if(locationsWithSameId.Length == 1) {
+        if (locationsWithSameId.Length == 1)
+        {
             Debug.Log("Only one location with the same id found");
             return locationsWithSameId[0];
         }
@@ -554,7 +578,7 @@ public class LocationRandomiser : MonoBehaviour
                 break;
             }
         }
-        if(locationsWithSameId.Length == 0)
+        if (locationsWithSameId.Length == 0)
         {
             Debug.Log("No locations with the same id found");
             return currentLocation;
@@ -564,8 +588,8 @@ public class LocationRandomiser : MonoBehaviour
         return locationsWithSameId[index];
 
     }
-        // Update is called once per frame
-        void Update()
+    // Update is called once per frame
+    void Update()
     {
 
         //if press r, randomise the location  

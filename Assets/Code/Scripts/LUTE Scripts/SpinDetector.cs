@@ -37,9 +37,13 @@ public class SpinDetector : Order
         else
         {
             Debug.LogWarning("Gyroscope not supported on this device.");
+            Continue();
         }
 
-           // Continue();
+
+        // Start a coroutine to continue the order after 1 minute if the user doesn't spin
+        StartCoroutine(continueAfterAMinute());
+        // Continue();
     }
 
 
@@ -96,6 +100,12 @@ public class SpinDetector : Order
         }
     }
 
+
+    IEnumerator continueAfterAMinute()
+    {
+        yield return new WaitForSeconds(90f); // Wait for 1 minute
+        Continue(); // Continue the order after 1 minute
+    }
     public override string GetSummary()
     {
         //you can use this to return a summary of the order which is displayed in the inspector of the order

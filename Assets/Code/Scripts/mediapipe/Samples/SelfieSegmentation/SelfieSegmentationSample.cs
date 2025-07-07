@@ -131,7 +131,6 @@ public class SelfieSegmentationSample : MonoBehaviour
 
     public void OnClick()
     {
-
         if(pressedButton == false)
         pressedButton = true;
     }
@@ -244,7 +243,7 @@ public class SelfieSegmentationSample : MonoBehaviour
             if (!forceFinishLine || pauseAfterFinish)
                 yield return new WaitForSeconds(endPause);
 
-            // Coroutine ends → runningCoroutine becomes null (see wrapper)
+            // Coroutine ends -> runningCoroutine becomes null (see wrapper)
         }
     }
 
@@ -307,6 +306,14 @@ public class SelfieSegmentationSample : MonoBehaviour
 
         if (pressedButton)
         {
+
+            if (contour.Count < 5)
+            {
+                pressedButton = false;
+                return;
+            }
+
+
 
             pressedButton = false;
 

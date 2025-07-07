@@ -57,6 +57,8 @@ public class DecisionMedieval : Order
         //hide the DecisionPanel
         DecisionPanel.GetComponentInChildren<SignaturePad>().deleteSignature();
 
+        DecisionPanel.GetComponentInChildren<SignaturePad>().alreadyChosen = false;
+
         DecisionPanel.SetActive(false);
 
         Continue();
