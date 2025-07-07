@@ -85,7 +85,8 @@ namespace TensorFlowLite
             useBilateral = SystemInfo.graphicsDeviceType != GraphicsDeviceType.OpenGLES3;
             kBilateralFilter = compute.FindKernel("BilateralFilter");
 
-            isGLES = SystemInfo.graphicsDeviceType == GraphicsDeviceType.OpenGLES3;
+            isGLES = (SystemInfo.graphicsDeviceType == GraphicsDeviceType.OpenGLES3)||
+                (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Metal);
             if (isGLES)
             {
                 Debug.Log("[Segmentation] Running CPU-threshold fallback on GLES");
