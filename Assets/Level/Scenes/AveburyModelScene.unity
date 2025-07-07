@@ -265,6 +265,7 @@ GameObject:
   - component: {fileID: 585849333}
   - component: {fileID: 585849332}
   - component: {fileID: 585849331}
+  - component: {fileID: 585849334}
   m_Layer: 5
   m_Name: Button_Exit
   m_TagString: Untagged
@@ -397,6 +398,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 585849329}
   m_CullTransparentMesh: 1
+--- !u!114 &585849334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 585849329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ec29e08913313f49944151a2301d48f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  holdTime: 5
+  OnLongPress:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1586440907}
+        m_TargetAssemblyTypeName: BasicFlowEngine, Assembly-CSharp
+        m_MethodName: ExecuteNode
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Spawn model
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &739490172
 GameObject:
   m_ObjectHideFlags: 0
@@ -709,8 +738,11 @@ GameObject:
   - component: {fileID: 1586440906}
   - component: {fileID: 1586440905}
   - component: {fileID: 1586440904}
-  - component: {fileID: 1586440903}
-  - component: {fileID: 1586440902}
+  - component: {fileID: 1586440910}
+  - component: {fileID: 1586440909}
+  - component: {fileID: 1586440913}
+  - component: {fileID: 1586440912}
+  - component: {fileID: 1586440911}
   m_Layer: 0
   m_Name: BasicFlowEngine
   m_TagString: Untagged
@@ -718,39 +750,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1586440902
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1586440901}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e25b71ff91e05740a6eb925390d6f15, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_PrefabToPlace: {fileID: 908037693231588034, guid: 4ea5a47a9ebb64a4a983301788811ec8, type: 3}
-  m_ObjectName: Model
-  raycastHitEvent: {fileID: 11400000, guid: 503648b3444113b4896ceded8c86c177, type: 2}
-  automaticallyPlaceObject: 1
-  rotateable: 1
-  scaleable: 1
-  moveable: 1
-  planeAlignment: 100
---- !u!114 &1586440903
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1586440901}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40e7ad385acaccf48b9cb2f7fef519f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _duration: 10
 --- !u!114 &1586440904
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -795,8 +794,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeRect:
     serializedVersion: 2
-    x: 763
-    y: 104
+    x: 660.2726
+    y: 88.0909
     width: 80.63
     height: 40
   nodeName: Node
@@ -805,8 +804,6 @@ MonoBehaviour:
   itemId: 0
   orderList:
   - {fileID: 1586440904}
-  - {fileID: 1586440903}
-  - {fileID: 1586440902}
   eventHandler: {fileID: 1586440905}
   isGrouped: 0
   groupIndex: -1
@@ -814,7 +811,7 @@ MonoBehaviour:
   tint: {r: 1, g: 1, b: 1, a: 1}
   useCustomTint: 0
   hoverStartTime: 0
-  targetUnlockNode: {fileID: 0}
+  targetUnlockNode: {fileID: 1586440910}
   targetKeyNode: {fileID: 0}
   showDesc: 0
   saveable: 0
@@ -838,10 +835,12 @@ MonoBehaviour:
   hideComponents: 0
   localizationId: 
   selectedOrders: []
-  selectedNodes: []
-  nodeViewHeight: 786
+  selectedNodes:
+  - {fileID: 1586440910}
+  nodeViewHeight: 412.4
   hideOrders: []
-  variables: []
+  variables:
+  - {fileID: 1586440912}
   variablesExpanded: 1
   variablesScrollPos: {x: 0, y: 0}
   mapLocations: []
@@ -852,8 +851,8 @@ MonoBehaviour:
   showHandlerInfoOnGraph: 1
   showAnnotations: 1
   labelTint: {r: 1, g: 1, b: 1, a: 1}
-  zoom: 1
-  scrollPos: {x: 0, y: 0}
+  zoom: 0.9100001
+  scrollPos: {x: -148.39496, y: 54.53051}
   version: 1
   sidesOfDie: 6
   postcards: []
@@ -874,6 +873,113 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1586440909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1586440901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e25b71ff91e05740a6eb925390d6f15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PrefabToPlace: {fileID: 908037693231588034, guid: 4ea5a47a9ebb64a4a983301788811ec8, type: 3}
+  m_ObjectName: Model
+  raycastHitEvent: {fileID: 11400000, guid: 503648b3444113b4896ceded8c86c177, type: 2}
+  automaticallyPlaceObject: 1
+  rotateable: 0
+  scaleable: 0
+  moveable: 0
+  planeAlignment: 100
+--- !u!114 &1586440910
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1586440901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc9f689a21732a34489f55c1ed82a919, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nodeRect:
+    serializedVersion: 2
+    x: 898.1651
+    y: 88.101875
+    width: 126.76
+    height: 40
+  nodeName: Spawn model
+  nodeDescription: Basic building block of a narrative engine
+  groupDescription: A series of nodes that can be executed as a group
+  itemId: 0
+  orderList:
+  - {fileID: 1586440913}
+  - {fileID: 1586440909}
+  eventHandler: {fileID: 1586440911}
+  isGrouped: 0
+  groupIndex: -1
+  repeatable: 0
+  tint: {r: 1, g: 1, b: 1, a: 1}
+  useCustomTint: 0
+  hoverStartTime: 0
+  targetUnlockNode: {fileID: 0}
+  targetKeyNode: {fileID: 1586440906}
+  showDesc: 0
+  saveable: 0
+  updateLocationStatusToComplete: 1
+  NodeComplete: 0
+--- !u!114 &1586440911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1586440901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ff5d05b32c24db409e01e50a2be8298, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parentNode: {fileID: 1586440910}
+  location:
+    locationRef: {fileID: 1586440912}
+    locationVal: {fileID: 0}
+  requiresPress: 0
+  autoTrigger: 1
+  requiresLocation: 1
+  overrideLocationDisplayList: {fileID: 0}
+--- !u!114 &1586440912
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1586440901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f6b6fee47fe44e48b3fa567bf2412cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scope: 0
+  key: Barn
+  propertyReferences: []
+  value: {fileID: 11400000, guid: 830172ee2a623bc43a7ced05db42d141, type: 2}
+--- !u!114 &1586440913
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1586440901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40e7ad385acaccf48b9cb2f7fef519f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _duration: 10
 --- !u!1 &1772590207
 GameObject:
   m_ObjectHideFlags: 0

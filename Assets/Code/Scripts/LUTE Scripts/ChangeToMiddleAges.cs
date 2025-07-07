@@ -43,6 +43,17 @@ public class ChangeToMiddleAges : Order
         Compass compass = GameObject.Find("Compass Test").GetComponent<Compass>();
         compass.timePeriod = Compass.TimePeriod.MiddleAges;
 
+        //get the TargetLocation locationvariable form the engine
+
+        //var engine = GetEngine();
+        //var targetLocation = engine.GetVariable<LocationVariable>("TargetLocation");
+
+        //set this to location 8.1, north or south depending on the quadrant
+
+        LocationRandomiser.Instance.SetLastSeenAndTargetToFirstNPC();
+
+        //if(LocationRandomiser.Instance.southQuadrant)
+
         //GameObject.Find("Copper Pipe(Clone)").SetActive(false);
         //GameObject.Find("Pit(Clone)").SetActive(false);
         //GameObject.Find("Stone 7_LP(Clone)").SetActive(false);
