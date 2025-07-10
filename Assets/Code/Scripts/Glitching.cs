@@ -61,7 +61,10 @@ public class Glitching : MonoBehaviour
         // Get player location (make sure this is set up in your GPS system)
 
         //use the Mapbox location service to get the player location
-        Vector2d playerLocation = _mapManager.TrackerPos();
+        //Vector2d playerLocation = _mapManager.TrackerPos();
+
+        //get the current position of the player
+        Vector2d playerLocation = LocationProviderFactory.Instance.DefaultLocationProvider.CurrentLocation.LatitudeLongitude;
 
         //LocationProviderFactory.Instance.DefaultLocationProvider.CurrentLocation.LatitudeLongitude;
 

@@ -49,6 +49,7 @@ public class Compass : MonoBehaviour
 
     [Header("Neolithic Light (3D)")]
     [SerializeField] private GameObject neolithicLight;  // e.g. a point light or some 3D object
+    [SerializeField] private GameObject neolithicLightFrontLight;
 
 
     //debug bool to use the test position instead of the real GPS location
@@ -76,8 +77,8 @@ public class Compass : MonoBehaviour
     [Serializable]
     public struct TargetMarker
     {
-        public LocationVariable location;      // NPC8 / 9 / 10
-        public GameObject icon;           // the blue circle
+        public LUTELocationInfo location;      // NPC8 / 9 / 10
+        public GameObject icon;           // the arrow
     }
 
     public TargetMarker[] middleAgeTargets;   // size 3 in the Inspector
@@ -137,9 +138,9 @@ public class Compass : MonoBehaviour
         NPC9 = main.GetVariable<LocationVariable>("NPC9");
         NPC10 = main.GetVariable<LocationVariable>("NPC10");
 
-        middleAgeTargets[0].location = NPC8;
-        middleAgeTargets[1].location = NPC9;
-        middleAgeTargets[2].location = NPC10;
+        middleAgeTargets[0].location = NPC8.Value;
+        middleAgeTargets[1].location = NPC9.Value;
+        middleAgeTargets[2].location = NPC10.Value;
 
         StartCoroutine(LoadStonesAfterSeconds());
 
@@ -293,7 +294,7 @@ public class Compass : MonoBehaviour
                         var m = middleAgeTargets[i];
                         if (m.location == null) continue;
 
-                        Vector2 npcLatLon = ParseLatLon(m.location.Value.Position);
+                        Vector2 npcLatLon = ParseLatLon(m.location.Position);
 
                         // bearing relative to TRUE north
                         float bearingNpc = (float)CalculateBearing(currentLatLon, npcLatLon);
@@ -361,7 +362,35 @@ public class Compass : MonoBehaviour
                                             new Vector3(halfW - edge.x, halfH + edge.y, 2f));
                         world.z = neolithicLight.transform.position.z;
                         neolithicLight.transform.position = world;
+
+                        //// 2-C Neolithic top light brightness
+                        if (neolithicLightFrontLight != null)
+                        {
+                            Light lightComponent = neolithicLightFrontLight.GetComponent<Light>();
+                            if (lightComponent != null)
+                            {
+
+                                
+
+                                float xCoord = 2 - Math.Abs(world.x);
+
+                                lightComponent.intensity = xCoord * 10f;
+
+                                //if (world.x > -1 && world.x < 1 )
+                                //{
+                                //    // If the light is within the screen bounds, set it to full brightness
+                                //    lightComponent.intensity = 1f;
+                                //}
+                                //else
+                                //{
+                                //    // If the light is outside the screen bounds, dim it
+                                //    lightComponent.intensity = 0.2f;
+                                //}
+                            }
+                        }
                     }
+
+                   
                     break;
                 }
         }
