@@ -153,6 +153,9 @@ public class MapCompletion : MonoBehaviour
                     if(child.name.Contains("81") || child.name.Contains("87"))
                     {
 
+                        if (createdStone1 == null) continue;
+                        if (createdStone2 == null) continue;
+
                         if (child.name.Contains("81"))
                         {
                             //spawn the createdStone1 prefab at the position of the sphere
@@ -194,8 +197,14 @@ public class MapCompletion : MonoBehaviour
                     if (child.name.Contains("61") || child.name.Contains("53"))
                     {
 
+                        if (createdStone1 == null) continue;
+                        if (createdStone2 == null) continue;
+
                         if (child.name.Contains("61"))
                         {
+
+
+
                             //spawn the createdStone1 prefab at the position of the sphere
                             GameObject stoneCopy = Instantiate(createdStone1, sphere.transform.position, Quaternion.identity, sphere.transform);
                             stoneCopy.name = "Created Stone 1 " + child.name; // Name the stone copy

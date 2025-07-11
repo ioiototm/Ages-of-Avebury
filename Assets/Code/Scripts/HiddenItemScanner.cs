@@ -44,6 +44,7 @@ public class HiddenItemScanner : MonoBehaviour
     private bool isWithinDetectionRange = false;
 
 
+
     private int pingAmmount = 0;
 
     private bool isActive = false;
@@ -66,6 +67,24 @@ public class HiddenItemScanner : MonoBehaviour
             if (feedbackText != null)
             {
                 feedbackText.text = "Tap Scan to begin searching";
+            }
+
+
+            // Replace the obsolete method with the recommended one
+           // ARPlaneManager planeManager = FindFirstObjectByType<ARPlaneManager>();
+
+            if (planeManager != null)
+            {
+                foreach (var trackable in planeManager.trackables)
+                {
+                    var meshRenderer = trackable.GetComponent<MeshRenderer>();
+                    var color = meshRenderer.sharedMaterials[0].GetColor("_TexTintColor");
+                    color.a = 0.8f;
+
+                    meshRenderer.sharedMaterials[0].SetColor("_TexTintColor", color);
+
+
+                }
             }
         }
     }
@@ -332,7 +351,7 @@ public class HiddenItemScanner : MonoBehaviour
             // Adjust orientation if needed
             //spawnedObject.transform.rotation = Quaternion.Euler(-90, spawnedObject.transform.rotation.eulerAngles.y, 0);
 
-      
+
 
             if (feedbackText != null)
             {
@@ -353,6 +372,32 @@ public class HiddenItemScanner : MonoBehaviour
             spawnedAndDiscoveredObject = spawnedObject;
             // Notify listeners about the discovered item
             OnItemDiscovered?.Invoke(spawnedObject);
+
+            // Replace the obsolete method with the recommended one
+
+            if (planeManager == null)
+            {
+                planeManager = FindFirstObjectByType<ARPlaneManager>();
+               
+            }
+
+            
+            if (planeManager != null)
+            {
+
+                //go through each trackable in the plane manager and set the opacity of the _TextTintColor material in the MeshRenderer to 0.2f
+
+                foreach(var trackable in planeManager.trackables)
+                {
+                    var meshRenderer = trackable.GetComponent<MeshRenderer>();
+                    var color = meshRenderer.sharedMaterials[0].GetColor("_TexTintColor");
+                    color.a = 0f;
+
+                    meshRenderer.sharedMaterials[0].SetColor("_TexTintColor", color);
+
+
+                }
+            }
         }
         else
         {

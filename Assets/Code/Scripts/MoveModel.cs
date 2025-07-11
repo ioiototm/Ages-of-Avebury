@@ -75,7 +75,7 @@ public class MoveModel : MonoBehaviour
 
         //get the offset property 
         Vector2 offset = materialUp.GetVector("Vector2_E103CB4D");
-        print(offset);
+        //print(offset);
 
 
         //Debug.Log("OffsetX: " + offsetX + " OffsetY: " + offsetY);
