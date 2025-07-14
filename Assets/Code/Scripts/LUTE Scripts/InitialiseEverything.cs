@@ -144,6 +144,8 @@ public class InitialiseEverything : Order
 
         centering = GameObject.Find("PlayerTarget").GetComponent<ImmediatePositionWithLocationProvider>();
 
+        GetEngine().GetAbstractMap().SetZoom(16.5f);
+
         // Start centering the map to the screen every second
         StartCoroutine(centerToScreenEverySecond());
 
@@ -183,10 +185,12 @@ public class InitialiseEverything : Order
         return pts;
     }
 
-    private static bool activelyCentering = true;
+    public static bool activelyCentering = true;
+    private static bool isMapMoved = false;
 
     public static void movedMap()
-            {
+    {
+
         // If the map has been moved, stop actively centering
         activelyCentering = false;
         Debug.Log("Map has been moved, stopping active centering.");
@@ -200,8 +204,10 @@ public class InitialiseEverything : Order
         {
             // Center the map to the current location
             activelyCentering = true;
-            GetEngine().GetAbstractMap().SetZoom(17f);
+            GetEngine().GetAbstractMap().SetZoom(16.5f);
             centering.UpdateMapToPlayer();
+
+            StartCoroutine(waitAbitAndRestartMap());
 
 
             //StartCoroutine(centerToScreenEverySecond());
@@ -214,10 +220,17 @@ public class InitialiseEverything : Order
         }
     }
 
+    IEnumerator waitAbitAndRestartMap()
+    {
+        // Wait for 2 seconds before restarting the map
+        yield return new WaitForSeconds(0.5f);
+        // Restart the map
+        activelyCentering = true;
+    }
+
     IEnumerator centerToScreenEverySecond()
     {
 
-       
 
         while (true)
         {
