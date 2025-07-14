@@ -1,6 +1,7 @@
 using LoGaCulture.LUTE;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
 
 
@@ -20,6 +21,14 @@ public class DecisionMedieval : Order
 
     [SerializeField]
     GameObject stoneShapeUI;
+
+    [SerializeField]
+    Material stoneSketchMaterial;
+
+    [SerializeField]
+    RenderTexture rt;
+    
+    private GameObject instantiatedStone;
 
 
     //enum to be either stone1, stone2, otherStone, bakery, cottage, church
@@ -71,6 +80,27 @@ public class DecisionMedieval : Order
 
         sign.alreadyChosen = false;
 
+        // Destroy the instantiated stone
+        if (instantiatedStone != null)
+        {
+            Destroy(instantiatedStone);
+        }
+        else
+        {
+            Debug.LogWarning("No instantiated stone to destroy.");
+        }
+
+        //destroy the camera
+        GameObject camGO = GameObject.Find("StonePreviewCam");
+        if (camGO != null)
+        {
+            Destroy(camGO);
+        }
+        else
+        {
+            Debug.LogWarning("No camera to destroy.");
+        }
+
         DecisionPanel.SetActive(false);
 
         Continue();
@@ -116,15 +146,57 @@ public class DecisionMedieval : Order
 
 
 
-        var outlinePoints = stone.GetComponent<StoneCreator>().outlinePoints;
-
-        //scale them by 5
-        for (int i = 0; i < outlinePoints.Count; i++)
+        //instantiate a copy of the stone prefab
+        if (stone == null)
         {
-            outlinePoints[i] *= 20f;
+            Debug.LogError("Stone prefab is not assigned in the inspector.");
+            //return;
+        }
+        instantiatedStone = Instantiate(stone, Vector3.zero, Quaternion.identity);
+
+        instantiatedStone.layer = LayerMask.NameToLayer("StonePreview");
+
+        instantiatedStone.SetActive(true);
+
+        //set the material of the instantiated stone
+        if (instantiatedStone.TryGetComponent<Renderer>(out Renderer renderer))
+        {
+            renderer.material = stoneSketchMaterial;
+        }
+        else
+        {
+            Debug.LogError("Renderer component not found on the instantiated stone.");
         }
 
-        stoneShapeUI.GetComponent<UILineRenderer>().Points = outlinePoints.ToArray();
+        GameObject camGO = new GameObject("StonePreviewCam");
+        Camera cam = camGO.AddComponent<Camera>();
+
+        cam.clearFlags = CameraClearFlags.SolidColor;
+        cam.backgroundColor = Color.clear;          // transparent
+        cam.orthographic = true;                 // or perspective, your call
+        cam.cullingMask = 1 << LayerMask.NameToLayer("StonePreview");
+        cam.enabled = false;                // only on when pop-up visible
+
+        cam.targetTexture = rt; // Assign the RenderTexture
+
+       
+
+        Bounds b = instantiatedStone.GetComponent<Renderer>().bounds;
+        camGO.transform.position = b.center + new Vector3(0, 0, -b.extents.magnitude * 2);
+        camGO.transform.LookAt(b.center);
+
+        cam.enabled = true;          // start rendering
+        
+
+        //var outlinePoints = stone.GetComponent<StoneCreator>().outlinePoints;
+
+        ////scale them by 5
+        //for (int i = 0; i < outlinePoints.Count; i++)
+        //{
+        //    outlinePoints[i] *= 20f;
+        //}
+
+        //stoneShapeUI.GetComponent<UILineRenderer>().Points = outlinePoints.ToArray();
 
         decision = new StoneDecision(stoneType, false);
 
@@ -135,6 +207,6 @@ public class DecisionMedieval : Order
     public override string GetSummary()
     {
         //you can use this to return a summary of the order which is displayed in the inspector of the order
-        return "Reads all messages";
+        return "Sets up everything for the decision panel";
     }
 }
