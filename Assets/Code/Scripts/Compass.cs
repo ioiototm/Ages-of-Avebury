@@ -374,6 +374,8 @@ public class Compass : MonoBehaviour
 
                                 float xCoord = 2 - Math.Abs(world.x);
 
+                                if (world.y < 0) xCoord = 0;
+
                                 lightComponent.intensity = xCoord * 10f;
 
                                 //if (world.x > -1 && world.x < 1 )

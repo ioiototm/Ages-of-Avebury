@@ -101,8 +101,8 @@ public class LoadAndShowStone : Order
         lineGO.transform.position = mainCamera.transform.position
                                   + mainCamera.transform.forward * distance;
 
-        // Rotate to face the camera, then rotate 90 degrees on the local X axis
-        lineGO.transform.rotation = mainCamera.transform.rotation * Quaternion.Euler(90, 0, 0);
+        // Rotate to face the camera, then rotate -90 degrees on the local X axis
+        lineGO.transform.rotation = mainCamera.transform.rotation * Quaternion.Euler(-90, 0, 0);
 
         //set the scale to fit the screen
         float screenHeight = 2.0f * distance * Mathf.Tan(mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad);
