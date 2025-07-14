@@ -54,10 +54,22 @@ public class DecisionMedieval : Order
         yield return new WaitForSeconds(5f);
         // Continue with the next step
 
-        //hide the DecisionPanel
-        DecisionPanel.GetComponentInChildren<SignaturePad>().deleteSignature();
+        //remove the saveTheStone and breakTheStone listeners
+        var sign = DecisionPanel.GetComponentInChildren<SignaturePad>();
+        if (sign != null)
+        {
+            sign.OnSaveChosen -= saveTheStone;
+            sign.OnBreakChosen -= breakTheStone;
+        }
+        else
+        {
+            Debug.LogError("SignaturePad component not found on DecisionPanel.");
+        }
 
-        DecisionPanel.GetComponentInChildren<SignaturePad>().alreadyChosen = false;
+        //hide the DecisionPanel
+        sign.deleteSignature();
+
+        sign.alreadyChosen = false;
 
         DecisionPanel.SetActive(false);
 
@@ -69,6 +81,11 @@ public class DecisionMedieval : Order
 
         Debug.Log("Stone saved successfully!");
         decision.Save = true;
+
+        var savedStones = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>().GetVariable<IntegerVariable>("SavedStones");
+        savedStones.Value++;
+
+        
 
         StartCoroutine(wait());
     }

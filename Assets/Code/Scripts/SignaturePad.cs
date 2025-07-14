@@ -84,6 +84,8 @@ public class SignaturePad : MonoBehaviour,
    
     public void OnPointerUp(PointerEventData ev)
     {
+
+        if (alreadyChosen) return;
         if (strokeLen < minStrokeLength)
         {
             Destroy(currentLine.gameObject);
@@ -97,8 +99,7 @@ public class SignaturePad : MonoBehaviour,
         if (localStart.x < 0)
         {
             OnSaveChosen?.Invoke();
-            var savedStones = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>().GetVariable<IntegerVariable>("SavedStones");
-            savedStones.Value++;
+           
         }
         else
             OnBreakChosen?.Invoke();
