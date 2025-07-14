@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI.Extensions;   // 🔹 (namespace for UILineRenderer)
@@ -9,6 +10,7 @@ public class SignaturePad : MonoBehaviour,
     [Header("Visuals")]
     public UILineRenderer linePrefab;          // 🔹 drag InkStroke prefab here
     public float minStrokeLength = 50f;        // pixels
+    public float signatureFinalizeTime = 1f;   // seconds
 
     [Header("Stone Shape")]
     public UILineRenderer stoneShapeObject;
@@ -22,9 +24,14 @@ public class SignaturePad : MonoBehaviour,
     UILineRenderer currentLine;            // 🔹
     List<Vector2> pts = new List<Vector2>();
     Vector2 firstScreenPos;
-    float strokeLen;
+    float totalStrokeLength;
 
     public bool alreadyChosen = false; // to prevent multiple calls
+
+    private List<UILineRenderer> allLines = new List<UILineRenderer>();
+    private Coroutine finalizeCoroutine;
+    private bool isSigning = false;
+    private Camera pressCamera;
 
     void Awake() => rt = GetComponent<RectTransform>();
 
@@ -52,13 +59,26 @@ public class SignaturePad : MonoBehaviour,
     public void OnPointerDown(PointerEventData ev)
     {
         if (alreadyChosen) return; // prevent multiple calls
+
+        if (finalizeCoroutine != null)
+        {
+            StopCoroutine(finalizeCoroutine);
+            finalizeCoroutine = null;
+        }
+
         // new stroke
         currentLine = Instantiate(linePrefab, transform);   // 🔹 child of DrawingSurface
+        allLines.Add(currentLine);
         currentLine.Points = new Vector2[0];
         pts.Clear();
 
-        firstScreenPos = ev.position;
-        strokeLen = 0f;
+        if (!isSigning)
+        {
+            firstScreenPos = ev.position;
+            pressCamera = ev.pressEventCamera;
+            isSigning = true;
+        }
+        
         AddPoint(ev);
     }
 
@@ -72,28 +92,51 @@ public class SignaturePad : MonoBehaviour,
 
     public void deleteSignature()
     {
+        foreach (var line in allLines)
+        {
+            if (line != null)
+            {
+                Destroy(line.gameObject);
+            }
+        }
+        allLines.Clear();
+
         if (currentLine != null)
         {
             Destroy(currentLine.gameObject);
             currentLine = null;
-            pts.Clear();
-            strokeLen = 0f;
+        }
+        
+        pts.Clear();
+        totalStrokeLength = 0f;
+        isSigning = false;
+        if (finalizeCoroutine != null)
+        {
+            StopCoroutine(finalizeCoroutine);
+            finalizeCoroutine = null;
         }
     }
 
    
     public void OnPointerUp(PointerEventData ev)
     {
-
         if (alreadyChosen) return;
-        if (strokeLen < minStrokeLength)
+
+        finalizeCoroutine = StartCoroutine(FinalizeSignature());
+    }
+
+    private IEnumerator FinalizeSignature()
+    {
+        yield return new WaitForSeconds(signatureFinalizeTime);
+
+        if (totalStrokeLength < minStrokeLength)
         {
-            Destroy(currentLine.gameObject);
-            return;
+            deleteSignature();
+            yield break;
         }
 
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            rt, firstScreenPos, ev.pressEventCamera, out var localStart);
+            rt, firstScreenPos, pressCamera, out var localStart);
 
         // decide side (left / right of centre)
         if (localStart.x < 0)
@@ -105,8 +148,7 @@ public class SignaturePad : MonoBehaviour,
             OnBreakChosen?.Invoke();
 
         alreadyChosen = true; // prevent multiple calls
-
-
+        isSigning = false;
     }
 
     // ───────────────────────────────────────────────
@@ -125,6 +167,6 @@ public class SignaturePad : MonoBehaviour,
         currentLine.SetAllDirty();             // 🔹 force redraw
 
         if (pts.Count > 1)
-            strokeLen += Vector2.Distance(pts[^2], pts[^1]);
+            totalStrokeLength += Vector2.Distance(pts[^2], pts[^1]);
     }
 }
