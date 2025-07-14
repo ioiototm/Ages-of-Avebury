@@ -52,6 +52,11 @@ public class LocationRandomiser : MonoBehaviour
         //get all location variables
         List<LocationVariable> locationVariables = basicFlowEngine.GetVariables<LocationVariable>();
         //set the value of each variable to the first location in the list that contains the quadrant
+
+        Compass compassToUpdate = GameObject.FindAnyObjectByType<Compass>();
+
+      
+
         foreach (var variable in locationVariables)
         {
             //get the name of the variable
@@ -70,7 +75,28 @@ public class LocationRandomiser : MonoBehaviour
                 if (location != null)
                 {
                     variable.Value = location;
+                    if (compassToUpdate != null)
+                    {
 
+                        if(number == "8" )
+                        {
+                            compassToUpdate.middleAgeTargets[0].location = location;
+                            Debug.Log("SET THE NPC NUMBER " + number + " TO " + location.name);
+
+                        }
+                        if(number == "9")
+                        {
+                            compassToUpdate.middleAgeTargets[1].location = location;
+                            Debug.Log("SET THE NPC NUMBER " + number + " TO " + location.name);
+                        }
+                        if( number =="10")
+                        {
+                            compassToUpdate.middleAgeTargets[2].location = location;
+                            Debug.Log("SET THE NPC NUMBER " + number + " TO " + location.name);
+                        }
+
+
+                    }
 
                 }
             }
