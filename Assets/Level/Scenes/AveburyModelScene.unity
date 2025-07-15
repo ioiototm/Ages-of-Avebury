@@ -2226,6 +2226,18 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
+          m_StringArgument: Complete Game
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1586440907}
+        m_TargetAssemblyTypeName: BasicFlowEngine, Assembly-CSharp
+        m_MethodName: ExecuteNode
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
           m_StringArgument: Spawn model
           m_BoolArgument: 0
         m_CallState: 2
@@ -7018,6 +7030,8 @@ GameObject:
   - component: {fileID: 1586440913}
   - component: {fileID: 1586440912}
   - component: {fileID: 1586440911}
+  - component: {fileID: 1586440915}
+  - component: {fileID: 1586440914}
   m_Layer: 0
   m_Name: BasicFlowEngine
   m_TagString: Untagged
@@ -7182,7 +7196,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeRect:
     serializedVersion: 2
-    x: 898.1651
+    x: 899.264
     y: 88.101875
     width: 126.76
     height: 40
@@ -7255,6 +7269,55 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _duration: 2
+--- !u!114 &1586440914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1586440901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3297b57b2fe63d849877b450c95c52b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1586440915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1586440901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc9f689a21732a34489f55c1ed82a919, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nodeRect:
+    serializedVersion: 2
+    x: 1290.1531
+    y: 138.87607
+    width: 141.3
+    height: 40
+  nodeName: Complete Game
+  nodeDescription: Basic building block of a narrative engine
+  groupDescription: A series of nodes that can be executed as a group
+  itemId: 0
+  orderList:
+  - {fileID: 1586440914}
+  eventHandler: {fileID: 0}
+  isGrouped: 0
+  groupIndex: -1
+  repeatable: 0
+  tint: {r: 1, g: 1, b: 1, a: 1}
+  useCustomTint: 0
+  hoverStartTime: 0
+  targetUnlockNode: {fileID: 0}
+  targetKeyNode: {fileID: 0}
+  showDesc: 0
+  saveable: 0
+  updateLocationStatusToComplete: 1
+  NodeComplete: 0
 --- !u!1 &1614843343
 GameObject:
   m_ObjectHideFlags: 0
