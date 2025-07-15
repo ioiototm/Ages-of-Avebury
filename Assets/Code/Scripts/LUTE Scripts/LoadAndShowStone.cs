@@ -28,6 +28,8 @@ public class LoadAndShowStone : Order
 
         var randomIndex = Random.Range(0, Compass.meshesAndOutlines.Count);
 
+        Debug.Log("Random Index for Random rock is: " + randomIndex);
+
         var pts = Compass.meshesAndOutlines[randomIndex];
 
         GameObject lineGO = new GameObject("RemoteStoneOutline");
@@ -47,26 +49,7 @@ public class LoadAndShowStone : Order
         var size = bounds.size;
 
         // Normalize points by centering them
-        var normalizedPts = pts.outline.Select(p => p - centerVec2).ToList();
-
-        // Find the maximum distance from the center to scale correctly
-        float maxDist = 0f;
-        foreach (var p in normalizedPts)
-        {
-            if (p.magnitude > maxDist)
-            {
-                maxDist = p.magnitude;
-            }
-        }
-
-        // Normalize all points by the max distance
-        if (maxDist > 0)
-        {
-            for (int i = 0; i < normalizedPts.Count; i++)
-            {
-                normalizedPts[i] /= maxDist;
-            }
-        }
+        var normalizedPts = SelfieSegmentationSample.NormalizeToBounds(pts.outline, new Vector2(-1, -1), new Vector2(1, 1));
 
 
         //remove the last point
@@ -112,6 +95,23 @@ public class LoadAndShowStone : Order
         // --- End Changes ---
 
         stoneCreator.outlinePoints = normalizedPts;
+        //stoneCreator.GenerateSlab();
+
+        //get the mesh filter of this object, and set it to the random mesh from Compass.meshesAndOutlines
+        MeshFilter meshFilter = stoneCreator.GetComponent<MeshFilter>();
+        stoneCreator.enabled = false;
+        if (meshFilter != null)
+        {
+            meshFilter.sharedMesh = Compass.meshesAndOutlines[randomIndex].mesh;
+        }
+        else
+        {
+            Debug.LogError("MeshFilter component not found on the GameObject.");
+        }
+
+        //disable the mesh renderer so it doesn't show
+        stoneCreator.gameObject.SetActive(false);
+  
 
 
         return lineGO;
