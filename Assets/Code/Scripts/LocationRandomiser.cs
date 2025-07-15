@@ -528,7 +528,7 @@ public class LocationRandomiser : MonoBehaviour
     }
 
 
-    public LUTELocationInfo GetLocationWithID(int id)
+    public LUTELocationInfo GetLocationWithID(int id, bool randomise = false)
     {
         //filter locations based on quadrant  
         string quadrant = southQuadrant ? "south" : "north";
@@ -544,7 +544,27 @@ public class LocationRandomiser : MonoBehaviour
             Debug.Log("No locations with the same id found");
             return null;
         }
-        return locationsWithSameId[0];
+
+        if (locationsWithSameId.Length == 1)
+        {
+            Debug.Log("Only one location with the same id found");
+            return locationsWithSameId[0];
+        }
+
+        if (randomise)
+        {
+            //pick a random location from the locations with the same id and return it
+
+            int index = UnityEngine.Random.Range(0, locationsWithSameId.Length);
+
+            return locationsWithSameId[index];
+
+        }
+
+        else
+        {
+            return locationsWithSameId[0];
+        }
     }
 
     public LUTELocationInfo RandomiseCurrentLocation(LUTELocationInfo currentLocation)

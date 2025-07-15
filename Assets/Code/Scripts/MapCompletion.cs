@@ -19,7 +19,13 @@ public class MapCompletion : MonoBehaviour
 
 
     [SerializeField]
+    public bool gameCompleted = false;
+
+    [SerializeField]
     Material stoneMaterial;
+
+    [SerializeField]
+    Material stoneOutlineMaterial;
 
     [SerializeField]
     public List<GameObject> stones = new List<GameObject>();
@@ -55,7 +61,8 @@ public class MapCompletion : MonoBehaviour
             meshFilter.sharedMesh = stoneMesh.mesh;
 
             MeshRenderer meshRenderer = stoneObject.AddComponent<MeshRenderer>();
-            meshRenderer.material = stoneMaterial;
+            //add both materials to the mesh renderer
+            meshRenderer.sharedMaterials = new Material[] { stoneMaterial, stoneOutlineMaterial };
 
             stoneObject.SetActive(false); // Initially set to inactive
 
@@ -127,6 +134,7 @@ public class MapCompletion : MonoBehaviour
     {
         //GameObject map = Instantiate(mapWithEmpty, Vector3.zero, Quaternion.identity);
         GameObject mapObject = mapWithEmpty.transform.GetChild(1).gameObject;
+
 
         completeMap = false; // Reset the flag after spawning
                              //this gameobject has a child transform called "New Stones" and under it, all child transforms
@@ -330,8 +338,12 @@ public class MapCompletion : MonoBehaviour
             //spawn the map with empty
             if (mapWithEmpty != null)
             {
-                StartCoroutine(spawnMap());
-                completeMap = false; // Reset the flag after spawning
+                if (gameCompleted)
+                {
+
+                    StartCoroutine(spawnMap());
+                    completeMap = false; // Reset the flag after spawning
+                }
             }
             else
             {

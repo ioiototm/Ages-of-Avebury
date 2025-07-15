@@ -37,6 +37,21 @@ public class MoveModel : MonoBehaviour
             StartCoroutine(spawnEverything());
 
         }
+
+        //get the xr camera
+        Camera xrCamera = GameObject.Find("XR-New/XR Origin (Mobile AR)/Camera Offset/Main Camera").GetComponent<Camera>();
+
+        //chamge the clipping from 0.1 to 0.01
+        if (xrCamera != null)
+        {
+            xrCamera.nearClipPlane = 0.01f;
+            Debug.Log("XR Camera near clip plane set to 0.01");
+        }
+        else
+        {
+            Debug.LogError("XR Camera not found.");
+        }
+
     }
 
     IEnumerator spawnEverything()
