@@ -10030,7 +10030,6 @@ GameObject:
   - component: {fileID: 1204839950}
   - component: {fileID: 1204839949}
   - component: {fileID: 1204839945}
-  - component: {fileID: 1204839944}
   - component: {fileID: 1204839981}
   - component: {fileID: 1204839980}
   - component: {fileID: 1204839976}
@@ -10489,6 +10488,9 @@ GameObject:
   - component: {fileID: 1204840529}
   - component: {fileID: 1204840531}
   - component: {fileID: 1204840528}
+  - component: {fileID: 1204840534}
+  - component: {fileID: 1204840533}
+  - component: {fileID: 1204840532}
   m_Layer: 0
   m_Name: BasicFlowEngine
   m_TagString: Untagged
@@ -10573,8 +10575,7 @@ MonoBehaviour:
   hideComponents: 1
   localizationId: 
   selectedOrders: []
-  selectedNodes:
-  - {fileID: 1204840088}
+  selectedNodes: []
   nodeViewHeight: 667
   hideOrders: []
   variables:
@@ -10616,8 +10617,8 @@ MonoBehaviour:
   showHandlerInfoOnGraph: 1
   showAnnotations: 1
   labelTint: {r: 1, g: 1, b: 1, a: 1}
-  zoom: 0.28000045
-  scrollPos: {x: 1461.8374, y: 341.81726}
+  zoom: 0.6400004
+  scrollPos: {x: 501.92914, y: -53.192772}
   version: 1
   sidesOfDie: 6
   postcards: []
@@ -10878,19 +10879,6 @@ MonoBehaviour:
   saveable: 0
   updateLocationStatusToComplete: 1
   NodeComplete: 0
---- !u!114 &1204839944
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1204839864}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40e7ad385acaccf48b9cb2f7fef519f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _duration: 15
 --- !u!114 &1204839945
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -10935,7 +10923,6 @@ MonoBehaviour:
   orderList:
   - {fileID: 1204839945}
   - {fileID: 1204840357}
-  - {fileID: 1204839944}
   - {fileID: 1204840175}
   - {fileID: 1204840172}
   - {fileID: 1204840181}
@@ -10964,7 +10951,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40e7ad385acaccf48b9cb2f7fef519f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _duration: 15
+  _duration: 45
 --- !u!114 &1204839951
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -11064,7 +11051,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40e7ad385acaccf48b9cb2f7fef519f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _duration: 15
+  _duration: 90
 --- !u!114 &1204839964
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -14267,8 +14254,11 @@ MonoBehaviour:
   - {fileID: 1204840288}
   - {fileID: 1204840329}
   - {fileID: 1204840092}
+  - {fileID: 1204840534}
   - {fileID: 1204840090}
+  - {fileID: 1204840533}
   - {fileID: 1204840400}
+  - {fileID: 1204840532}
   - {fileID: 1204840399}
   - {fileID: 1204840089}
   eventHandler: {fileID: 0}
@@ -19917,7 +19907,7 @@ MonoBehaviour:
   hoverStartTime: 0
   targetUnlockNode: {fileID: 0}
   targetKeyNode: {fileID: 0}
-  showDesc: 1
+  showDesc: 0
   saveable: 0
   updateLocationStatusToComplete: 1
   NodeComplete: 0
@@ -26312,6 +26302,45 @@ MonoBehaviour:
   waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
+--- !u!114 &1204840532
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40e7ad385acaccf48b9cb2f7fef519f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _duration: 0.75
+--- !u!114 &1204840533
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40e7ad385acaccf48b9cb2f7fef519f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _duration: 0.75
+--- !u!114 &1204840534
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40e7ad385acaccf48b9cb2f7fef519f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _duration: 0.75
 --- !u!1 &1219303569
 GameObject:
   m_ObjectHideFlags: 0
