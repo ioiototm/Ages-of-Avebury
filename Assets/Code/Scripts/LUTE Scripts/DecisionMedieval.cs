@@ -30,6 +30,25 @@ public class DecisionMedieval : Order
     
     private GameObject instantiatedStone;
 
+    private void sendLogToServer()
+    {
+
+        //if visit number is one, make it "first", 2 is "second", 3 is "third"
+        string visitNumberText = visitNumber switch
+        {
+            1 => "first",
+            2 => "second",
+            3 => "third",
+            _ => $"{visitNumber}th"
+        };
+
+        visitNumber++;
+
+        string decisionText = decision.Save ? "save" : "break";
+
+        LogaManager.Instance.LogManager.Log(LoGaCulture.LUTE.Logs.LogLevel.Info, "On their " + visitNumberText + " visit, the player signed to "+ decisionText +" stone " + decision.Type.ToString());
+    }
+
 
     //enum to be either stone1, stone2, otherStone, bakery, cottage, church
     public enum StoneType
@@ -56,6 +75,11 @@ public class DecisionMedieval : Order
 
     [SerializeField]
     StoneDecision decision;
+
+
+    private static int visitNumber = 1;
+
+
 
     IEnumerator wait()
     {
@@ -109,8 +133,11 @@ public class DecisionMedieval : Order
     void saveTheStone()
     {
 
-        Debug.Log("Stone saved successfully!");
+
         decision.Save = true;
+        sendLogToServer();
+        Debug.Log("Stone saved successfully!");
+
 
         var savedStones = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>().GetVariable<IntegerVariable>("SavedStones");
         savedStones.Value++;
@@ -122,8 +149,10 @@ public class DecisionMedieval : Order
 
     void breakTheStone()
     {
-        Debug.Log("Stone broken successfully!");
         decision.Save = false;
+        sendLogToServer();
+        Debug.Log("Stone broken successfully!");
+
 
         StartCoroutine(wait());
     }
