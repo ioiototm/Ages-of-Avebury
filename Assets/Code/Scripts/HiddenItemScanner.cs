@@ -26,6 +26,7 @@ public class HiddenItemScanner : MonoBehaviour
     [SerializeField] private float pingLifetime = 3f;
     [SerializeField] private float directionalPingDelay = 0.7f; // Delay before showing directional pings
     [SerializeField] private float directionalPingDistance = 1f; // Distance to place directional pings
+    [SerializeField] private GameObject scanButtonGameObject;
 
     [Header("AR Settings")]
     [SerializeField] private ARRaycastManager raycastManager;
@@ -69,9 +70,11 @@ public class HiddenItemScanner : MonoBehaviour
                 feedbackText.text = "Tap Scan to begin searching";
             }
 
+            scanButtonGameObject.SetActive(true);
+
 
             // Replace the obsolete method with the recommended one
-           // ARPlaneManager planeManager = FindFirstObjectByType<ARPlaneManager>();
+            // ARPlaneManager planeManager = FindFirstObjectByType<ARPlaneManager>();
 
             if (planeManager != null)
             {
@@ -149,6 +152,9 @@ public class HiddenItemScanner : MonoBehaviour
 
         // Set up AR components if not assigned
         SetupARComponents();
+
+        if(scanButtonGameObject == null)
+            scanButtonGameObject = GameObject.Find("Scan");
 
         if (feedbackText != null)
         {
@@ -341,6 +347,8 @@ public class HiddenItemScanner : MonoBehaviour
 
         // Wait a moment for dramatic effect
         yield return new WaitForSeconds(1.5f);
+        
+        scanButtonGameObject.SetActive(false);
 
         // Spawn the hidden item on the AR plane
         Pose itemPose = GetCenterScreenPose();
