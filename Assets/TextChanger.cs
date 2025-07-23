@@ -21,7 +21,7 @@ public class LocationClickHandler : MonoBehaviour, IPointerClickHandler
         }
         else if (clickCount == 2)
         {
-            messageText.text = "Location skipped!";
+            messageText.text = "I can't get there!";
 
             if (animator != null)
             {

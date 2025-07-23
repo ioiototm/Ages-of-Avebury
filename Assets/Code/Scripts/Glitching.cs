@@ -109,6 +109,12 @@ public class Glitching : MonoBehaviour
 
             BasicFlowEngine flowEngine = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>();
             flowEngine.ExecuteNode("Change to Neolithic");
+            var portalCompleted = flowEngine.GetVariable<LocationVariable>("Portal5");
+            if (portalCompleted != null)
+            {
+                portalCompleted.Value.LocationStatus = LocationStatus.Completed;
+            }
+
 
             //disable this game object
             gameObject.SetActive(false);
