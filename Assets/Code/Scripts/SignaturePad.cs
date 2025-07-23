@@ -68,6 +68,7 @@ public class SignaturePad : MonoBehaviour,
 
         // new stroke
         currentLine = Instantiate(linePrefab, transform);   // 🔹 child of DrawingSurface
+        currentLine.color = Color.black;
         allLines.Add(currentLine);
         currentLine.Points = new Vector2[0];
         pts.Clear();
