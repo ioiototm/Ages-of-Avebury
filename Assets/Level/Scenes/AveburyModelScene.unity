@@ -7284,6 +7284,7 @@ GameObject:
   - component: {fileID: 1586440911}
   - component: {fileID: 1586440915}
   - component: {fileID: 1586440914}
+  - component: {fileID: 1586440916}
   m_Layer: 0
   m_Name: BasicFlowEngine
   m_TagString: Untagged
@@ -7377,7 +7378,7 @@ MonoBehaviour:
   localizationId: 
   selectedOrders: []
   selectedNodes: []
-  nodeViewHeight: 854
+  nodeViewHeight: 512
   hideOrders: []
   variables:
   - {fileID: 1586440912}
@@ -7459,6 +7460,7 @@ MonoBehaviour:
   orderList:
   - {fileID: 1586440913}
   - {fileID: 1586440909}
+  - {fileID: 1586440916}
   eventHandler: {fileID: 1586440911}
   isGrouped: 0
   groupIndex: -1
@@ -7570,6 +7572,20 @@ MonoBehaviour:
   saveable: 0
   updateLocationStatusToComplete: 1
   NodeComplete: 0
+--- !u!114 &1586440916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1586440901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 798dd5877a0a3704f8e839885a8e7169, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mAlpha: 0
+  material: {fileID: 2100000, guid: e4de2fa2efaa31843830928018dffcdb, type: 2}
 --- !u!1 &1614843343
 GameObject:
   m_ObjectHideFlags: 0
