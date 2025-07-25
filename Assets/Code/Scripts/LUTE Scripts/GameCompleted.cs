@@ -12,6 +12,8 @@ public class GameCompleted : Order
         MapCompletion mapCompletion = FindFirstObjectByType<MapCompletion>();
         mapCompletion.gameCompleted = true;
 
+        Continue();
+
     }
     public override string GetSummary()
     {
