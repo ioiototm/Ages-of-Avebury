@@ -112,7 +112,10 @@ public class InitialiseEverything : Order
             var name = locationVariable.Key;
 
             //the names are random but have a number somewhere, so check if the name contains any numbers, in any place
-
+            if (name.Contains("barnCentre"))
+            {
+                mapManager.HideLocationMarker(locationVariable);
+            }
             // Check if the name contains any number  
             if (name.Any(char.IsDigit))
             {
@@ -132,6 +135,7 @@ public class InitialiseEverything : Order
                     mapManager.HideLocationMarker(locationVariable);
                     
                 }
+
                 else
                 {
                     //show the location marker
