@@ -14,7 +14,7 @@ public class DecisionMedieval : Order
     [SerializeField]
     GameObject DecisionPanel;
 
-    
+
 
     [SerializeField]
     GameObject stone;
@@ -27,8 +27,27 @@ public class DecisionMedieval : Order
 
     [SerializeField]
     RenderTexture rt;
-    
+
     private GameObject instantiatedStone;
+
+    private void sendLogToServer()
+    {
+
+        //if visit number is one, make it "first", 2 is "second", 3 is "third"
+        string visitNumberText = visitNumber switch
+        {
+            1 => "first",
+            2 => "second",
+            3 => "third",
+            _ => $"{visitNumber}th"
+        };
+
+        visitNumber++;
+
+        string decisionText = decision.Save ? "save" : "break";
+
+        LogaManager.Instance.LogManager.Log(LoGaCulture.LUTE.Logs.LogLevel.Info, "On their " + visitNumberText + " visit, the player signed to " + decisionText + " stone " + decision.Type.ToString());
+    }
 
 
     //enum to be either stone1, stone2, otherStone, bakery, cottage, church
@@ -56,6 +75,11 @@ public class DecisionMedieval : Order
 
     [SerializeField]
     StoneDecision decision;
+
+
+    private static int visitNumber = 1;
+
+
 
     IEnumerator wait()
     {
@@ -109,21 +133,26 @@ public class DecisionMedieval : Order
     void saveTheStone()
     {
 
-        Debug.Log("Stone saved successfully!");
+
         decision.Save = true;
+        sendLogToServer();
+        Debug.Log("Stone saved successfully!");
+
 
         var savedStones = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>().GetVariable<IntegerVariable>("SavedStones");
         savedStones.Value++;
 
-        
+
 
         StartCoroutine(wait());
     }
 
     void breakTheStone()
     {
-        Debug.Log("Stone broken successfully!");
         decision.Save = false;
+        sendLogToServer();
+        Debug.Log("Stone broken successfully!");
+
 
         StartCoroutine(wait());
     }
@@ -131,7 +160,7 @@ public class DecisionMedieval : Order
 
     public override void OnEnter()
     {
-       var sign = DecisionPanel.GetComponentInChildren<SignaturePad>();
+        var sign = DecisionPanel.GetComponentInChildren<SignaturePad>();
 
         if (sign != null)
         {
@@ -141,7 +170,7 @@ public class DecisionMedieval : Order
         else
         {
             Debug.LogError("SignaturePad component not found on DecisionPanel.");
-        
+
         }
 
 
@@ -179,14 +208,14 @@ public class DecisionMedieval : Order
 
         cam.targetTexture = rt; // Assign the RenderTexture
 
-       
+
 
         Bounds b = instantiatedStone.GetComponent<Renderer>().bounds;
         camGO.transform.position = b.center + new Vector3(0, 0, -b.extents.magnitude * 2);
         camGO.transform.LookAt(b.center);
 
         cam.enabled = true;          // start rendering
-        
+
 
         //var outlinePoints = stone.GetComponent<StoneCreator>().outlinePoints;
 

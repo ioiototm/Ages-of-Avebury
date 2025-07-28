@@ -1,14 +1,15 @@
-﻿using System.Collections;
+﻿using LoGaCulture.LUTE;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI.Extensions;   // 🔹 (namespace for UILineRenderer)
+using UnityEngine.UI.Extensions;   // (namespace for UILineRenderer)
 
 public class SignaturePad : MonoBehaviour,
     IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
     [Header("Visuals")]
-    public UILineRenderer linePrefab;          // 🔹 drag InkStroke prefab here
+    public UILineRenderer linePrefab;          // drag InkStroke prefab here
     public float minStrokeLength = 50f;        // pixels
     public float signatureFinalizeTime = 1f;   // seconds
 
@@ -21,7 +22,7 @@ public class SignaturePad : MonoBehaviour,
     public System.Action OnBreakChosen;
 
     RectTransform rt;
-    UILineRenderer currentLine;            // 🔹
+    UILineRenderer currentLine;
     List<Vector2> pts = new List<Vector2>();
     Vector2 firstScreenPos;
     float totalStrokeLength;
@@ -34,6 +35,8 @@ public class SignaturePad : MonoBehaviour,
     private Camera pressCamera;
 
     void Awake() => rt = GetComponent<RectTransform>();
+
+
 
 
 
@@ -68,7 +71,6 @@ public class SignaturePad : MonoBehaviour,
 
         // new stroke
         currentLine = Instantiate(linePrefab, transform);   // 🔹 child of DrawingSurface
-        currentLine.color = Color.black;
         allLines.Add(currentLine);
         currentLine.Points = new Vector2[0];
         pts.Clear();
@@ -79,7 +81,7 @@ public class SignaturePad : MonoBehaviour,
             pressCamera = ev.pressEventCamera;
             isSigning = true;
         }
-        
+
         AddPoint(ev);
     }
 
@@ -107,7 +109,7 @@ public class SignaturePad : MonoBehaviour,
             Destroy(currentLine.gameObject);
             currentLine = null;
         }
-        
+
         pts.Clear();
         totalStrokeLength = 0f;
         isSigning = false;
@@ -118,7 +120,7 @@ public class SignaturePad : MonoBehaviour,
         }
     }
 
-   
+
     public void OnPointerUp(PointerEventData ev)
     {
         if (alreadyChosen) return;
@@ -139,11 +141,14 @@ public class SignaturePad : MonoBehaviour,
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             rt, firstScreenPos, pressCamera, out var localStart);
 
+
+
         // decide side (left / right of centre)
         if (localStart.x < 0)
         {
             OnSaveChosen?.Invoke();
-           
+
+
         }
         else
             OnBreakChosen?.Invoke();
@@ -164,8 +169,8 @@ public class SignaturePad : MonoBehaviour,
         pts.Add(local);
 
         // update renderer points
-        currentLine.Points = pts.ToArray();    // 🔹 copies list
-        currentLine.SetAllDirty();             // 🔹 force redraw
+        currentLine.Points = pts.ToArray();    // copies list
+        currentLine.SetAllDirty();             // force redraw
 
         if (pts.Count > 1)
             totalStrokeLength += Vector2.Distance(pts[^2], pts[^1]);

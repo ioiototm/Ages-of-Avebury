@@ -49,6 +49,10 @@ public class LocationRandomiser : MonoBehaviour
 
         //filter locations based on quadrant, assume south quadrant
         string quadrant = southQuadrant ? "south" : "north";
+        if (debugMode)
+        {
+            quadrant = "campus";
+        }
         //get all location variables
         List<LocationVariable> locationVariables = basicFlowEngine.GetVariables<LocationVariable>();
         //set the value of each variable to the first location in the list that contains the quadrant
