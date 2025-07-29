@@ -41,6 +41,9 @@ public class MapCompletion : MonoBehaviour
     [SerializeField]
     GameObject bakery, cottage, church;
 
+    [SerializeField]
+    GameObject beamOfLight;
+
     public static bool alreadyLoaded=false;
 
     IEnumerator wait10AndCreateStones()
@@ -172,6 +175,12 @@ public class MapCompletion : MonoBehaviour
                             stoneCopy.transform.localScale = Vector3.one * 0.05f; // Scale down the stone copy
                             stoneCopy.SetActive(true); // Activate the stone copy
 
+                            //spawn a beam of light at the position of the stone, above it
+                            GameObject beam = Instantiate(beamOfLight, stoneCopy.transform.position + Vector3.up * 2f, Quaternion.identity, stoneCopy.transform);
+                            beam.name = "Beam of Light " + child.name; // Name the beam of light
+                            beam.transform.localScale = Vector3.one * 0.1f; // Scale down the beam of light
+                            beam.SetActive(true); // Activate the beam of light
+
                             //rotate the stone copy to face the centre of the map
                             if (centreOfMap != null)
                             {
@@ -187,7 +196,14 @@ public class MapCompletion : MonoBehaviour
                             stoneCopy.name = "Created Stone 2 " + child.name; // Name the stone copy
                             stoneCopy.transform.localScale = Vector3.one * 0.05f; // Scale down the stone copy
                             stoneCopy.SetActive(true); // Activate the stone copy
-                            //rotate the stone copy to face the centre of the map
+                                                       //rotate the stone copy to face the centre of the map
+
+                            //spawn a beam of light at the position of the stone, above it
+                            GameObject beam = Instantiate(beamOfLight, stoneCopy.transform.position + Vector3.up * 2f, Quaternion.identity, stoneCopy.transform);
+                            beam.name = "Beam of Light " + child.name; // Name the beam of light
+                            beam.transform.localScale = Vector3.one * 0.1f; // Scale down the beam of light
+                            beam.SetActive(true); // Activate the beam of light
+
                             if (centreOfMap != null)
                             {
                                 Vector3 directionToCentre = (centreOfMap.transform.position - stoneCopy.transform.position).normalized;
@@ -218,7 +234,13 @@ public class MapCompletion : MonoBehaviour
                             stoneCopy.name = "Created Stone 1 " + child.name; // Name the stone copy
                             stoneCopy.transform.localScale = Vector3.one * 0.05f; // Scale down the stone copy
                             stoneCopy.SetActive(true); // Activate the stone copy
-                            //rotate the stone copy to face the centre of the map
+                                                       //rotate the stone copy to face the centre of the map
+
+                            //spawn a beam of light at the position of the stone, above it
+                            GameObject beam = Instantiate(beamOfLight, stoneCopy.transform.position + Vector3.up * 2f, Quaternion.identity, stoneCopy.transform);
+                            beam.name = "Beam of Light " + child.name; // Name the beam of light
+                            beam.transform.localScale = Vector3.one * 0.1f; // Scale down the beam of light
+                            beam.SetActive(true); // Activate the beam of light
                             if (centreOfMap != null)
                             {
                                 Vector3 directionToCentre = (centreOfMap.transform.position - stoneCopy.transform.position).normalized;
@@ -233,7 +255,13 @@ public class MapCompletion : MonoBehaviour
                             stoneCopy.name = "Created Stone 2 " + child.name; // Name the stone copy
                             stoneCopy.transform.localScale = Vector3.one * 0.05f; // Scale down the stone copy
                             stoneCopy.SetActive(true); // Activate the stone copy
-                            //rotate the stone copy to face the centre of the map
+                                                       //rotate the stone copy to face the centre of the map
+
+                            //spawn a beam of light at the position of the stone, above it
+                            GameObject beam = Instantiate(beamOfLight, stoneCopy.transform.position + Vector3.up * 2f, Quaternion.identity, stoneCopy.transform);
+                            beam.name = "Beam of Light " + child.name; // Name the beam of light
+                            beam.transform.localScale = Vector3.one * 0.1f; // Scale down the beam of light
+                            beam.SetActive(true); // Activate the beam of light
                             if (centreOfMap != null)
                             {
                                 Vector3 directionToCentre = (centreOfMap.transform.position - stoneCopy.transform.position).normalized;
@@ -257,6 +285,12 @@ public class MapCompletion : MonoBehaviour
                     stoneCopy.transform.localScale = Vector3.one * 0.05f; // Scale down the stone copy
 
                     stoneCopy.SetActive(true); // Activate the stone copy
+
+                    //spawn a beam of light at the position of the stone, above it
+                    //GameObject beam = Instantiate(beamOfLight, stoneCopy.transform.position + Vector3.up * 0.4f, Quaternion.identity, stoneCopy.transform);
+                    //beam.name = "Beam of Light " + child.name; // Name the beam of light
+                    //beam.transform.localScale = Vector3.one * 0.1f; // Scale down the beam of light
+                    //beam.SetActive(true); // Activate the beam of light
 
                     //rotate the stone copy to face the centre of the map
                     if (centreOfMap != null)
