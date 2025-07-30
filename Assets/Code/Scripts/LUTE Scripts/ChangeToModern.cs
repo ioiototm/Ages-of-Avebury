@@ -43,6 +43,15 @@ public class ChangeToModern : Order
         Compass compass = GameObject.Find("Compass Test").GetComponent<Compass>();
         compass.timePeriod = Compass.TimePeriod.Modern;
 
+        //get the variable dateInApp
+        var dateInApp = GetEngine().GetVariable<StringVariable>("dateInApp");
+        if (dateInApp != null)
+        {
+            //get todays date and set it to the variable
+            string today = System.DateTime.Now.ToString("dd-MM-yyyy");
+            dateInApp.Value = today;
+        }
+
         //GameObject.Find("Copper Pipe(Clone)").SetActive(false);
         //GameObject.Find("Pit(Clone)").SetActive(false);
         //GameObject.Find("Stone 7_LP(Clone)").SetActive(false);

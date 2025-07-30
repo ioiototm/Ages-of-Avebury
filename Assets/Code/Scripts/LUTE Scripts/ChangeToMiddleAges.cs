@@ -52,6 +52,16 @@ public class ChangeToMiddleAges : Order
 
         LocationRandomiser.Instance.SetLastSeenAndTargetToFirstNPC();
 
+
+        //get the variable dateInApp
+        var dateInApp = GetEngine().GetVariable<StringVariable>("dateInApp");
+        if (dateInApp != null)
+        {
+            //get todays date and set it to the variable
+            string today = System.DateTime.Now.ToString("dd-MM")+"-1722";
+            dateInApp.Value = today;
+        }
+
         //if(LocationRandomiser.Instance.southQuadrant)
 
         //GameObject.Find("Copper Pipe(Clone)").SetActive(false);

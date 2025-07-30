@@ -154,6 +154,15 @@ public class InitialiseEverything : Order
         StartCoroutine(centerToScreenEverySecond());
 
 
+        //get the variable dateInApp
+        var dateInApp = GetEngine().GetVariable<StringVariable>("dateInApp");
+        if (dateInApp != null)
+        {
+            //get todays date and set it to the variable
+            string today = System.DateTime.Now.ToString("dd-MM-yyyy");
+            dateInApp.Value = today;
+        }
+
         LogaManager.Instance.LogManager.Log(LogLevel.Info,"App Version: "+Application.version);
 
 
