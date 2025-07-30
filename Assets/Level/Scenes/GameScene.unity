@@ -10898,6 +10898,8 @@ GameObject:
   - component: {fileID: 1204840586}
   - component: {fileID: 1204840587}
   - component: {fileID: 1204840588}
+  - component: {fileID: 1204840590}
+  - component: {fileID: 1204840589}
   m_Layer: 0
   m_Name: BasicFlowEngine
   m_TagString: Untagged
@@ -10982,9 +10984,9 @@ MonoBehaviour:
   hideComponents: 1
   localizationId: 
   selectedOrders:
-  - {fileID: 1204840588}
+  - {fileID: 1204840535}
   selectedNodes:
-  - {fileID: 1204840210}
+  - {fileID: 1204840088}
   nodeViewHeight: 733
   hideOrders: []
   variables:
@@ -11030,7 +11032,7 @@ MonoBehaviour:
   showAnnotations: 1
   labelTint: {r: 1, g: 1, b: 1, a: 1}
   zoom: 0.5337499
-  scrollPos: {x: 251.9432, y: 282.63824}
+  scrollPos: {x: 911.4282, y: -4.012863}
   version: 1
   sidesOfDie: 6
   postcards: []
@@ -11695,7 +11697,7 @@ MonoBehaviour:
   hoverStartTime: 0
   targetUnlockNode: {fileID: 1204839971}
   targetKeyNode: {fileID: 0}
-  showDesc: 0
+  showDesc: 1
   saveable: 0
   updateLocationStatusToComplete: 1
   NodeComplete: 0
@@ -14425,7 +14427,7 @@ MonoBehaviour:
   storyText: They span in place three times
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 8300000, guid: b91231dca171b9841a09571015c51597, type: 3}
+  voiceOverClip: {fileID: 8300000, guid: 4f03850fe4f13544796b39f877c23f78, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
@@ -14457,7 +14459,7 @@ MonoBehaviour:
   storyText: The ones who came before also had a rock in their hands
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 8300000, guid: 81b89734a9949aa4fb8afbf9b5733a1a, type: 3}
+  voiceOverClip: {fileID: 8300000, guid: f21a809f4a0b5604994e52d9b55a96ce, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
@@ -15037,6 +15039,8 @@ MonoBehaviour:
   - {fileID: 1204840402}
   - {fileID: 1204840560}
   - {fileID: 1204840559}
+  - {fileID: 1204840590}
+  - {fileID: 1204840589}
   - {fileID: 1204840401}
   - {fileID: 1204840133}
   - {fileID: 1204840539}
@@ -23188,7 +23192,7 @@ MonoBehaviour:
   storyText: with their Wayfinder Rock in their hands to leave...
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 8300000, guid: f2f08d96405524f44a8540ccbc3b2528, type: 3}
+  voiceOverClip: {fileID: 8300000, guid: f2e81ca31a890cc4c9b0d5180bdf6f3e, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
@@ -23246,7 +23250,7 @@ MonoBehaviour:
   storyText: 'as smooth as a old axe-sharpener''s block. '
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 8300000, guid: 6cf27ca5593852745a9c2788cb42e3f4, type: 3}
+  voiceOverClip: {fileID: 8300000, guid: 9b48ed6af0a04204f946de8dfe018541, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
@@ -26775,7 +26779,7 @@ MonoBehaviour:
   storyText: Farewell...
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: f8db77209f92513489850cfbdee2a61b, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
@@ -26783,7 +26787,7 @@ MonoBehaviour:
   waitForClick: 0
   timeToWait: 1
   stopVoiceover: 0
-  waitForVO: 0
+  waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
 --- !u!114 &1204840536
@@ -26807,7 +26811,7 @@ MonoBehaviour:
   storyText: You have raised another stone.
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: bb09de6e7fd95a744a5eec324371d886, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
@@ -26815,7 +26819,7 @@ MonoBehaviour:
   waitForClick: 0
   timeToWait: 1
   stopVoiceover: 0
-  waitForVO: 0
+  waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
 --- !u!114 &1204840537
@@ -26839,7 +26843,7 @@ MonoBehaviour:
   storyText: Follow the light to your next location.
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: ee976553c3da4ea408a9d0ae8255199d, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
@@ -26847,7 +26851,7 @@ MonoBehaviour:
   waitForClick: 0
   timeToWait: 1
   stopVoiceover: 0
-  waitForVO: 0
+  waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
 --- !u!114 &1204840538
@@ -26881,10 +26885,10 @@ MonoBehaviour:
   characterNameColour:
     serializedVersion: 2
     rgba: 0
-  storyText: Your stone has been raised.
+  storyText: Hail! Your stone has been raised!
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: a08cc3d4016fe56468027eba11bfc0ee, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
@@ -26892,7 +26896,7 @@ MonoBehaviour:
   waitForClick: 0
   timeToWait: 1
   stopVoiceover: 0
-  waitForVO: 0
+  waitForVO: 1
   setDialogueBox: {fileID: 36597674}
   showButton: 0
 --- !u!114 &1204840540
@@ -27289,10 +27293,10 @@ MonoBehaviour:
   characterNameColour:
     serializedVersion: 2
     rgba: 0
-  storyText: Raise the rock in your hand and point it at yourself or a friend.
+  storyText: Raise the rock in your hand
   typingSpeed: 15
   extendPrevious: 0
-  voiceOverClip: {fileID: 0}
+  voiceOverClip: {fileID: 8300000, guid: fcf4d62a2682a744f8946b753ef4843f, type: 3}
   showAlways: 1
   showCount: 1
   fadeWhenDone: 1
@@ -28742,7 +28746,7 @@ MonoBehaviour:
   _duration: 2
 --- !u!114 &1204840588
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -28753,6 +28757,51 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _duration: 2
+--- !u!114 &1204840589
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40e7ad385acaccf48b9cb2f7fef519f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _duration: 0.75
+--- !u!114 &1204840590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204839864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56d6b77eb00dafe45bc66ef633cccddc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  character: {fileID: 0}
+  characterPortrait: {fileID: 0}
+  characterName: 
+  characterNameColour:
+    serializedVersion: 2
+    rgba: 0
+  storyText: Point it at yourself or a friend.
+  typingSpeed: 15
+  extendPrevious: 0
+  voiceOverClip: {fileID: 8300000, guid: ef498415f940cc04f8758702f571f3c5, type: 3}
+  showAlways: 1
+  showCount: 1
+  fadeWhenDone: 1
+  allowLineSkip: 1
+  waitForClick: 0
+  timeToWait: 1
+  stopVoiceover: 0
+  waitForVO: 1
+  setDialogueBox: {fileID: 36597674}
+  showButton: 0
 --- !u!1 &1219303569
 GameObject:
   m_ObjectHideFlags: 0
@@ -30647,6 +30696,7 @@ MonoBehaviour:
   bakery: {fileID: 1732013985733744393, guid: 86a767fa921a4cd4298a5c995c23577a, type: 3}
   cottage: {fileID: 7446336629091917979, guid: 8cfc6fef7fbcfe942a3aee616ea07620, type: 3}
   church: {fileID: 4581592603595316899, guid: 03a6edb0b1971694a94ac77a5063ca5c, type: 3}
+  beamOfLight: {fileID: 0}
 --- !u!4 &1390095188
 Transform:
   m_ObjectHideFlags: 0
