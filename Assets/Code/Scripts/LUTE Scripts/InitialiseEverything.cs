@@ -154,6 +154,9 @@ public class InitialiseEverything : Order
         StartCoroutine(centerToScreenEverySecond());
 
 
+        LogaManager.Instance.LogManager.Log(LogLevel.Info,"App Version: "+Application.version);
+
+
         // Continue to the next order
         Continue();
     }
