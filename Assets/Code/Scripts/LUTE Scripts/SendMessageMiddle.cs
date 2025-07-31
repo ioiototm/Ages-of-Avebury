@@ -60,6 +60,17 @@ public class SendMessageMiddle : Order
         // a "SubjectField/Text (TMP)" object
         // and a "Panel/ContentsField" object
 
+        if(from.Contains("Langston"))
+        {
+            //get the dateInApp stirng variable from the engine
+            var date = GetEngine().GetVariable<StringVariable>("dateInApp");
+
+            //append at the start of the message
+            message = "                                                          " + date +"\n"+ message;
+
+        }
+
+
         //Update each of these objects with the values from the order
         messageObject.transform.Find("MsgBG/FromField/FromField").GetComponent<TMPro.TextMeshProUGUI>().text = from;
         //messageObject.transform.Find("SubjectField/SubjectField").GetComponent<TMPro.TextMeshProUGUI>().text = subject;

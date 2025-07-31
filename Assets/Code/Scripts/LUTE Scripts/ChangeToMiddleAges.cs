@@ -18,6 +18,10 @@ public class ChangeToMiddleAges : Order
     InterfaceGameEvent middleAgesInterfaceEvent;
 
 
+    [SerializeField]
+    Character drLangston;
+
+
     public override void OnEnter()
     {
 
@@ -61,6 +65,10 @@ public class ChangeToMiddleAges : Order
             string today = System.DateTime.Now.ToString("dd-MM")+"-1722";
             dateInApp.Value = today;
         }
+
+        //drLangston.SetStandardText("Dr. Langston - " + dateInApp.Value);
+
+        //langstonName.text += " " + dateInApp.Value;
 
         //if(LocationRandomiser.Instance.southQuadrant)
 
