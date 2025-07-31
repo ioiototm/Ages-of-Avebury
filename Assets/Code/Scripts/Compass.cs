@@ -148,6 +148,11 @@ public class Compass : MonoBehaviour
         //StartCoroutine(StartLocationService());
     }
 
+    bool IsConnectedToInternet()
+    {
+        return Application.internetReachability != NetworkReachability.NotReachable;
+    }
+
     System.Collections.IEnumerator LoadStonesAfterSeconds()
     {
         if(MapCompletion.alreadyLoaded)
@@ -156,6 +161,15 @@ public class Compass : MonoBehaviour
             yield break;
         }
         yield return new WaitForSeconds(2f); // Wait for 2 seconds before loading stones
+
+
+        if (!IsConnectedToInternet())
+        {
+            
+            TinySave.Instance.Load();
+
+            yield break;
+        }
 
         if (meshesAndOutlines.Count == 0)
         {
@@ -203,6 +217,7 @@ public class Compass : MonoBehaviour
                        }
 
 
+                       TinySave.Instance.Save(); // Save the loaded stones to PlayerPrefs
 
                    }
                },
