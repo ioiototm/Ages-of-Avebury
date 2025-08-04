@@ -1,5 +1,8 @@
+using LoGaCulture.LUTE;
 using System;
 using System.Collections.Generic;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class TinySave : MonoBehaviour
@@ -24,10 +27,18 @@ public class TinySave : MonoBehaviour
     const string KEY_HAS_PLAYED = "HasPlayedBefore";
     const string KEY_OBJECTS    = "SavedObjects";   // JSON blob
     const string KEY_STONES     = "SavedStones";    // JSON blob of meshes
+    const string KEY_VARIABLES = "SavedVariables"; // JSON blob
+    const string KEY_LAST_NODE = "LastNodeSeen";
+    const string KEY_MESSAGES = "SavedMessages"; // JSON blob of messages
+
+    [SerializeField]
+    private GameObject messagePrefab;
 
 
     [Tooltip("Drop any objects whose state you want to persist")]
     public List<GameObject> trackedObjects = new List<GameObject>();
+
+    //public static string LastNodeSeen { get; set; }
 
   
     [Serializable]
@@ -43,6 +54,106 @@ public class TinySave : MonoBehaviour
     {
         public string base64;
     }
+
+    [Serializable]
+    class VariableData
+    {
+        public string name;
+        public string type;
+        public string value;
+    }
+
+    [Serializable]
+    class MessageData
+    {
+        public string from;
+        public string subject;
+        public string message;
+    }
+
+
+    public void SaveMessages()
+    {
+        //messages are objects, and they have a From, Subject, and Message property that we want to save
+        //go thorugh each message in InitialiseEverything._inboxCanvas, and go into ModernInbox/Scroll View/Viewport/Content and get all the Message objects
+        //each message object has a subobject called FromField/FromField, SubjectField/SubjectField, and Panel/ContentsField
+        //save them one by one in a list of MessageData objects
+
+        if (InitialiseEverything._inboxCanvas == null)
+        {
+            Debug.LogWarning("TinySave: Inbox content transform not assigned. Cannot save messages.");
+            return;
+        }
+
+        var messageList = new List<MessageData>();
+
+        //using the InitialiseEverything._inboxCanvas, get the subobject called "Scroll View/Viewport/Content"
+        Transform inboxContent = InitialiseEverything._inboxCanvas.transform.Find("ModernInbox/Scroll View/Viewport/Content");
+
+        foreach (Transform messageObject in inboxContent)
+        {
+            // Find the text components within the message object hierarchy
+            var fromText = messageObject.Find("FromField/FromField")?.GetComponent<TMP_Text>();
+            var subjectText = messageObject.Find("SubjectField/SubjectField")?.GetComponent<TMP_Text>();
+            // The comment mentions Panel/ContentsField. Assuming it's a TMP_Text component.
+            var messageContent = messageObject.Find("Panel/ContentsField")?.GetComponent<TMP_Text>();
+
+            if (fromText != null && subjectText != null && messageContent != null)
+            {
+                messageList.Add(new MessageData
+                {
+                    from = fromText.text,
+                    subject = subjectText.text,
+                    message = messageContent.text
+                });
+            }
+            else
+            {
+                Debug.LogWarning($"TinySave: Could not find all required text components on message object '{messageObject.name}'.", messageObject);
+            }
+        }
+
+        // Serialize the list to JSON and save to PlayerPrefs
+        string json = JsonUtility.ToJson(new Wrapper<MessageData> { items = messageList });
+        PlayerPrefs.SetString(KEY_MESSAGES, json);
+        Debug.Log($"TinySave: Saved {messageList.Count} messages.");
+
+    }
+
+    // Load messages from PlayerPrefs, same but in reverse, using the prefab
+    public void LoadMessages()
+    {
+        if (!PlayerPrefs.HasKey(KEY_MESSAGES))
+        {
+            Debug.LogWarning("TinySave: No saved messages found.");
+            return;
+        }
+        string json = PlayerPrefs.GetString(KEY_MESSAGES);
+        var wrapper = JsonUtility.FromJson<Wrapper<MessageData>>(json);
+        // Clear existing messages in the inbox, a loop and destroy them
+        Transform inboxContent = InitialiseEverything._inboxCanvas.transform.Find("ModernInbox/Scroll View/Viewport/Content");
+        foreach (Transform child in inboxContent)
+        {
+            Destroy(child.gameObject);
+        }
+
+
+
+
+        foreach (var data in wrapper.items)
+        {
+            // Instantiate a new message prefab
+            GameObject messageObject = Instantiate(messagePrefab, InitialiseEverything._inboxCanvas.transform.Find("ModernInbox/Scroll View/Viewport/Content"));
+            var fromText = messageObject.transform.Find("FromField/FromField").GetComponent<TMP_Text>();
+            var subjectText = messageObject.transform.Find("SubjectField/SubjectField").GetComponent<TMP_Text>();
+            var contentText = messageObject.transform.Find("Panel/ContentsField").GetComponent<TMP_Text>();
+            fromText.text = data.from;
+            subjectText.text = data.subject;
+            contentText.text = data.message;
+        }
+        Debug.Log($"TinySave: Loaded {wrapper.items.Count} messages.");
+    }
+
 
     public void Save()
     {
@@ -81,14 +192,16 @@ public class TinySave : MonoBehaviour
             });
         }
 
-        // e) dump to JSON and store in prefs
-        string stonesJson = JsonUtility.ToJson(new Wrapper<StoneData> { items = stoneList });
-        PlayerPrefs.SetString(KEY_STONES, stonesJson);
+        // e) save last node seen
+        if (!string.IsNullOrEmpty(LastNodeSeen))
+        {
+            PlayerPrefs.SetString(KEY_LAST_NODE, LastNodeSeen);
+        }
 
 
-        // f) flush to disk
+        // g) flush to disk
         PlayerPrefs.Save();
-        Debug.Log("TinySave: Saved objects and stones.");
+        Debug.Log("TinySave: Saved objects, stones, and variables.");
     }
 
    
@@ -133,7 +246,15 @@ public class TinySave : MonoBehaviour
             Debug.Log($"TinySave: Loaded {Compass.meshesAndOutlines.Count} stones from storage.");
         }
 
-        if(PlayerPrefs.HasKey(KEY_OBJECTS) || PlayerPrefs.HasKey(KEY_STONES))
+        // Load last node seen
+        if (PlayerPrefs.HasKey(KEY_LAST_NODE))
+        {
+            LastNodeSeen = PlayerPrefs.GetString(KEY_LAST_NODE);
+        }
+
+        
+
+        if(PlayerPrefs.HasKey(KEY_OBJECTS) || PlayerPrefs.HasKey(KEY_STONES) || PlayerPrefs.HasKey(KEY_VARIABLES))
         {
             Debug.Log("TinySave -> loaded");
         }
@@ -149,24 +270,184 @@ public class TinySave : MonoBehaviour
         get => PlayerPrefs.HasKey(KEY_STONES);
     }
 
+    private static bool _loadGame = false;
+
+    public static bool loadGame
+    {
+        
+        get => _loadGame;
+        set
+        {
+        _loadGame = value;
+           
+        }
+
+    }
+
+    public static string LastNodeSeen
+    {
+        get => PlayerPrefs.GetString(KEY_LAST_NODE, "");
+        set => PlayerPrefs.SetString(KEY_LAST_NODE, value);
+    }
+
+    private void Update()
+    {
+        //if press h
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            SaveMessages();
+            //// f) collect variable data
+            //var variableList = new List<VariableData>();
+            //BasicFlowEngine flowEngine = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>();
+            //if (flowEngine != null)
+            //{
+            //    foreach (var variableName in flowEngine.GetVariableNames())
+            //    {
+            //        var variableObj = flowEngine.GetVariable(variableName);
+            //        string serializedValue = "";
+            //        string variableType = "";
+
+            //        if (variableObj is BooleanVariable booleanVariable)
+            //        {
+            //            serializedValue = booleanVariable.Value.ToString();
+            //            variableType = "bool";
+            //        }
+            //        else if (variableObj is StringVariable stringVariable)
+            //        {
+            //            serializedValue = stringVariable.Value;
+            //            variableType = "string";
+            //        }
+            //        else if (variableObj is FloatVariable floatVariable)
+            //        {
+            //            serializedValue = floatVariable.Value.ToString();
+            //            variableType = "float";
+            //        }
+            //        else if (variableObj is LocationVariable locationVariable)
+            //        {
+            //            //serializedValue = JsonUtility.ToJson(locationVariable.Value);
+            //            //var data = locationVariable.Value
+            //            variableType = "location";
+            //        }
+
+            //        if (!string.IsNullOrEmpty(variableType))
+            //        {
+            //            variableList.Add(new VariableData { name = variableName, type = variableType, value = serializedValue });
+            //        }
+            //    }
+            //}
+            //string variablesJson = JsonUtility.ToJson(new Wrapper<VariableData> { items = variableList });
+            //PlayerPrefs.SetString(KEY_VARIABLES, variablesJson);
+
+
+            // g) flush to disk
+            PlayerPrefs.Save();
+
+
+        }
+
+        if(Input.GetKeyDown(KeyCode.L))
+        {
+
+            LoadMessages();
+            //// Load variables
+            //if (PlayerPrefs.HasKey(KEY_VARIABLES))
+            //{
+            //    string json = PlayerPrefs.GetString(KEY_VARIABLES);
+            //    var wrapper = JsonUtility.FromJson<Wrapper<VariableData>>(json);
+            //    BasicFlowEngine flowEngine = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>();
+
+            //    if (flowEngine != null && wrapper != null)
+            //    {
+            //        foreach (var data in wrapper.items)
+            //        {
+            //            var variableObj = flowEngine.GetVariable(data.name);
+            //            if (variableObj == null) continue;
+
+            //            switch (data.type)
+            //            {
+            //                case "bool":
+            //                    if (variableObj is BooleanVariable boolVar && bool.TryParse(data.value, out bool boolValue))
+            //                    {
+            //                        boolVar.Value = boolValue;
+            //                    }
+            //                    break;
+            //                case "string":
+            //                    if (variableObj is StringVariable strVar)
+            //                    {
+            //                        strVar.Value = data.value;
+            //                    }
+            //                    break;
+            //                case "float":
+            //                    if (variableObj is FloatVariable floatVar && float.TryParse(data.value, out float floatValue))
+            //                    {
+            //                        floatVar.Value = floatValue;
+            //                    }
+            //                    break;
+            //                case "location":
+            //                    if (variableObj is LocationVariable locVar)
+            //                    {
+            //                        locVar.Value = JsonUtility.FromJson<LUTELocationInfo>(data.value);
+            //                    }
+            //                    break;
+            //            }
+            //        }
+            //        Debug.Log($"TinySave: Loaded {wrapper.items.Count} variables from storage.");
+            //    }
+            //}
+
+        }
+
+
+    }
+
+    
 
     private void Start()
     {
-        if(HasPlayedBefore)
-        {
-            Load();
-            BasicFlowEngine basicFlowEngine = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>();
-            //basicFlowEngine.ExecuteNode("Tutorial");
-        }
-        else
-        {
-            //get the basicflowengine
-            BasicFlowEngine basicFlowEngine = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>();
-            basicFlowEngine.ExecuteNode("FirstPlay");
+        DontDestroyOnLoad(gameObject); // Ensure this object persists across scenes
 
-            //save the game state
-            Save();
+        //if current scene is MainMenu
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "MainMenu")
+        {
+            GameObject loadButton = GameObject.Find("Button_Load");
+
+            // If the game has been played before, load the saved state
+            if (HasPlayedBefore)
+            {
+                loadButton.SetActive(true);
+                loadGame = true; // Set the flag to indicate we can load
+                //Load(); // Load the saved state
+            }
+            else
+            {
+                loadButton.SetActive(false);
+                loadGame = false; // Set the flag to indicate we cannot load
+            }
+           
         }
+
+        //if(HasPlayedBefore)
+        //{
+        //    Load();
+        //    //BasicFlowEngine basicFlowEngine = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>();
+        //    //if (basicFlowEngine != null && !string.IsNullOrEmpty(LastNodeSeen))
+        //    //{
+        //    //    basicFlowEngine.ExecuteNode(LastNodeSeen);
+        //    //}
+        //}
+        //else
+        //{
+        //    //get the basicflowengine
+        //    BasicFlowEngine basicFlowEngine = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>();
+        //    basicFlowEngine.ExecuteNode("FirstPlay");
+
+        //    //save the game state
+        //    Save();
+        //}
+
+
+
+
     }
 
     [Serializable]

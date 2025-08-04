@@ -10,6 +10,15 @@ public class ChoseRandomQuadrant : Order
     public override void OnEnter()
     {
 
+        if(TinySave.loadGame)
+        {
+            //if we are loading a game, we don't want to change the quadrant
+            Debug.Log("Loading game, not changing quadrant");
+            Continue();
+            return;
+        }
+
+
         bool southQuadrant;
 
         //50/50 south or north

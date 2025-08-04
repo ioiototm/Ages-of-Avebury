@@ -166,6 +166,29 @@ public class InitialiseEverything : Order
         LogaManager.Instance.LogManager.Log(LogLevel.Info,"App Version: "+Application.version);
 
 
+        if (TinySave.loadGame != false)
+        {
+            //GetEngine().StopNode("Node");
+
+            //get the last order from the node this order is in
+            var node = GetEngine().FindNode(ParentNode._NodeName);
+            var lastOrder = node.OrderList.Last<Order>();
+            var lastNodeSeen = GetEngine().FindNode(TinySave.LastNodeSeen);
+
+            if (lastOrder is NextNode nextOrder)
+            {
+               nextOrder.targetNode = lastNodeSeen;
+            }
+
+            lastNodeSeen.TargetKeyNode.TargetUnlockNode = null;
+            lastNodeSeen.TargetKeyNode = null;
+
+
+
+
+        }
+
+
         // Continue to the next order
         Continue();
     }
