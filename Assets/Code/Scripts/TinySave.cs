@@ -64,12 +64,22 @@ public class TinySave : MonoBehaviour
     }
 
     [Serializable]
+    class LocationSaveData
+    {
+        public LocationStatus Status;
+        public bool Hidden;
+    }
+
+    [Serializable]
     class MessageData
     {
         public string from;
         public string subject;
         public string message;
+        public bool highlighted;
     }
+
+
 
 
     public void SaveMessages()
@@ -98,13 +108,16 @@ public class TinySave : MonoBehaviour
             // The comment mentions Panel/ContentsField. Assuming it's a TMP_Text component.
             var messageContent = messageObject.Find("Panel/ContentsField")?.GetComponent<TMP_Text>();
 
+            var highlighted = messageObject.Find("Highlight")?.gameObject.activeSelf ?? false;
+
             if (fromText != null && subjectText != null && messageContent != null)
             {
                 messageList.Add(new MessageData
                 {
                     from = fromText.text,
                     subject = subjectText.text,
-                    message = messageContent.text
+                    message = messageContent.text,
+                    highlighted = highlighted
                 });
             }
             else
@@ -138,7 +151,7 @@ public class TinySave : MonoBehaviour
         }
 
 
-
+        bool unreadMessages = false;
 
         foreach (var data in wrapper.items)
         {
@@ -147,13 +160,159 @@ public class TinySave : MonoBehaviour
             var fromText = messageObject.transform.Find("FromField/FromField").GetComponent<TMP_Text>();
             var subjectText = messageObject.transform.Find("SubjectField/SubjectField").GetComponent<TMP_Text>();
             var contentText = messageObject.transform.Find("Panel/ContentsField").GetComponent<TMP_Text>();
+            var highlightObject = messageObject.transform.Find("Highlight");
             fromText.text = data.from;
             subjectText.text = data.subject;
             contentText.text = data.message;
+            if (highlightObject != null)
+            {
+                highlightObject.gameObject.SetActive(data.highlighted);
+                if (data.highlighted)
+                {
+                    unreadMessages = true; // If any message is highlighted, set the flag
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"TinySave: Highlight object not found in message prefab for '{data.from}'.", messageObject);
+            }
         }
         Debug.Log($"TinySave: Loaded {wrapper.items.Count} messages.");
+
+        if(unreadMessages)
+        {
+            BasicFlowEngine flowEngine = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>();
+            flowEngine.GetVariable<BooleanVariable>("unreadMessages").Value = true;
+        }
+        else
+        {
+            Debug.Log("TinySave: All messages are read.");
+        }
+       
     }
 
+    public void SaveEngineVariables()
+    {
+        // f) collect variable data
+        var variableList = new List<VariableData>();
+        BasicFlowEngine flowEngine = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>();
+        if (flowEngine != null)
+        {
+            foreach (var variableName in flowEngine.GetVariableNames())
+            {
+                var variableObj = flowEngine.GetVariable(variableName);
+                string serializedValue = "";
+                string variableType = "";
+
+
+                if(variableObj is IntegerVariable intVariable)
+                {
+                    serializedValue = intVariable.Value.ToString();
+                    variableType = "int";
+                }
+                else if (variableObj is BooleanVariable booleanVariable)
+                {
+                    serializedValue = booleanVariable.Value.ToString();
+                    variableType = "bool";
+                }
+                else if (variableObj is StringVariable stringVariable)
+                {
+                    serializedValue = stringVariable.Value;
+                    variableType = "string";
+                }
+                else if (variableObj is FloatVariable floatVariable)
+                {
+                    serializedValue = floatVariable.Value.ToString();
+                    variableType = "float";
+                }
+                else if (variableObj is LocationVariable locationVariable)
+                {
+
+                    //the location has two main properties outside the name. it's the visited status, and if it's visible or not
+
+                    var locationData = new LocationSaveData
+                    {
+                        Status = locationVariable.Value.LocationStatus,
+                        Hidden = locationVariable.Value.LocationHidden
+                    };
+
+                    serializedValue = JsonUtility.ToJson(locationData);
+                    variableType = "location";
+
+                    //serializedValue = JsonUtility.ToJson(locationVariable.Value);
+                    //variableType = "location";
+                }
+                if (!string.IsNullOrEmpty(variableType))
+                {
+                    variableList.Add(new VariableData { name = variableName, type = variableType, value = serializedValue });
+                }
+            }
+        }
+        string variablesJson = JsonUtility.ToJson(new Wrapper<VariableData> { items = variableList });
+        PlayerPrefs.SetString(KEY_VARIABLES, variablesJson);
+    }
+
+
+    public void LoadEngineVariables()
+    {
+        // Load variables
+        if (PlayerPrefs.HasKey(KEY_VARIABLES))
+        {
+            string json = PlayerPrefs.GetString(KEY_VARIABLES);
+            var wrapper = JsonUtility.FromJson<Wrapper<VariableData>>(json);
+            BasicFlowEngine flowEngine = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>();
+            if (flowEngine != null && wrapper != null)
+            {
+                foreach (var data in wrapper.items)
+                {
+                    var variableObj = flowEngine.GetVariable(data.name);
+                    if (variableObj == null) continue;
+                    switch (data.type)
+                    {
+                        case "int":
+                            // Assuming you have an IntVariable type, otherwise handle accordingly
+                            if (variableObj is IntegerVariable intVar && int.TryParse(data.value, out int intValue))
+                            {
+                                intVar.Value = intValue;
+                            }
+                            break;
+
+                        case "bool":
+                            if (variableObj is BooleanVariable boolVar && bool.TryParse(data.value, out bool boolValue))
+                            {
+                                boolVar.Value = boolValue;
+                            }
+                            break;
+                        case "string":
+                            if (variableObj is StringVariable strVar)
+                            {
+                                strVar.Value = data.value;
+                            }
+                            break;
+                        case "float":
+                            if (variableObj is FloatVariable floatVar && float.TryParse(data.value, out float floatValue))
+                            {
+                                floatVar.Value = floatValue;
+                            }
+                            break;
+                        case "location":
+                            if (variableObj is LocationVariable locVar)
+                            {
+                                // Deserialize the JSON string into a LocationSaveData object
+                                LocationSaveData locationData = JsonUtility.FromJson<LocationSaveData>(data.value);
+                                
+                                // Set the properties of the LocationVariable
+                                locVar.Value.LocationStatus = locationData.Status;
+                                locVar.Value.LocationHidden = locationData.Hidden;
+
+                            }
+                            break;
+                    }
+                }
+                Debug.Log($"TinySave: Loaded {wrapper.items.Count} variables from storage.");
+            }
+        }
+    }
 
     public void Save()
     {
@@ -295,49 +454,8 @@ public class TinySave : MonoBehaviour
         //if press h
         if (Input.GetKeyDown(KeyCode.H))
         {
-            SaveMessages();
-            //// f) collect variable data
-            //var variableList = new List<VariableData>();
-            //BasicFlowEngine flowEngine = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>();
-            //if (flowEngine != null)
-            //{
-            //    foreach (var variableName in flowEngine.GetVariableNames())
-            //    {
-            //        var variableObj = flowEngine.GetVariable(variableName);
-            //        string serializedValue = "";
-            //        string variableType = "";
-
-            //        if (variableObj is BooleanVariable booleanVariable)
-            //        {
-            //            serializedValue = booleanVariable.Value.ToString();
-            //            variableType = "bool";
-            //        }
-            //        else if (variableObj is StringVariable stringVariable)
-            //        {
-            //            serializedValue = stringVariable.Value;
-            //            variableType = "string";
-            //        }
-            //        else if (variableObj is FloatVariable floatVariable)
-            //        {
-            //            serializedValue = floatVariable.Value.ToString();
-            //            variableType = "float";
-            //        }
-            //        else if (variableObj is LocationVariable locationVariable)
-            //        {
-            //            //serializedValue = JsonUtility.ToJson(locationVariable.Value);
-            //            //var data = locationVariable.Value
-            //            variableType = "location";
-            //        }
-
-            //        if (!string.IsNullOrEmpty(variableType))
-            //        {
-            //            variableList.Add(new VariableData { name = variableName, type = variableType, value = serializedValue });
-            //        }
-            //    }
-            //}
-            //string variablesJson = JsonUtility.ToJson(new Wrapper<VariableData> { items = variableList });
-            //PlayerPrefs.SetString(KEY_VARIABLES, variablesJson);
-
+            //SaveMessages();
+           SaveEngineVariables();
 
             // g) flush to disk
             PlayerPrefs.Save();
@@ -348,52 +466,8 @@ public class TinySave : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.L))
         {
 
-            LoadMessages();
-            //// Load variables
-            //if (PlayerPrefs.HasKey(KEY_VARIABLES))
-            //{
-            //    string json = PlayerPrefs.GetString(KEY_VARIABLES);
-            //    var wrapper = JsonUtility.FromJson<Wrapper<VariableData>>(json);
-            //    BasicFlowEngine flowEngine = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>();
-
-            //    if (flowEngine != null && wrapper != null)
-            //    {
-            //        foreach (var data in wrapper.items)
-            //        {
-            //            var variableObj = flowEngine.GetVariable(data.name);
-            //            if (variableObj == null) continue;
-
-            //            switch (data.type)
-            //            {
-            //                case "bool":
-            //                    if (variableObj is BooleanVariable boolVar && bool.TryParse(data.value, out bool boolValue))
-            //                    {
-            //                        boolVar.Value = boolValue;
-            //                    }
-            //                    break;
-            //                case "string":
-            //                    if (variableObj is StringVariable strVar)
-            //                    {
-            //                        strVar.Value = data.value;
-            //                    }
-            //                    break;
-            //                case "float":
-            //                    if (variableObj is FloatVariable floatVar && float.TryParse(data.value, out float floatValue))
-            //                    {
-            //                        floatVar.Value = floatValue;
-            //                    }
-            //                    break;
-            //                case "location":
-            //                    if (variableObj is LocationVariable locVar)
-            //                    {
-            //                        locVar.Value = JsonUtility.FromJson<LUTELocationInfo>(data.value);
-            //                    }
-            //                    break;
-            //            }
-            //        }
-            //        Debug.Log($"TinySave: Loaded {wrapper.items.Count} variables from storage.");
-            //    }
-            //}
+            //LoadMessages();
+            LoadEngineVariables();
 
         }
 
