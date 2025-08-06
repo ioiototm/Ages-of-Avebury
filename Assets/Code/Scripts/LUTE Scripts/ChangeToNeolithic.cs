@@ -1,4 +1,5 @@
 using LoGaCulture.LUTE;
+using System.Linq;
 using UnityEngine;
 
 
@@ -16,6 +17,8 @@ public class ChangeToNeolithic : Order
 
     [SerializeField]
     InterfaceGameEvent neolithicInterfaceEvent;
+
+    public static bool skipToLoadedNode = false;
 
 
     public override void OnEnter()
@@ -69,7 +72,26 @@ public class ChangeToNeolithic : Order
         compass.timePeriod = Compass.TimePeriod.Neolithic;
 
 
-        Continue();
+        if(skipToLoadedNode)
+        {
+            //get the last order from the node this order is in
+            var node = GetEngine().FindNode(ParentNode._NodeName);
+            var lastOrder = node.OrderList.Last<Order>();
+            var lastNodeSeen = GetEngine().FindNode(TinySave.LastNodeSeen);
+
+            if (lastOrder is NextNode nextOrder)
+            {
+                nextOrder.targetNode = lastNodeSeen;
+            }
+
+        }
+        else
+        {
+            TinySave.LastNodeSeen = ParentNode._NodeName;
+        }
+
+
+            Continue();
     }
 
     public override string GetSummary()

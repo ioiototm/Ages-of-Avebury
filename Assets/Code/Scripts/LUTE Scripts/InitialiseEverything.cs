@@ -105,47 +105,49 @@ public class InitialiseEverything : Order
         //get all the location variables in the flow engine
         var locationVariables = GetEngine().GetVariables<LocationVariable>();
 
-        //go through each location variable name that has a number in it
-        foreach (var locationVariable in locationVariables)
+        if (TinySave.loadGame == false)
         {
-
-            var name = locationVariable.Key;
-
-            //the names are random but have a number somewhere, so check if the name contains any numbers, in any place
-            if (name.Contains("barnCentre"))
-            {
-                mapManager.HideLocationMarker(locationVariable);
-            }
-            // Check if the name contains any number  
-            if (name.Any(char.IsDigit))
+            //go through each location variable name that has a number in it
+            foreach (var locationVariable in locationVariables)
             {
 
-                locationVariable.Value.LocationStatus = LoGaCulture.LUTE.LocationStatus.Unvisited;
+                var name = locationVariable.Key;
 
-
-                //if the digit is not 1, then hide it
-                if (!name.Contains("1") || name.Contains("10") || name.Contains("11") || name.Contains("12") || name.Contains("13"))
+                //the names are random but have a number somewhere, so check if the name contains any numbers, in any place
+                if (name.Contains("barnCentre"))
                 {
-                    //if it's not the LastSeenLocation and TargetLocation
-                    if (name.Contains("LastSeenLocation") || name.Contains("TargetLocation"))
-                    {
-                        continue;
-                    }
-                    //hide the location marker
                     mapManager.HideLocationMarker(locationVariable);
-                    
                 }
-
-                else
+                // Check if the name contains any number  
+                if (name.Any(char.IsDigit))
                 {
-                    //show the location marker
-                    mapManager.ShowLocationMarker(locationVariable);
+
+                    locationVariable.Value.LocationStatus = LoGaCulture.LUTE.LocationStatus.Unvisited;
+
+
+                    //if the digit is not 1, then hide it
+                    if (!name.Contains("1") || name.Contains("10") || name.Contains("11") || name.Contains("12") || name.Contains("13"))
+                    {
+                        //if it's not the LastSeenLocation and TargetLocation
+                        if (name.Contains("LastSeenLocation") || name.Contains("TargetLocation"))
+                        {
+                            continue;
+                        }
+                        //hide the location marker
+                        mapManager.HideLocationMarker(locationVariable);
+
+                    }
+
+                    else
+                    {
+                        //show the location marker
+                        mapManager.ShowLocationMarker(locationVariable);
+                    }
+
                 }
 
             }
-
         }
-
         centering = GameObject.Find("PlayerTarget").GetComponent<ImmediatePositionWithLocationProvider>();
 
         GetEngine().GetAbstractMap().SetZoom(16.5f);
@@ -166,7 +168,7 @@ public class InitialiseEverything : Order
         LogaManager.Instance.LogManager.Log(LogLevel.Info,"App Version: "+Application.version);
 
 
-        if (TinySave.loadGame != false)
+        if (TinySave.loadGame)
         {
             //GetEngine().StopNode("Node");
 
@@ -177,14 +179,40 @@ public class InitialiseEverything : Order
 
             if (lastOrder is NextNode nextOrder)
             {
-               nextOrder.targetNode = lastNodeSeen;
+
+                if (TinySave.LastNodeSeen.Contains("Neolithic"))
+                {
+
+                    var changeToNeolithicNode = GetEngine().FindNode("Change to Neolithic");
+                    nextOrder.targetNode = changeToNeolithicNode;
+
+                    //get the ChangeToNeolithic order and execute it
+
+                    ChangeToNeolithic.skipToLoadedNode = true;
+
+
+                }
+                else if(TinySave.LastNodeSeen.Contains("Mid"))
+                {
+                    var changeToMiddleAgesNode = GetEngine().FindNode("Change to Middle");
+                    nextOrder.targetNode = changeToMiddleAgesNode;
+                    //get the ChangeToMiddleAges order and execute it
+                    ChangeToMiddleAges.skipToLoadedNode = true;
+                }
+                else
+                {
+                    nextOrder.targetNode = lastNodeSeen;
+                }
+
+                
             }
 
             lastNodeSeen.TargetKeyNode.TargetUnlockNode = null;
             lastNodeSeen.TargetKeyNode = null;
 
 
-
+            TinySave.Instance.LoadMessages();
+            TinySave.Instance.LoadEngineVariables();
 
         }
 

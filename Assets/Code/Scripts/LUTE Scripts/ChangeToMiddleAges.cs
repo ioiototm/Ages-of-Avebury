@@ -1,4 +1,5 @@
 using LoGaCulture.LUTE;
+using System.Linq;
 using UnityEngine;
 
 
@@ -21,6 +22,8 @@ public class ChangeToMiddleAges : Order
     [SerializeField]
     Character drLangston;
 
+
+    public static bool skipToLoadedNode = false;
 
     public override void OnEnter()
     {
@@ -66,6 +69,8 @@ public class ChangeToMiddleAges : Order
             dateInApp.Value = today;
         }
 
+        
+
         //drLangston.SetStandardText("Dr. Langston - " + dateInApp.Value);
 
         //langstonName.text += " " + dateInApp.Value;
@@ -76,9 +81,26 @@ public class ChangeToMiddleAges : Order
         //GameObject.Find("Pit(Clone)").SetActive(false);
         //GameObject.Find("Stone 7_LP(Clone)").SetActive(false);
         //GameObject.Find("Stone III_LP(Clone)").SetActive(false);
+        if (skipToLoadedNode)
+        {
+            //get the last order from the node this order is in
+            var node = GetEngine().FindNode(ParentNode._NodeName);
+            var lastOrder = node.OrderList.Last<Order>();
+            var lastNodeSeen = GetEngine().FindNode(TinySave.LastNodeSeen);
+
+            if (lastOrder is NextNode nextOrder)
+            {
+                nextOrder.targetNode = lastNodeSeen;
+            }
+
+        }
+        else
+        {
+            TinySave.LastNodeSeen = ParentNode._NodeName;
+        }
 
 
-        Continue();
+            Continue();
     }
 
     public override string GetSummary()

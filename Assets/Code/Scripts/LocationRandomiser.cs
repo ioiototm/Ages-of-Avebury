@@ -172,10 +172,10 @@ public class LocationRandomiser : MonoBehaviour
         //currentLocation = locationInfos[0];
 
         //print the names
-        foreach (var locationInfo in locationInfos)
-        {
-            Debug.Log(locationInfo.name);
-        }
+        //foreach (var locationInfo in locationInfos)
+        //{
+        //    Debug.Log(locationInfo.name);
+        //}
 
         //var listOfVariables = basicFlowEngine.GetVariables<LocationVariable>();
 

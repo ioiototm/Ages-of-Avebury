@@ -52,6 +52,10 @@ public class LocationUpdate : Order
 
 
         TinySave.LastNodeSeen = ParentNode._NodeName;
+        TinySave.Instance.SaveMessages();
+        TinySave.Instance.SaveEngineVariables();
+
+        //TinySave.Instance.Save();
 
         Debug.Log("Last node seen set to: " + TinySave.LastNodeSeen);
 
