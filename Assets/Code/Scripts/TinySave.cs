@@ -68,6 +68,7 @@ public class TinySave : MonoBehaviour
     {
         public LocationStatus Status;
         public bool Hidden;
+        public bool Disabled;
     }
 
     [Serializable]
@@ -129,6 +130,7 @@ public class TinySave : MonoBehaviour
         // Serialize the list to JSON and save to PlayerPrefs
         string json = JsonUtility.ToJson(new Wrapper<MessageData> { items = messageList });
         PlayerPrefs.SetString(KEY_MESSAGES, json);
+        PlayerPrefs.Save(); // Ensure changes are saved immediately
         Debug.Log($"TinySave: Saved {messageList.Count} messages.");
 
     }
@@ -228,12 +230,15 @@ public class TinySave : MonoBehaviour
                 else if (variableObj is LocationVariable locationVariable)
                 {
 
+                    
+
                     //the location has two main properties outside the name. it's the visited status, and if it's visible or not
 
                     var locationData = new LocationSaveData
                     {
                         Status = locationVariable.Value.LocationStatus,
-                        Hidden = locationVariable.Value.LocationHidden
+                        Hidden = locationVariable.Value.LocationHidden,
+                        Disabled = locationVariable.Value.LocationDisabled
                     };
 
                     serializedValue = JsonUtility.ToJson(locationData);
@@ -250,6 +255,7 @@ public class TinySave : MonoBehaviour
         }
         string variablesJson = JsonUtility.ToJson(new Wrapper<VariableData> { items = variableList });
         PlayerPrefs.SetString(KEY_VARIABLES, variablesJson);
+        PlayerPrefs.Save(); // Ensure changes are saved immediately
     }
 
 
@@ -304,6 +310,13 @@ public class TinySave : MonoBehaviour
                                 // Set the properties of the LocationVariable
                                 locVar.Value.LocationStatus = locationData.Status;
                                 locVar.Value.LocationHidden = locationData.Hidden;
+                                locVar.Value.LocationDisabled = locationData.Disabled;
+
+                                if(!locationData.Hidden)
+                                {
+                                    flowEngine.GetMapManager().ShowLocationMarker(locVar);
+                                }
+
 
                             }
                             break;
@@ -314,42 +327,58 @@ public class TinySave : MonoBehaviour
         }
     }
 
-    public void Save()
+    public void SaveTheStones()
     {
-        // a) flag that the game has been opened once
-        PlayerPrefs.SetInt(KEY_HAS_PLAYED, 1);
-
-        // b) collect object data
-        var objList = new List<ObjData>();
-        foreach (var go in trackedObjects)
-        {
-            if (!go) continue;   // skip null slots
-
-            objList.Add(new ObjData
-            {
-                name   = go.name,
-                active = go.activeSelf,
-                x = go.transform.position.x,
-                y = go.transform.position.y,
-                z = go.transform.position.z
-            });
-        }
-
-        // c) dump to JSON and store in prefs
-        string json = JsonUtility.ToJson(new Wrapper<ObjData>{ items = objList });
-        PlayerPrefs.SetString(KEY_OBJECTS, json);
-
-        // d) collect stone data
+        // a) collect stone data
         var stoneList = new List<StoneData>();
         foreach (var stone in Compass.meshesAndOutlines)
         {
             if (stone.mesh == null || stone.outline == null) continue;
-
             stoneList.Add(new StoneData
             {
                 base64 = MeshSerializer.ToBase64(stone.mesh, stone.outline)
             });
         }
+        // b) dump to JSON and store in prefs
+        string json = JsonUtility.ToJson(new Wrapper<StoneData> { items = stoneList });
+        PlayerPrefs.SetString(KEY_STONES, json);
+        PlayerPrefs.Save(); // Ensure changes are saved immediately
+        Debug.Log($"TinySave: Saved {stoneList.Count} stones.");
+    }
+
+    public void Save(bool andStones = false)
+    {
+        // a) flag that the game has been opened once
+        PlayerPrefs.SetInt(KEY_HAS_PLAYED, 1);
+
+        //// b) collect object data
+        //var objList = new List<ObjData>();
+        //foreach (var go in trackedObjects)
+        //{
+        //    if (!go) continue;   // skip null slots
+
+        //    objList.Add(new ObjData
+        //    {
+        //        name   = go.name,
+        //        active = go.activeSelf,
+        //        x = go.transform.position.x,
+        //        y = go.transform.position.y,
+        //        z = go.transform.position.z
+        //    });
+        //}
+
+        //// c) dump to JSON and store in prefs
+        //string json = JsonUtility.ToJson(new Wrapper<ObjData>{ items = objList });
+        //PlayerPrefs.SetString(KEY_OBJECTS, json);
+
+        // d) collect stone data
+
+        if (andStones)
+        {
+            SaveTheStones();
+        }
+        SaveMessages();
+        SaveEngineVariables();
 
         // e) save last node seen
         if (!string.IsNullOrEmpty(LastNodeSeen))
@@ -369,22 +398,25 @@ public class TinySave : MonoBehaviour
         bool hasPlayed = PlayerPrefs.GetInt(KEY_HAS_PLAYED, 0) == 1;
         Debug.Log("Has played before? " + hasPlayed);
 
-        // Load tracked objects
-        if (PlayerPrefs.HasKey(KEY_OBJECTS))
-        {
-            string json = PlayerPrefs.GetString(KEY_OBJECTS);
-            var wrapper = JsonUtility.FromJson<Wrapper<ObjData>>(json);
+        //// Load tracked objects
+        //if (PlayerPrefs.HasKey(KEY_OBJECTS))
+        //{
+        //    string json = PlayerPrefs.GetString(KEY_OBJECTS);
+        //    var wrapper = JsonUtility.FromJson<Wrapper<ObjData>>(json);
 
-            foreach (var data in wrapper.items)
-            {
-                // find the matching object by name
-                GameObject go = trackedObjects.Find(g => g && g.name == data.name);
-                if (!go) continue;
+        //    foreach (var data in wrapper.items)
+        //    {
+        //        // find the matching object by name
+        //        GameObject go = trackedObjects.Find(g => g && g.name == data.name);
+        //        if (!go) continue;
 
-                go.SetActive(data.active);
-                go.transform.position = new Vector3(data.x, data.y, data.z);
-            }
-        }
+        //        go.SetActive(data.active);
+        //        go.transform.position = new Vector3(data.x, data.y, data.z);
+        //    }
+        //}
+
+        LoadEngineVariables();
+        LoadMessages();
 
         // Load stones
         if (PlayerPrefs.HasKey(KEY_STONES))
@@ -411,9 +443,11 @@ public class TinySave : MonoBehaviour
             LastNodeSeen = PlayerPrefs.GetString(KEY_LAST_NODE);
         }
 
-        
 
-        if(PlayerPrefs.HasKey(KEY_OBJECTS) || PlayerPrefs.HasKey(KEY_STONES) || PlayerPrefs.HasKey(KEY_VARIABLES))
+
+
+
+        if (PlayerPrefs.HasKey(KEY_OBJECTS) || PlayerPrefs.HasKey(KEY_STONES) || PlayerPrefs.HasKey(KEY_VARIABLES))
         {
             Debug.Log("TinySave -> loaded");
         }
@@ -446,15 +480,21 @@ public class TinySave : MonoBehaviour
     public static string LastNodeSeen
     {
         get => PlayerPrefs.GetString(KEY_LAST_NODE, "");
-        set => PlayerPrefs.SetString(KEY_LAST_NODE, value);
-    }
+        set
+        {
+            PlayerPrefs.SetString(KEY_LAST_NODE, value);
+            PlayerPrefs.Save(); // Ensure the last node is saved immediately
+        }
+    } // Ensure the last node is saved immediately
+        
+    
 
     private void Update()
     {
         //if press h
         if (Input.GetKeyDown(KeyCode.H))
         {
-            //SaveMessages();
+            SaveMessages();
            SaveEngineVariables();
 
             // g) flush to disk
@@ -466,7 +506,7 @@ public class TinySave : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.L))
         {
 
-            //LoadMessages();
+            LoadMessages();
             LoadEngineVariables();
 
         }

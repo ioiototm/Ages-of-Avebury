@@ -217,7 +217,7 @@ public class Compass : MonoBehaviour
                        }
 
 
-                       TinySave.Instance.Save(); // Save the loaded stones to PlayerPrefs
+                       TinySave.Instance.SaveTheStones(); // Save the loaded stones to PlayerPrefs
 
                    }
                },
