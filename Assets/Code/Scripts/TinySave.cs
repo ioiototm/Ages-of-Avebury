@@ -1,6 +1,7 @@
 using LoGaCulture.LUTE;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -316,6 +317,28 @@ public class TinySave : MonoBehaviour
                                 {
                                     flowEngine.GetMapManager().ShowLocationMarker(locVar);
                                 }
+
+                                //the locaVar.name contains locations like this 3.1-Remnant, 6.2-FirstArea, 10.1NPCSouth3, 2.2-EmptyPit, etc
+                                //get the number at the start of the name, before the dot, and it can be multi digit, so use regex
+                                //if it's bigger tham 5, hide the marker
+
+                                var match = System.Text.RegularExpressions.Regex.Match(locVar.Value.name, @"^\d+");
+                                if (match.Success && int.TryParse(match.Value, out int locationID))
+                                {
+                                    if (locationID > 5)
+                                    {
+                                        locVar.Value.LocationHidden = true;
+                                        //locVar.Value.LocationDisabled = true;
+                                        flowEngine.GetMapManager().HideLocationMarker(locVar);
+                                    }
+
+                                    if (locationID == 1)
+                                    {
+                                        locVar.Value.LocationStatus = LocationStatus.Completed;
+                                    }
+                                }
+
+                               
 
 
                             }
