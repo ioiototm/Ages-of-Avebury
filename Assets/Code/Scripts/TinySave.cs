@@ -31,6 +31,7 @@ public class TinySave : MonoBehaviour
     const string KEY_VARIABLES = "SavedVariables"; // JSON blob
     const string KEY_LAST_NODE = "LastNodeSeen";
     const string KEY_MESSAGES = "SavedMessages"; // JSON blob of messages
+    const string KEY_STONE_DECISION = "StoneDecision"; // JSON blob of stone decisions
 
     [SerializeField]
     private GameObject messagePrefab;
@@ -81,7 +82,32 @@ public class TinySave : MonoBehaviour
         public bool highlighted;
     }
 
+    [Serializable]
+    class StoneDecisionData
+    {
+        public DecisionMedieval.StoneDecision stoneDecision;
+        public int WhichStone; // 0 for first stone, 1 for second stone, etc.
+    }
 
+
+    public void SaveStoneMedieval(DecisionMedieval.StoneDecision decision, int whichStone)
+    {
+        //we need to save the Stone Decision variable, as well as the which stone
+        //we need to save the stone decision as a JSON blob, and store it in PlayerPrefs
+        
+        DecisionMedieval.StoneDecision stoneDecision = decision;
+        StoneDecisionData stoneDecisionData = new StoneDecisionData
+        {
+            stoneDecision = stoneDecision,
+            WhichStone = whichStone
+        };
+
+        //add the stone decision to PlayerPrefs, as we have multiple decisions
+        string json = JsonUtility.ToJson(stoneDecisionData);
+        PlayerPrefs.SetString(KEY_STONE_DECISION, json);
+        PlayerPrefs.Save(); // Ensure changes are saved immediately
+
+    }
 
 
     public void SaveMessages()

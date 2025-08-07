@@ -70,7 +70,7 @@ public class SignaturePad : MonoBehaviour,
         }
 
         // new stroke
-        currentLine = Instantiate(linePrefab, transform);   // 🔹 child of DrawingSurface
+        currentLine = Instantiate(linePrefab, transform);   //  child of DrawingSurface
         allLines.Add(currentLine);
         currentLine.Points = new Vector2[0];
         pts.Clear();
@@ -151,8 +151,9 @@ public class SignaturePad : MonoBehaviour,
 
         }
         else
+        {
             OnBreakChosen?.Invoke();
-
+        }
         alreadyChosen = true; // prevent multiple calls
         isSigning = false;
     }
