@@ -31,10 +31,14 @@ public class TinySave : MonoBehaviour
     const string KEY_VARIABLES = "SavedVariables"; // JSON blob
     const string KEY_LAST_NODE = "LastNodeSeen";
     const string KEY_MESSAGES = "SavedMessages"; // JSON blob of messages
+    const string KEY_MEDIEVAL_MESSAGES = "SavedMedievalMessages"; // JSON blob of medieval messages
     const string KEY_STONE_DECISION = "StoneDecision"; // JSON blob of stone decisions
 
     [SerializeField]
     private GameObject messagePrefab;
+
+    [SerializeField]
+    private GameObject medievalMessagePrefab;
 
 
     [Tooltip("Drop any objects whose state you want to persist")]
@@ -106,6 +110,56 @@ public class TinySave : MonoBehaviour
         string json = JsonUtility.ToJson(stoneDecisionData);
         PlayerPrefs.SetString(KEY_STONE_DECISION, json);
         PlayerPrefs.Save(); // Ensure changes are saved immediately
+
+    }
+
+    public void SaveMessagesMedieval()
+    {
+        var listOfMessages = InitialiseEverything._inboxMiddleCanvas.transform.Find("Scroll View/Viewport/Content").gameObject;
+
+        var messageList = new List<MessageData>();
+
+
+        foreach (Transform messageObject in listOfMessages.transform)
+        {
+            var fromField = messageObject.Find("MsgBG/FromField/FromField");
+            var contentField = messageObject.Find("MsgBG/ContentsField");
+
+            if (fromField != null && contentField != null)
+            {
+                var fromText = fromField.GetComponent<TMP_Text>();
+                var contentText = contentField.GetComponent<TMP_Text>();
+                if (fromText != null && contentText != null)
+                {
+
+                    messageList.Add(new MessageData
+                    {
+                        from = fromText.text,
+                        subject = "Medieval Message", 
+                        message = contentText.text,
+                        highlighted = false 
+                    });
+
+                    Debug.Log($"TinySave: Saved message from '{fromText.text}' with content '{contentText.text}'.");
+                }
+                else
+                {
+                    Debug.LogWarning("TinySave: Could not find TMP_Text components in message object.", messageObject);
+                }
+            }
+            else
+            {
+                Debug.LogWarning("TinySave: Could not find FromField or ContentsField in message object.", messageObject);
+            }
+        }
+
+        // Serialize the list to JSON and save to PlayerPrefs
+        string json = JsonUtility.ToJson(new Wrapper<MessageData> { items = messageList });
+        PlayerPrefs.SetString(KEY_MEDIEVAL_MESSAGES, json);
+        PlayerPrefs.Save(); // Ensure changes are saved immediately
+        Debug.Log($"TinySave: Saved {messageList.Count} medieval messages.");
+
+
 
     }
 
@@ -218,6 +272,33 @@ public class TinySave : MonoBehaviour
             Debug.Log("TinySave: All messages are read.");
         }
        
+    }
+
+    public void LoadMedievalMessages()
+    {
+        if (!PlayerPrefs.HasKey(KEY_MEDIEVAL_MESSAGES))
+        {
+            Debug.LogWarning("TinySave: No saved medieval messages found.");
+            return;
+        }
+        string json = PlayerPrefs.GetString(KEY_MEDIEVAL_MESSAGES);
+        var wrapper = JsonUtility.FromJson<Wrapper<MessageData>>(json);
+        // Clear existing messages in the inbox, a loop and destroy them
+        Transform inboxContent = InitialiseEverything._inboxMiddleCanvas.transform.Find("Scroll View/Viewport/Content");
+        foreach (Transform child in inboxContent)
+        {
+            Destroy(child.gameObject);
+        }
+        foreach (var data in wrapper.items)
+        {
+            // Instantiate a new message prefab
+            GameObject messageObject = Instantiate(medievalMessagePrefab, InitialiseEverything._inboxMiddleCanvas.transform.Find("Scroll View/Viewport/Content"));
+            var fromText = messageObject.transform.Find("MsgBG/FromField/FromField").GetComponent<TMP_Text>();
+            var contentText = messageObject.transform.Find("MsgBG/ContentsField").GetComponent<TMP_Text>();
+            fromText.text = data.from;
+            contentText.text = data.message;
+        }
+        Debug.Log($"TinySave: Loaded {wrapper.items.Count} medieval messages.");
     }
 
     public void SaveEngineVariables()
@@ -378,6 +459,8 @@ public class TinySave : MonoBehaviour
 
     public void SaveTheStones()
     {
+
+        return; 
         // a) collect stone data
         var stoneList = new List<StoneData>();
         foreach (var stone in Compass.meshesAndOutlines)

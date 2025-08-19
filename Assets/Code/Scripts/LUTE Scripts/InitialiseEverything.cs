@@ -167,6 +167,8 @@ public class InitialiseEverything : Order
 
         LogaManager.Instance.LogManager.Log(LogLevel.Info,"App Version: "+Application.version);
 
+        //Continue();
+        //return;
 
         if (TinySave.loadGame)
         {
@@ -177,12 +179,15 @@ public class InitialiseEverything : Order
             var lastOrder = node.OrderList.Last<Order>();
             var lastNodeSeen = GetEngine().FindNode(TinySave.LastNodeSeen);
 
+          
             if (lastOrder is NextNode nextOrder)
             {
 
+               
+
                 if (TinySave.LastNodeSeen.Contains("Neolithic"))
                 {
-
+                  
                     var changeToNeolithicNode = GetEngine().FindNode("Change to Neolithic");
                     nextOrder.targetNode = changeToNeolithicNode;
 
@@ -194,31 +199,41 @@ public class InitialiseEverything : Order
                 }
                 else if(TinySave.LastNodeSeen.Contains("Mid"))
                 {
+                  
+
                     var changeToMiddleAgesNode = GetEngine().FindNode("Change to Middle");
+
+
                     nextOrder.targetNode = changeToMiddleAgesNode;
+
+                    //Continue();
+                    //return;
                     //get the ChangeToMiddleAges order and execute it
                     ChangeToMiddleAges.skipToLoadedNode = true;
                 }
                 else
                 {
+     
                     nextOrder.targetNode = lastNodeSeen;
                 }
 
                 
             }
+            if (lastNodeSeen.TargetKeyNode != null)
+            {
+                lastNodeSeen.TargetKeyNode.TargetUnlockNode = null;
+                lastNodeSeen.TargetKeyNode = null;
+            }
 
-            lastNodeSeen.TargetKeyNode.TargetUnlockNode = null;
-            lastNodeSeen.TargetKeyNode = null;
-
-
-            TinySave.Instance.LoadMessages();
-            TinySave.Instance.LoadEngineVariables();
+            //TinySave.Instance.LoadMessages();
+            //TinySave.Instance.LoadEngineVariables();
 
         }
 
 
         // Continue to the next order
         Continue();
+        return;
     }
 
     public static List<Vector3> ParsePoints(string data)

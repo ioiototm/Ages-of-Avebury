@@ -83,16 +83,23 @@ public class ChangeToMiddleAges : Order
         //GameObject.Find("Stone III_LP(Clone)").SetActive(false);
         if (skipToLoadedNode)
         {
+
+            Debug.Log("PARENT NODE IS: " + ParentNode._NodeName + " AND LAST NODE SEEN IS " + TinySave.LastNodeSeen);
             //get the last order from the node this order is in
             var node = GetEngine().FindNode(ParentNode._NodeName);
             var lastOrder = node.OrderList.Last<Order>();
             var lastNodeSeen = GetEngine().FindNode(TinySave.LastNodeSeen);
 
-            if (lastOrder is NextNode nextOrder)
+            if (lastNodeSeen._NodeName != ParentNode._NodeName)
             {
-                nextOrder.targetNode = lastNodeSeen;
-            }
+                if (lastOrder is NextNode nextOrder)
+                {
+                    nextOrder.targetNode = lastNodeSeen;
+                }
 
+                TinySave.Instance.LoadMedievalMessages();
+            }
+            
         }
         else
         {
