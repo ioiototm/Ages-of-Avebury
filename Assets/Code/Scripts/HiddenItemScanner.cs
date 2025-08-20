@@ -45,6 +45,7 @@ public class HiddenItemScanner : MonoBehaviour
     private bool isWithinDetectionRange = false;
 
 
+    public int maxPingAmmount = 10; // Maximum number of pings before forcing discovery
 
     private int pingAmmount = 0;
 
@@ -262,7 +263,7 @@ public class HiddenItemScanner : MonoBehaviour
 
         Debug.Log($"Ping ammount: {pingAmmount}");
 
-        if (pingAmmount > 10)
+        if (pingAmmount > maxPingAmmount)
         {
             pingAmmount = 0;
 
@@ -270,6 +271,11 @@ public class HiddenItemScanner : MonoBehaviour
             Debug.Log("Ping ammount reset");
 
             //spawn the item anyway
+            StartCoroutine(DiscoverItem());
+            return;
+        }
+        else if (maxPingAmmount < 5)
+        {
             StartCoroutine(DiscoverItem());
             return;
         }

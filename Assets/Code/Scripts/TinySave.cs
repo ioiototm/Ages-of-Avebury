@@ -34,6 +34,8 @@ public class TinySave : MonoBehaviour
     const string KEY_MEDIEVAL_MESSAGES = "SavedMedievalMessages"; // JSON blob of medieval messages
     const string KEY_STONE_DECISION = "StoneDecision"; // JSON blob of stone decisions
 
+
+
     [SerializeField]
     private GameObject messagePrefab;
 
@@ -87,31 +89,61 @@ public class TinySave : MonoBehaviour
     }
 
     [Serializable]
-    class StoneDecisionData
+    public class StoneDecisionData
     {
         public DecisionMedieval.StoneDecision stoneDecision;
         public int WhichStone; // 0 for first stone, 1 for second stone, etc.
     }
 
+    [Serializable]
+    public class StoneDecisionCollection
+    {
+        public List<StoneDecisionData> decisions = new List<StoneDecisionData>();
+    }
+
 
     public void SaveStoneMedieval(DecisionMedieval.StoneDecision decision, int whichStone)
     {
-        //we need to save the Stone Decision variable, as well as the which stone
-        //we need to save the stone decision as a JSON blob, and store it in PlayerPrefs
-        
-        DecisionMedieval.StoneDecision stoneDecision = decision;
-        StoneDecisionData stoneDecisionData = new StoneDecisionData
+        StoneDecisionCollection collection;
+        if (PlayerPrefs.HasKey(KEY_STONE_DECISION))
         {
-            stoneDecision = stoneDecision,
-            WhichStone = whichStone
-        };
+            string json = PlayerPrefs.GetString(KEY_STONE_DECISION);
+            collection = JsonUtility.FromJson<StoneDecisionCollection>(json) ?? new StoneDecisionCollection();
+        }
+        else
+        {
+            collection = new StoneDecisionCollection();
+        }
 
-        //add the stone decision to PlayerPrefs, as we have multiple decisions
-        string json = JsonUtility.ToJson(stoneDecisionData);
-        PlayerPrefs.SetString(KEY_STONE_DECISION, json);
-        PlayerPrefs.Save(); // Ensure changes are saved immediately
+        // Find if a decision for this stone already exists
+        var existingDecision = collection.decisions.FirstOrDefault(d => d.WhichStone == whichStone);
+        if (existingDecision != null)
+        {
+            // Update existing decision
+            existingDecision.stoneDecision = decision;
+        }
+        else
+        {
+            // Add new decision
+            collection.decisions.Add(new StoneDecisionData { stoneDecision = decision, WhichStone = whichStone });
+        }
 
+        // Serialize the entire collection and save it
+        string updatedJson = JsonUtility.ToJson(collection);
+        PlayerPrefs.SetString(KEY_STONE_DECISION, updatedJson);
+        PlayerPrefs.Save();
     }
+
+    public StoneDecisionCollection LoadStoneMedieval()
+    {
+        if (PlayerPrefs.HasKey(KEY_STONE_DECISION))
+        {
+            string json = PlayerPrefs.GetString(KEY_STONE_DECISION);
+            return JsonUtility.FromJson<StoneDecisionCollection>(json);
+        }
+        return new StoneDecisionCollection();
+    }
+
 
     public void SaveMessagesMedieval()
     {

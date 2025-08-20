@@ -18,6 +18,9 @@ public class Scanner : Order
     [SerializeField]
     LocationVariable locationInfo;
 
+    [SerializeField]
+    int maxPingAmmount = 10;
+
 
     public void OnItemDiscovered(GameObject gameObject)
     {
@@ -37,6 +40,7 @@ public class Scanner : Order
     {
         scanner.OnItemDiscovered += OnItemDiscovered;
         scanner.SetItemToSpawn(itemToSpawn);
+        scanner.maxPingAmmount = maxPingAmmount;
         scanner.SetIsActive(true);
 
         //get the last seen location 

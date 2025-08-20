@@ -1,4 +1,6 @@
 using LoGaCulture.LUTE;
+using Mapbox.Unity.Location;
+using Mapbox.Utils;
 using System.Collections;
 using UnityEngine;
 
@@ -52,7 +54,12 @@ public class StoneCreation : Order
         //GameObject stoneObject = GameObject.Find("StoneObject");
         //stoneObject.SetActive(false);
 
+        //get the current location
+        //LocationRandomiser.Instance.SetLastSeenAndTargetToFirstNPC();
+        Vector2d playerLocation = LocationProviderFactory.Instance.DefaultLocationProvider.CurrentLocation.LatitudeLongitude;
 
+
+        //
 
         Continue();
     }
