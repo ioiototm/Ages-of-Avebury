@@ -6,11 +6,15 @@ using UnityEngine;
 [AddComponentMenu("")]
 public class GameCompleted : Order
 {
-     public override void OnEnter()
+
+
+    public static bool GameCompletedFlag = false;
+    public override void OnEnter()
     {
         //get the MapCompletion script from any GameObject in the scene
         MapCompletion mapCompletion = FindFirstObjectByType<MapCompletion>();
         mapCompletion.gameCompleted = true;
+        GameCompletedFlag = true;
 
         Continue();
 

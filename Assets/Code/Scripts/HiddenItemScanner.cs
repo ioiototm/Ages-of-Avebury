@@ -364,10 +364,16 @@ public class HiddenItemScanner : MonoBehaviour
 
             spawnedObject.SetActive(true);
 
+            
+
             // Adjust orientation if needed
             //spawnedObject.transform.rotation = Quaternion.Euler(-90, spawnedObject.transform.rotation.eulerAngles.y, 0);
 
-
+            if(GameCompleted.GameCompletedFlag)
+            {
+                //make the scale a bit smaller
+                spawnedObject.transform.localScale = spawnedObject.transform.localScale * 0.6f;
+            }
 
             if (feedbackText != null)
             {
