@@ -362,6 +362,8 @@ public class HiddenItemScanner : MonoBehaviour
         {
             GameObject spawnedObject = Instantiate(objectToSpawn, itemPose.position, itemPose.rotation);
 
+            spawnedObject.SetActive(true);
+
             // Adjust orientation if needed
             //spawnedObject.transform.rotation = Quaternion.Euler(-90, spawnedObject.transform.rotation.eulerAngles.y, 0);
 
