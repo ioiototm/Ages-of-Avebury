@@ -138,6 +138,8 @@ public class DecisionMedieval : Order
         sendLogToServer();
         Debug.Log("Stone saved successfully!");
 
+        MapCompletion.decisions.Add(decision);
+
 
         var savedStones = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>().GetVariable<IntegerVariable>("SavedStones");
         savedStones.Value++;
@@ -153,6 +155,7 @@ public class DecisionMedieval : Order
         sendLogToServer();
         Debug.Log("Stone broken successfully!");
 
+        MapCompletion.decisions.Add(decision);
 
         StartCoroutine(wait());
     }

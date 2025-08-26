@@ -35,11 +35,14 @@ public class MapCompletion : MonoBehaviour
     [SerializeField]
     public bool destroyedStone1 = false, destroyedStone2 = false, foundStoneCreated = false;
 
+
+    [SerializeField] public static List<DecisionMedieval.StoneDecision> decisions = new List<DecisionMedieval.StoneDecision>();
+
     [SerializeField]
     public bool southQuadrant = false;
 
     [SerializeField]
-    GameObject bakery, cottage, church;
+    public GameObject bakery, cottage, church;
 
     [SerializeField]
     GameObject beamOfLight;

@@ -46,16 +46,69 @@ public class PostGameScanner : Order
         GameObject mapComplete = GameObject.Find("MapComplete");
         MapCompletion mapCompletion = mapComplete.GetComponent<MapCompletion>();
 
+        var decisions = MapCompletion.decisions;
+        var toSave = false;
+
+
         switch (stoneType)
         {
             case DecisionMedieval.StoneType.Stone1:
-                itemToSpawn = mapCompletion.createdStone1;
+
+                foreach (var decision in decisions)
+                {
+                    if (decision.Type == DecisionMedieval.StoneType.Stone1)
+                    {
+                        toSave = decision.Save;
+                        if(decision.Save)
+                        {
+                            itemToSpawn = mapCompletion.createdStone1;
+                        }
+                        else
+                        {
+                            itemToSpawn = mapCompletion.bakery;
+                        }
+                        break;
+                    }
+                }
+
+
+                //itemToSpawn = mapCompletion.createdStone1;
                 break;
             case DecisionMedieval.StoneType.Stone2:
-                itemToSpawn = mapCompletion.createdStone2;
+                foreach (var decision in decisions)
+                {
+                    if (decision.Type == DecisionMedieval.StoneType.Stone2)
+                    {
+                        toSave = decision.Save;
+                        if (decision.Save)
+                        {
+                            itemToSpawn = mapCompletion.createdStone2;
+                        }
+                        else
+                        {
+                            itemToSpawn = mapCompletion.cottage;
+                        }
+                        break;
+                    }
+                }
                 break;
             case DecisionMedieval.StoneType.OtherStone:
-                itemToSpawn = mapCompletion.foundStone;
+                foreach (var decision in decisions)
+                {
+                    if (decision.Type == DecisionMedieval.StoneType.OtherStone)
+                    {
+                        toSave = decision.Save;
+                        if (decision.Save)
+                        {
+                            itemToSpawn = mapCompletion.foundStone;
+                        }
+                        else
+                        {
+                            itemToSpawn = mapCompletion.church;
+                        }
+                        break;
+                    }
+                }
                 break;
             default:
                 Debug.LogError("Unknown stone type: " + stoneType);
@@ -64,6 +117,14 @@ public class PostGameScanner : Order
 
 
         scanner.SetItemToSpawn(itemToSpawn);
+
+        if(!toSave)
+        {
+            //set the scale by ten
+            itemToSpawn.transform.localScale = itemToSpawn.transform.localScale * 10f;
+        }
+
+
         scanner.maxPingAmmount = 0;
         scanner.SetIsActive(true);
 

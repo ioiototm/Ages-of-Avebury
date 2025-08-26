@@ -16,6 +16,21 @@ public class GameCompleted : Order
         mapCompletion.gameCompleted = true;
         GameCompletedFlag = true;
 
+
+        //get the FirstStoneCreation6 and SecondStoneCreation7 location variables from the engine
+        var firstStoneCreation = GetEngine().GetVariable<LocationVariable>("FirstStoneCreation6");
+        var secondStoneCreation = GetEngine().GetVariable<LocationVariable>("SecondStoneCreation7");
+
+        //get the PostGameStoneFirst and PostGameStoneSecond location variables from the engine
+        var postGameStoneFirst = GetEngine().GetVariable<LocationVariable>("PostGameStoneFirst");
+        var postGameStoneSecond = GetEngine().GetVariable<LocationVariable>("PostGameStoneSecond");
+
+        postGameStoneFirst.Value.SetNewPosition(firstStoneCreation.Value.Position);
+        postGameStoneSecond.Value.SetNewPosition(secondStoneCreation.Value.Position);
+
+
+
+
         Continue();
 
     }
