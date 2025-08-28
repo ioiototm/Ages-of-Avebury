@@ -3,6 +3,7 @@ using Mapbox.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
@@ -354,6 +355,7 @@ public class HiddenItemScanner : MonoBehaviour
         // Wait a moment for dramatic effect
         yield return new WaitForSeconds(1.5f);
         
+
         scanButtonGameObject.SetActive(false);
 
         // Spawn the hidden item on the AR plane
@@ -420,6 +422,51 @@ public class HiddenItemScanner : MonoBehaviour
 
                 }
             }
+
+
+            if(GameCompleted.GameCompletedFlag)
+            {
+              
+
+              
+
+                //remove all button on click events and add a new one to call the TakePhoto() method in the ARPhotoCapture script which is in the object called PhotoCapture
+
+                if (scanButtonGameObject != null)
+                {
+                   
+                    scanButtonGameObject.SetActive(true);
+
+                    GameObject scanButtonText = GameObject.Find("Scan/TapToScanTxt");
+                    //change it to say "Take Photo"
+                    if (scanButtonText != null)
+                    {
+                        //get the TextMeshPro - Text (UI) component and change the text to "Take Photo"
+                        TMP_Text tMP_Text = scanButtonText.GetComponent<TMP_Text>();
+                        if (tMP_Text != null)
+                        {
+                            tMP_Text.text = "Take Photo";
+                        }
+
+
+                    }
+
+                    Button btn = scanButtonGameObject.GetComponent<Button>();
+                    if (btn != null)
+                    {
+                        btn.onClick.RemoveAllListeners();
+                        ARPhotoCapture photoCapture = GameObject.Find("PhotoCapture").GetComponent<ARPhotoCapture>();
+                        if (photoCapture != null)
+                        {
+                            btn.onClick.AddListener(photoCapture.TakePhoto);
+                        }
+                    }
+                }
+
+
+            }
+
+
         }
         else
         {
