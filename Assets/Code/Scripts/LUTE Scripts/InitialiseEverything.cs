@@ -114,7 +114,7 @@ public class InitialiseEverything : Order
                 var name = locationVariable.Key;
 
                 //the names are random but have a number somewhere, so check if the name contains any numbers, in any place
-                if (name.Contains("barnCentre") || name.Contains("StartingPoint"))
+                if (name.Contains("barnCentre") || name.Contains("StartingPoint") || name.Contains("PostGame"))
                 {
                     mapManager.HideLocationMarker(locationVariable);
                 }

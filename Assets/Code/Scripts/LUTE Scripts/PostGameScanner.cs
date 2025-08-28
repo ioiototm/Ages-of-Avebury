@@ -121,7 +121,7 @@ public class PostGameScanner : Order
         if(!toSave)
         {
             //set the scale by ten
-            itemToSpawn.transform.localScale = itemToSpawn.transform.localScale * 10f;
+            itemToSpawn.transform.localScale = itemToSpawn.transform.localScale * 13f;
         }
 
 

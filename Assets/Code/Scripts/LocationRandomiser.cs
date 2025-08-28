@@ -18,7 +18,7 @@ public class LocationRandomiser : MonoBehaviour
     LUTELocationInfo[] locationInfos;
 
     [SerializeField]
-    bool debugMode = true;
+    public bool debugMode = true;
 
 
     //public LUTELocationInfo currentLocation;

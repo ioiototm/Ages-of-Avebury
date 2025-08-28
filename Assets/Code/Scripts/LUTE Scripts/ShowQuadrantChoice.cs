@@ -29,8 +29,20 @@ public class ShowQuadrantChoice : Order
             return;
         }
 
-        GetEngine().GetMapManager().ShowLocationMarker(northQuadrant);
-        GetEngine().GetMapManager().ShowLocationMarker(southQuadrant);
+       
+        if(LocationRandomiser.Instance.debugMode)
+        {
+
+
+
+            GetEngine().FindNode("Post-Scan Message").Execute();
+        }
+        else
+        {
+            GetEngine().GetMapManager().ShowLocationMarker(northQuadrant);
+            GetEngine().GetMapManager().ShowLocationMarker(southQuadrant);
+
+        }
 
 
         //bool southQuadrant;
