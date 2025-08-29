@@ -28,6 +28,9 @@ public class GameCompleted : Order
         postGameStoneFirst.Value.SetNewPosition(firstStoneCreation.Value.Position);
         postGameStoneSecond.Value.SetNewPosition(secondStoneCreation.Value.Position);
 
+        postGameStoneFirst.Value.LocationStatus = LoGaCulture.LUTE.LocationStatus.Unvisited;
+        postGameStoneSecond.Value.LocationStatus = LoGaCulture.LUTE.LocationStatus.Unvisited;
+
 
 
 
