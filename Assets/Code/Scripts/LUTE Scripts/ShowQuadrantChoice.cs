@@ -19,15 +19,18 @@ public class ShowQuadrantChoice : Order
         }
 
 
-        var northQuadrant = GetEngine().GetVariable<LocationVariable>("StartingPointNorth");
-        var southQuadrant = GetEngine().GetVariable<LocationVariable>("StartingPointSouth");
+        var northQuadrantM = GetEngine().GetVariable<LocationVariable>("StartingPointNorthMain");
+        var southQuadrantM = GetEngine().GetVariable<LocationVariable>("StartingPointSouthMain");
+        var northQuadrantS = GetEngine().GetVariable<LocationVariable>("StartingPointNorthSecondary");
+        var southQuadrantS = GetEngine().GetVariable<LocationVariable>("StartingPointSouthSecondary");
 
-        if (northQuadrant == null || southQuadrant == null)
+        if (northQuadrantM == null || southQuadrantM == null || northQuadrantS == null)
         {
-            Debug.LogError("Could not find StartingPointNorth or StartingPointSouth variables");
+            Debug.LogError("Could not find StartingPointNorthMain, StartingPointSouthMain, StartingPointNorthSecondary or StartingPointSouthSecondary variable");
             Continue();
             return;
         }
+
 
        
         if(LocationRandomiser.Instance.debugMode)
@@ -39,8 +42,10 @@ public class ShowQuadrantChoice : Order
         }
         else
         {
-            GetEngine().GetMapManager().ShowLocationMarker(northQuadrant);
-            GetEngine().GetMapManager().ShowLocationMarker(southQuadrant);
+            GetEngine().GetMapManager().ShowLocationMarker(northQuadrantM);
+            GetEngine().GetMapManager().ShowLocationMarker(southQuadrantM);
+            GetEngine().GetMapManager().ShowLocationMarker(northQuadrantS);
+            GetEngine().GetMapManager().ShowLocationMarker(southQuadrantS);
 
         }
 
