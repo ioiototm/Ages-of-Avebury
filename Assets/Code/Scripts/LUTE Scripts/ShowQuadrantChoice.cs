@@ -1,4 +1,5 @@
 using LoGaCulture.LUTE;
+using System.Linq;
 using UnityEngine;
 
 [OrderInfo("AgesOfAvebury",
@@ -19,6 +20,8 @@ public class ShowQuadrantChoice : Order
         }
 
 
+        Debug.Log("Showing quadrant choice");
+
         var northQuadrantM = GetEngine().GetVariable<LocationVariable>("StartingPointNorthMain");
         var southQuadrantM = GetEngine().GetVariable<LocationVariable>("StartingPointSouthMain");
         var northQuadrantS = GetEngine().GetVariable<LocationVariable>("StartingPointNorthSecondary");
@@ -27,21 +30,38 @@ public class ShowQuadrantChoice : Order
         if (northQuadrantM == null || southQuadrantM == null || northQuadrantS == null)
         {
             Debug.LogError("Could not find StartingPointNorthMain, StartingPointSouthMain, StartingPointNorthSecondary or StartingPointSouthSecondary variable");
-            Continue();
-            return;
+            //Continue();
+            //return;
         }
 
+        var node = GetEngine().FindNode(ParentNode._NodeName);
+        var lastOrder = node.OrderList.Last<Order>();
 
-       
-        if(LocationRandomiser.Instance.debugMode)
+
+        if (LocationRandomiser.Instance.debugMode)
         {
 
+            Debug.Log("Debug mode - showing all quadrants");
+
+            //GetEngine().GetMapManager().ShowLocationMarker(northQuadrantM);
 
 
-            GetEngine().FindNode("Post-Scan Message").Execute();
+
+
+            
         }
         else
         {
+
+            Debug.Log("Normal mode - showing all quadrants");
+
+            if (lastOrder is NextNode nextOrder)
+            {
+
+                lastOrder.enabled = false;
+
+            }
+
             GetEngine().GetMapManager().ShowLocationMarker(northQuadrantM);
             GetEngine().GetMapManager().ShowLocationMarker(southQuadrantM);
             GetEngine().GetMapManager().ShowLocationMarker(northQuadrantS);

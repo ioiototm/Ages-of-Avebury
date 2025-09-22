@@ -27,6 +27,9 @@ public class InitialiseEverything : Order
     private GameObject scannerCanvas;
 
     [SerializeField]
+    private GameObject postGameScannerCanvas;
+
+    [SerializeField]
     private GameObject inboxMiddleCanvas;
 
 
@@ -34,6 +37,7 @@ public class InitialiseEverything : Order
     public static GameObject _menuCanvas;
     public static GameObject _mapCanvas;
     public static GameObject _scannerCanvas;
+    public static GameObject _postGameScannerCanvas;
 
     public static GameObject modernScreen;
     public static GameObject neolithicScreen;
@@ -65,7 +69,8 @@ public class InitialiseEverything : Order
         _inboxCanvas = inboxCanvas ? inboxCanvas : GameObject.Find("ModernInboxCanvas");
         _menuCanvas = menuCanvas ? menuCanvas : GameObject.Find("ModernMenuCanvas");
         _mapCanvas = mapCanvas ? mapCanvas : GameObject.Find("ModernMapCanvas");
-        _scannerCanvas = scannerCanvas ? scannerCanvas : GameObject.Find("ScannerCanvas");
+        _scannerCanvas = scannerCanvas ? scannerCanvas : GameObject.Find("ModernScanner");
+        _postGameScannerCanvas = postGameScannerCanvas ? postGameScannerCanvas : GameObject.Find("PostGameModernScanner");
 
         _inboxMiddleCanvas = inboxMiddleCanvas ? inboxMiddleCanvas : GameObject.Find("MiddleInbox");
 
@@ -74,6 +79,7 @@ public class InitialiseEverything : Order
         _menuCanvas.SetActive(false);
         _mapCanvas.SetActive(true);
         _scannerCanvas.SetActive(false);
+        _postGameScannerCanvas.SetActive(false);
 
 
         modernScreen = GameObject.Find("ModernInterface");
