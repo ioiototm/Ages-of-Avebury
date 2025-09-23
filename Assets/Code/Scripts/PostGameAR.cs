@@ -16,6 +16,23 @@ public class PostGameAR : Order
 
 
 
+    string GetRandomBakeryName()
+    {
+        string[] peopleNames = new string[]
+        {
+            "Alice", "Bob", "Charlie", "Diana", "Ethan", "Fiona", "George", "Hannah",
+            "Ian", "Julia", "Kevin", "Laura", "Michael", "Nina", "Oliver", "Paula",
+            "Quinn", "Rachel", "Sam", "Tina", "Umar", "Violet", "Wendy", "Xander",
+            "Yara", "Zane"
+        };
+
+        // Select a random name from the array and do "Name's Bakery"
+        string randomName = peopleNames[Random.Range(0, peopleNames.Length)];
+        return randomName + "'s Bakery";
+
+
+    }
+
 
     public override void OnEnter()
     {
@@ -101,40 +118,71 @@ public class PostGameAR : Order
         GameObject stoneOrBuilding2 = null;
         GameObject stoneOrBuilding3 = null;
 
+    
+
         foreach (var decision in decisions)
         {
             if (decision.Type == DecisionMedieval.StoneType.Stone1)
             {
                 if (decision.Save)
                 {
-                    stoneOrBuilding1 = mapCompletion.createdStone1;
+                    stoneOrBuilding1 = Instantiate(mapCompletion.createdStone1);
+
+                    //set scale to 0.2
+                    stoneOrBuilding1.transform.localScale = Vector3.one * 0.2f;
                 }
                 else
                 {
-                    stoneOrBuilding1 = mapCompletion.bakery;
+                    stoneOrBuilding1 = Instantiate(mapCompletion.bakery);
+
+
+                
+                    //get the Text (TMP) component and change the text to test
+                    stoneOrBuilding1.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = GetRandomBakeryName();
+
+                    //set scale to 4
+
+                    stoneOrBuilding1.transform.localScale = Vector3.one * 4f;
                 }
+
+
+                stoneOrBuilding1.SetActive(false);
+
+
             }
             else if (decision.Type == DecisionMedieval.StoneType.Stone2)
             {
                 if (decision.Save)
                 {
-                    stoneOrBuilding2 = mapCompletion.createdStone2;
+                    stoneOrBuilding2 = Instantiate(mapCompletion.createdStone2);
+                    //set scale to 0.2
+                    stoneOrBuilding2.transform.localScale = Vector3.one * 0.2f;
                 }
                 else
                 {
-                    stoneOrBuilding2 = mapCompletion.cottage;
+                    stoneOrBuilding2 = Instantiate(mapCompletion.cottage);
+
+                    //set scale to 5
+                    stoneOrBuilding2.transform.localScale  = Vector3.one * 5f;
                 }
+
+                stoneOrBuilding2.SetActive(false);
             }
             else if (decision.Type == DecisionMedieval.StoneType.OtherStone)
             {
                 if (decision.Save)
                 {
-                    stoneOrBuilding3 = mapCompletion.foundStone;
+                    stoneOrBuilding3 = Instantiate(mapCompletion.foundStone);
+                    //set scale to 0.2
+                    stoneOrBuilding3.transform.localScale = Vector3.one * 0.2f;
                 }
                 else
                 {
-                    stoneOrBuilding3 = mapCompletion.church;
+                    stoneOrBuilding3 = Instantiate(mapCompletion.church);
+                    //add 5 to the scale of the object
+                    stoneOrBuilding3.transform.localScale *= 5f;
                 }
+                stoneOrBuilding3.SetActive(false);
             }
         }
 
@@ -146,9 +194,9 @@ public class PostGameAR : Order
         // Set stoneOrBuilding2 at the center
         if (stoneOrBuilding2 != null)
         {
-            GameObject prefabCopy = Instantiate(stoneOrBuilding2);
-            prefabCopy.transform.SetParent(stone.transform);
-            prefabCopy.transform.localPosition = Vector3.zero;
+
+            stoneOrBuilding2.transform.SetParent(stone.transform);
+            stoneOrBuilding2.transform.localPosition = Vector3.zero;
         }
 
         // Define radius for placing the other objects
@@ -158,22 +206,24 @@ public class PostGameAR : Order
         // Place stoneOrBuilding1 randomly around the center
         if (stoneOrBuilding1 != null)
         {
-            GameObject prefabCopy = Instantiate(stoneOrBuilding1);
-            prefabCopy.transform.SetParent(stone.transform);
-            prefabCopy.transform.localPosition = GetRandomPositionOnCircle(minRadius, maxRadius);
+
+            stoneOrBuilding1.transform.SetParent(stone.transform);
+            stoneOrBuilding1.transform.localPosition = GetRandomPositionOnCircle(minRadius, maxRadius);
         }
 
         // Place stoneOrBuilding3 randomly around the center
         if (stoneOrBuilding3 != null)
         {
-            GameObject prefabCopy = Instantiate(stoneOrBuilding3);
-            prefabCopy.transform.SetParent(stone.transform);
-            prefabCopy.transform.localPosition = GetRandomPositionOnCircle(minRadius, maxRadius);
+
+            stoneOrBuilding3.transform.SetParent(stone.transform);
+            stoneOrBuilding3.transform.localPosition = GetRandomPositionOnCircle(minRadius, maxRadius);
         }
 
 
         var node = GetEngine().FindNode(ParentNode._NodeName);
         var lastOrder = node.OrderList.Last<Order>();
+
+    
 
         //get the next order to this one
 
