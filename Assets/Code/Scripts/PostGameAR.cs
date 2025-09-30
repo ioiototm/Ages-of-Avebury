@@ -15,7 +15,26 @@ public class PostGameAR : Order
 {
 
 
+    IEnumerator CheckAndEnableOnceSpawned()
+    {
+        //this function checks if there is an object called "Spawnable(Clone)" every second, and once it finds it, it sets its all children to visible
+        while (true)
+        {
+            GameObject spawnable = GameObject.Find("Spawnable(Clone)");
+            if (spawnable != null)
+            {
+               
+                // Enable all children of the spawnable object
+                foreach (Transform child in spawnable.transform)
+                {
+                    child.gameObject.SetActive(true);
+                }
+                yield break; // Exit the coroutine once done
+            }
+            yield return new WaitForSeconds(1f); // Wait for 1 second before checking again
+        }
 
+    }
     string GetRandomBakeryName()
     {
         string[] peopleNames = new string[]
@@ -114,109 +133,77 @@ public class PostGameAR : Order
         ////and then the other two stones/buildings are in a radius around them, not too close, not to far, randomly placed
 
         //check the decisions list for each stone type, and get the corresponding prefab from mapCompletion
-        GameObject stoneOrBuilding1 = null;
-        GameObject stoneOrBuilding2 = null;
-        GameObject stoneOrBuilding3 = null;
+        GameObject stoneOrBuilding1Prefab = null;
+        GameObject stoneOrBuilding2Prefab = null;
+        GameObject stoneOrBuilding3Prefab = null;
 
-    
+        // Create a new parent GameObject that will serve as the prefab container.
+        // It is created in the scene but immediately deactivated.
+        GameObject stone = new GameObject("StonesAndBuildings");
+        stone.SetActive(false); // Deactivate it so it and its children are not visible
 
         foreach (var decision in decisions)
         {
             if (decision.Type == DecisionMedieval.StoneType.Stone1)
             {
+                stoneOrBuilding1Prefab = decision.Save ? mapCompletion.createdStone1 : mapCompletion.bakery;
+                GameObject instance = Instantiate(stoneOrBuilding1Prefab, stone.transform);
                 if (decision.Save)
                 {
-                    stoneOrBuilding1 = Instantiate(mapCompletion.createdStone1);
-
-                    //set scale to 0.2
-                    stoneOrBuilding1.transform.localScale = Vector3.one * 0.2f;
+                    instance.transform.localScale = Vector3.one * 0.2f;
                 }
                 else
                 {
-                    stoneOrBuilding1 = Instantiate(mapCompletion.bakery);
-
-
-                
-                    //get the Text (TMP) component and change the text to test
-                    stoneOrBuilding1.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = GetRandomBakeryName();
-
-                    //set scale to 4
-
-                    stoneOrBuilding1.transform.localScale = Vector3.one * 4f;
+                    instance.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = GetRandomBakeryName();
+                    instance.transform.localScale = Vector3.one * 4f;
                 }
-
-
-                stoneOrBuilding1.SetActive(false);
-
-
             }
             else if (decision.Type == DecisionMedieval.StoneType.Stone2)
             {
+                stoneOrBuilding2Prefab = decision.Save ? mapCompletion.createdStone2 : mapCompletion.cottage;
+                GameObject instance = Instantiate(stoneOrBuilding2Prefab, stone.transform);
                 if (decision.Save)
                 {
-                    stoneOrBuilding2 = Instantiate(mapCompletion.createdStone2);
-                    //set scale to 0.2
-                    stoneOrBuilding2.transform.localScale = Vector3.one * 0.2f;
+                    instance.transform.localScale = Vector3.one * 0.2f;
                 }
                 else
                 {
-                    stoneOrBuilding2 = Instantiate(mapCompletion.cottage);
-
-                    //set scale to 5
-                    stoneOrBuilding2.transform.localScale  = Vector3.one * 5f;
+                    instance.transform.localScale = Vector3.one * 5f;
                 }
-
-                stoneOrBuilding2.SetActive(false);
             }
             else if (decision.Type == DecisionMedieval.StoneType.OtherStone)
             {
+                stoneOrBuilding3Prefab = decision.Save ? mapCompletion.foundStone : mapCompletion.church;
+                GameObject instance = Instantiate(stoneOrBuilding3Prefab, stone.transform);
                 if (decision.Save)
                 {
-                    stoneOrBuilding3 = Instantiate(mapCompletion.foundStone);
-                    //set scale to 0.2
-                    stoneOrBuilding3.transform.localScale = Vector3.one * 0.2f;
+                    instance.transform.localScale = Vector3.one * 0.2f;
                 }
                 else
                 {
-                    stoneOrBuilding3 = Instantiate(mapCompletion.church);
-                    //add 5 to the scale of the object
-                    stoneOrBuilding3.transform.localScale *= 5f;
+                    instance.transform.localScale *= 5f;
                 }
-                stoneOrBuilding3.SetActive(false);
             }
         }
 
+        // Now position the instantiated children within the deactivated parent
+        float minRadius = 5f;
+        float maxRadius = 10f;
 
-        //create a new game object to hold the three stones/buildings
-        GameObject stone = new GameObject("StonesAndBuildings");
-
-
-        // Set stoneOrBuilding2 at the center
-        if (stoneOrBuilding2 != null)
+        // Child at index 1 should be stoneOrBuilding2, which goes in the center
+        if (stone.transform.childCount > 1)
         {
-
-            stoneOrBuilding2.transform.SetParent(stone.transform);
-            stoneOrBuilding2.transform.localPosition = Vector3.zero;
+            stone.transform.GetChild(1).localPosition = Vector3.zero;
         }
-
-        // Define radius for placing the other objects
-        float minRadius = 2f;
-        float maxRadius = 5f;
-
-        // Place stoneOrBuilding1 randomly around the center
-        if (stoneOrBuilding1 != null)
+        // Child at index 0 should be stoneOrBuilding1
+        if (stone.transform.childCount > 0)
         {
-
-            stoneOrBuilding1.transform.SetParent(stone.transform);
-            stoneOrBuilding1.transform.localPosition = GetRandomPositionOnCircle(minRadius, maxRadius);
+            stone.transform.GetChild(0).localPosition = GetRandomPositionOnCircle(minRadius, maxRadius);
         }
-
-        // Place stoneOrBuilding3 randomly around the center
-        if (stoneOrBuilding3 != null)
+        // Child at index 2 should be stoneOrBuilding3
+        if (stone.transform.childCount > 2)
         {
-
-            stoneOrBuilding3.transform.SetParent(stone.transform);
-            stoneOrBuilding3.transform.localPosition = GetRandomPositionOnCircle(minRadius, maxRadius);
+            stone.transform.GetChild(2).localPosition = GetRandomPositionOnCircle(minRadius, maxRadius);
         }
 
 
@@ -242,6 +229,11 @@ public class PostGameAR : Order
 
             }
         }
+
+        // Start the coroutine to check and enable the child once spawned
+        StartCoroutine(CheckAndEnableOnceSpawned());
+
+
         Continue();
 
     }

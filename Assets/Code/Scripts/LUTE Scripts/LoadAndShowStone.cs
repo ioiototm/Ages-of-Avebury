@@ -7,7 +7,7 @@ using UnityEngine;
 
 
 [OrderInfo("AgesOfAvebury",
-              "Loads a random stone from online and shows the outline",
+              "Load Stone From Online",
               "")]
 [AddComponentMenu("")]
 public class LoadAndShowStone : Order
@@ -111,7 +111,14 @@ public class LoadAndShowStone : Order
 
         //disable the mesh renderer so it doesn't show
         stoneCreator.gameObject.SetActive(false);
-  
+
+
+        var mapCompletion = GameObject.Find("MapComplete").GetComponent<MapCompletion>();
+
+        //if (firstStone)
+        {
+            mapCompletion.foundStone = stoneCreator.gameObject;
+        }
 
 
         return lineGO;
@@ -149,6 +156,6 @@ public class LoadAndShowStone : Order
     public override string GetSummary()
     {
         //you can use this to return a summary of the order which is displayed in the inspector of the order
-        return "Detects spin";
+        return "Loads a random stone from online and shows the outline";
     }
 }
