@@ -123,6 +123,8 @@ public class InitialiseEverything : Order
                 if (name.Contains("barnCentre") || name.Contains("StartingPoint") || name.Contains("PostGame"))
                 {
                     mapManager.HideLocationMarker(locationVariable);
+                    //set to unvisited
+                    locationVariable.Value.LocationStatus = LoGaCulture.LUTE.LocationStatus.Unvisited;
                 }
                 // Check if the name contains any number  
                 if (name.Any(char.IsDigit))
@@ -237,9 +239,11 @@ public class InitialiseEverything : Order
         }
 
 
+        Debug.Log("Initialised everything");
+
         // Continue to the next order
         Continue();
-        return;
+        //return;
     }
 
     public static List<Vector3> ParsePoints(string data)
@@ -329,6 +333,19 @@ public class InitialiseEverything : Order
                 centering.UpdateMapToPlayer();
 
             }
+        }
+    }
+
+    //on quit game, reenable all location markers
+    private void OnApplicationQuit()
+    {
+        Debug.Log("Application quitting, re-enabling all location markers.");
+
+        var locationVariables = GetEngine().GetVariables<LocationVariable>();
+        var mapManager = GetEngine().GetMapManager();
+        foreach (var locationVariable in locationVariables)
+        {
+            locationVariable.Value.LocationDisabled = false;
         }
     }
 
