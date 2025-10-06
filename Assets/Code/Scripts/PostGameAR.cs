@@ -155,7 +155,7 @@ public class PostGameAR : Order
                 else
                 {
                     instance.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = GetRandomBakeryName();
-                    instance.transform.localScale = Vector3.one * 4f;
+                    instance.transform.localScale = Vector3.one * 7f;
                 }
             }
             else if (decision.Type == DecisionMedieval.StoneType.Stone2)
@@ -168,7 +168,7 @@ public class PostGameAR : Order
                 }
                 else
                 {
-                    instance.transform.localScale = Vector3.one * 5f;
+                    instance.transform.localScale = Vector3.one * 8f;
                 }
             }
             else if (decision.Type == DecisionMedieval.StoneType.OtherStone)
@@ -181,29 +181,35 @@ public class PostGameAR : Order
                 }
                 else
                 {
-                    instance.transform.localScale *= 5f;
+                    instance.transform.localScale *= 8f;
                 }
             }
         }
 
         // Now position the instantiated children within the deactivated parent
-        float minRadius = 5f;
-        float maxRadius = 10f;
+        float minRadius = 10f;
+        float maxRadius = 20f;
 
         // Child at index 1 should be stoneOrBuilding2, which goes in the center
         if (stone.transform.childCount > 1)
         {
             stone.transform.GetChild(1).localPosition = Vector3.zero;
+            //set it to enabled as well
+            stone.transform.GetChild(1).gameObject.SetActive(true);
         }
         // Child at index 0 should be stoneOrBuilding1
         if (stone.transform.childCount > 0)
         {
             stone.transform.GetChild(0).localPosition = GetRandomPositionOnCircle(minRadius, maxRadius);
+            //set it to enabled as well
+            stone.transform.GetChild(0).gameObject.SetActive(true);
         }
         // Child at index 2 should be stoneOrBuilding3
         if (stone.transform.childCount > 2)
         {
             stone.transform.GetChild(2).localPosition = GetRandomPositionOnCircle(minRadius, maxRadius);
+            //set it to enabled as well
+            stone.transform.GetChild(2).gameObject.SetActive(true);
         }
 
 
