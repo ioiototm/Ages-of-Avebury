@@ -26,13 +26,16 @@ public class TinySave : MonoBehaviour
     }
 
     const string KEY_HAS_PLAYED = "HasPlayedBefore";
-    const string KEY_OBJECTS    = "SavedObjects";   // JSON blob
-    const string KEY_STONES     = "SavedStones";    // JSON blob of meshes
+    const string KEY_OBJECTS = "SavedObjects";   // JSON blob
+    const string KEY_STONES = "SavedStones";    // JSON blob of meshes
     const string KEY_VARIABLES = "SavedVariables"; // JSON blob
     const string KEY_LAST_NODE = "LastNodeSeen";
     const string KEY_MESSAGES = "SavedMessages"; // JSON blob of messages
     const string KEY_MEDIEVAL_MESSAGES = "SavedMedievalMessages"; // JSON blob of medieval messages
     const string KEY_STONE_DECISION = "StoneDecision"; // JSON blob of stone decisions
+    const string KEY_STONE_DATA_FIRST = "StoneDataFirst"; // JSON blob of stone 1 data
+    const string KEY_STONE_DATA_SECOND = "StoneDataSecond"; // JSON blob of stone 2 data
+    const string KEY_STONE_DATA_THIRD_SOCIAL = "StoneDataThirdSocial"; // JSON blob of stone 3 data
 
 
 
@@ -48,13 +51,13 @@ public class TinySave : MonoBehaviour
 
     //public static string LastNodeSeen { get; set; }
 
-  
+
     [Serializable]
     class ObjData
     {
         public string name;      // use object's name as identifier
-        public bool   active;
-        public float  x, y, z;   // position
+        public bool active;
+        public float x, y, z;   // position
     }
 
     [Serializable]
@@ -102,6 +105,115 @@ public class TinySave : MonoBehaviour
     }
 
 
+    public static StoneCreator stone1, stone2, stone3;
+
+    public void SaveStoneData(string stoneBase64, int whichStone)
+    {
+        string key = whichStone switch
+        {
+            1 => KEY_STONE_DATA_FIRST,
+            2 => KEY_STONE_DATA_SECOND,
+            3 => KEY_STONE_DATA_THIRD_SOCIAL,
+            _ => throw new ArgumentOutOfRangeException(nameof(whichStone), "whichStone must be 0, 1, or 2.")
+        };
+        PlayerPrefs.SetString(key, stoneBase64);
+        PlayerPrefs.Save();
+    }
+
+    public void LoadAllStoneData()
+    {
+
+        var mapCompletion = GameObject.Find("MapComplete").GetComponent<MapCompletion>();
+
+
+        //if there is a saved stone 1
+        if (PlayerPrefs.HasKey(KEY_STONE_DATA_FIRST))
+        {
+            string stoneBase64 = PlayerPrefs.GetString(KEY_STONE_DATA_FIRST);
+
+            Mesh stoneMesh = null;
+            List<Vector2> outline = new List<Vector2>();
+
+            MeshSerializer.FromBase64(stoneBase64, out stoneMesh, out outline);
+
+
+            if (stone1 != null)
+            {
+                stone1.GetComponent<MeshFilter>().sharedMesh = stoneMesh;
+                stone1.outlinePoints = outline;
+
+                mapCompletion.createdStone1 = stone1.gameObject;
+            }
+            else
+            {
+                Debug.LogError("stone1 is not assigned in TinySave.");
+            }
+
+            //stoneCreator.outlinePoints = normalizedPts;
+            ////stoneCreator.GenerateSlab();
+
+            ////get the mesh filter of this object, and set it to the random mesh from Compass.meshesAndOutlines
+            //MeshFilter meshFilter = stoneCreator.GetComponent<MeshFilter>();
+            //stoneCreator.enabled = false;
+            //if (meshFilter != null)
+            //{
+            //    meshFilter.sharedMesh = Compass.meshesAndOutlines[randomIndex].mesh;
+            //}
+            //else
+            //{
+            //    Debug.LogError("MeshFilter component not found on the GameObject.");
+            //}
+
+            ////disable the mesh renderer so it doesn't show
+            //stoneCreator.gameObject.SetActive(false);
+
+            ////create a new stonecreator object
+
+
+        }
+
+        if (PlayerPrefs.HasKey(KEY_STONE_DATA_SECOND))
+        {
+            string stoneBase64 = PlayerPrefs.GetString(KEY_STONE_DATA_SECOND);
+            Mesh stoneMesh = null;
+            List<Vector2> outline = new List<Vector2>();
+            MeshSerializer.FromBase64(stoneBase64, out stoneMesh, out outline);
+
+            if (stone2 != null)
+            {
+                stone2.GetComponent<MeshFilter>().sharedMesh = stoneMesh;
+                stone2.outlinePoints = outline;
+
+                mapCompletion.createdStone2 = stone2.gameObject;
+            }
+            else
+            {
+                Debug.LogError("stone2 is not assigned in TinySave.");
+            }
+        }
+        if (PlayerPrefs.HasKey(KEY_STONE_DATA_THIRD_SOCIAL))
+        {
+            string stoneBase64 = PlayerPrefs.GetString(KEY_STONE_DATA_THIRD_SOCIAL);
+            Mesh stoneMesh = null;
+            List<Vector2> outline = new List<Vector2>();
+            MeshSerializer.FromBase64(stoneBase64, out stoneMesh, out outline);
+
+
+            if (stone3 != null)
+            {
+
+                stone3.GetComponent<MeshFilter>().sharedMesh = stoneMesh;
+                stone3.outlinePoints = outline;
+
+                mapCompletion.foundStone = stone3.gameObject;
+            }
+            else
+            {
+                Debug.LogError("stone3 is not assigned in TinySave.");
+            }
+        }
+    }
+
     public void SaveStoneMedieval(DecisionMedieval.StoneDecision decision, int whichStone)
     {
         StoneDecisionCollection collection;
@@ -134,6 +246,8 @@ public class TinySave : MonoBehaviour
         PlayerPrefs.Save();
     }
 
+
+
     public StoneDecisionCollection LoadStoneMedieval()
     {
         if (PlayerPrefs.HasKey(KEY_STONE_DECISION))
@@ -143,6 +257,8 @@ public class TinySave : MonoBehaviour
         }
         return new StoneDecisionCollection();
     }
+
+
 
 
     public void SaveMessagesMedieval()
@@ -608,6 +724,7 @@ public class TinySave : MonoBehaviour
         }
 
 
+        LoadAllStoneData();
 
 
 

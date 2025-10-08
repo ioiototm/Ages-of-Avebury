@@ -1,4 +1,5 @@
 using LoGaCulture.LUTE;
+using LoGaCulture.LUTE.Logs;
 using UnityEngine;
 
 [OrderInfo("AgesOfAvebury",
@@ -58,6 +59,10 @@ public class ChoseQuadrant : Order
             }
 
         }
+
+        LogaManager.Instance.LogManager.Log(LogLevel.Info, "Chosen quadrant: " + quadrant.ToString());
+
+
         Continue();
     }
 

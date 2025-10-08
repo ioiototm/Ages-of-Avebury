@@ -98,8 +98,9 @@ public class ChangeToMiddleAges : Order
                 }
 
                 TinySave.Instance.LoadMedievalMessages();
+                
             }
-            
+            TinySave.Instance.LoadAllStoneData();
         }
         else
         {

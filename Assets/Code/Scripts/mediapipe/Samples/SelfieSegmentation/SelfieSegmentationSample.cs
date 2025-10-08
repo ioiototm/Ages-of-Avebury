@@ -384,7 +384,7 @@ public class SelfieSegmentationSample : MonoBehaviour
             //get the list of points
             //Vector3[] points = new Vector3[lineRenderer.positionCount + 1];
 
-         
+
 
             //lineRenderer.GetPositions(points);
 
@@ -393,7 +393,10 @@ public class SelfieSegmentationSample : MonoBehaviour
 
             //ConnectionManager.Instance.SaveSharedVariable("stone1", "stone", pointsString);
 
-            ConnectionManager.Instance.SaveSharedVariable("StoneComplete", "MeshAndOutlineBase64", MeshSerializer.ToBase64(mesh, normalisedContour));
+
+            var meshData = MeshSerializer.ToBase64(mesh, normalisedContour);
+            ConnectionManager.Instance.SaveSharedVariable("StoneComplete", "MeshAndOutlineBase64",meshData);
+            TinySave.Instance.SaveStoneData(meshData, firstStone ? 1 : 2);
 
 
             //load next scene in the build

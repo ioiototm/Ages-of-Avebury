@@ -43,6 +43,8 @@ public class InitialiseEverything : Order
     public static GameObject neolithicScreen;
     public static GameObject middleAgesScreen;
 
+    public static StoneCreator stone1, stone2, stone3;
+
 
     public static GameObject neolithicMakeStoneButton;
 
@@ -84,6 +86,15 @@ public class InitialiseEverything : Order
 
         modernScreen = GameObject.Find("ModernInterface");
         neolithicScreen = GameObject.Find("NeolithicInterface");
+
+        stone1 = GameObject.Find("Stone1").GetComponent<StoneCreator>();
+        stone2 = GameObject.Find("Stone2").GetComponent<StoneCreator>();
+        stone3 = GameObject.Find("Stone3").GetComponent<StoneCreator>();
+
+        TinySave.stone1 = stone1;
+        TinySave.stone2 = stone2;
+        TinySave.stone3 = stone3;
+
         middleAgesScreen = GameObject.Find("MiddlePeriodInterface");
 
 
@@ -235,6 +246,7 @@ public class InitialiseEverything : Order
 
             //TinySave.Instance.LoadMessages();
             TinySave.Instance.LoadEngineVariables();
+            //TinySave.Instance.LoadAllStoneData();
 
         }
 

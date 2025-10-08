@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TriangleNet;
 using UnityEngine;
 
 
@@ -119,6 +120,11 @@ public class LoadAndShowStone : Order
         {
             mapCompletion.foundStone = stoneCreator.gameObject;
         }
+
+        //serialize the stone to base64
+        var base64Stone = MeshSerializer.ToBase64(meshFilter.sharedMesh, stoneCreator.outlinePoints);
+
+        TinySave.Instance.SaveStoneData(base64Stone, 3);
 
 
         return lineGO;

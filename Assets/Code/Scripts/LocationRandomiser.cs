@@ -353,6 +353,36 @@ public class LocationRandomiser : MonoBehaviour
 
     }
 
+    public void SetAllLocationsToEnabled()
+    {
+        ////go through all of the locations and set them to not visited
+        ////get all the locations from the resources
+        //var locations = Resources.LoadAll<LUTELocationInfo>("Locations");
+        //foreach (var location in locations)
+        //{
+        //    //set the status to unvisited
+        //    location.LocationStatus = LocationStatus.Unvisited;
+
+        //}
+
+
+        var locationVariables = basicFlowEngine.GetVariables<LocationVariable>();
+        var mapManager = basicFlowEngine.GetMapManager();
+        foreach (var locationVariable in locationVariables)
+        {
+            locationVariable.Value.LocationDisabled = false;
+        }
+
+    }
+
+    //on destroy, go through all of the locations, and set them to not visited
+    private void OnDestroy()
+    {
+     
+        SetAllLocationsToEnabled();
+
+    }
+
 
     private int numberOfTries = 0;
 
