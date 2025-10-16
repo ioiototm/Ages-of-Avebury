@@ -46,7 +46,7 @@ public class HiddenItemScanner : MonoBehaviour
     private bool isWithinDetectionRange = false;
 
 
-    public int maxPingAmmount = 10; // Maximum number of pings before forcing discovery
+    public int maxPingAmmount = 8; // Maximum number of pings before forcing discovery
 
     private int pingAmmount = 0;
 
