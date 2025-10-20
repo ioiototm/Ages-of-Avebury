@@ -27,6 +27,14 @@ public class LoadAndShowStone : Order
         //get a random List<Vector3> from Compass rocks which is List<List<Vector3>>
         //get a random index 
 
+        //if there are no elements, return null
+
+        if(Compass.meshesAndOutlines.Count <= 0)
+        {
+            return null;
+        }
+
+
         var randomIndex = Random.Range(0, Compass.meshesAndOutlines.Count);
 
         Debug.Log("Random Index for Random rock is: " + randomIndex);
@@ -137,12 +145,19 @@ public class LoadAndShowStone : Order
             mainCamera = Camera.main;
         }
 
-        SpawnStoneOutline();
+        var spawned = SpawnStoneOutline();
 
-       StartCoroutine(wait5Seconds());
-        //continue the order
-        //Continue();
+        if (spawned == null)
+        {
+            Continue();
+        }
+        else
+        {
 
+            StartCoroutine(wait5Seconds());
+            //continue the order
+            //Continue();
+        }
     }
 
     IEnumerator wait5Seconds()
