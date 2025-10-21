@@ -251,6 +251,18 @@ public class InitialiseEverything : Order
         }
 
 
+        if (!TinySave.HasPlayedBefore)
+        {
+            //get the basicflowengine
+            BasicFlowEngine basicFlowEngine = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>();
+            basicFlowEngine.ExecuteNode("FirstPlay");
+
+            //save the game state
+            //Save();
+        }
+
+        
+
         Debug.Log("Initialised everything");
 
         // Continue to the next order

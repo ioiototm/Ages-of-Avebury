@@ -189,26 +189,25 @@ public class PostGameAR : Order
         // Now position the instantiated children within the deactivated parent
         float minRadius = 10f;
         float maxRadius = 20f;
+        int maxPlacementAttempts = 5;
 
         // Child at index 1 should be stoneOrBuilding2, which goes in the center
         if (stone.transform.childCount > 1)
         {
             stone.transform.GetChild(1).localPosition = Vector3.zero;
-            //set it to enabled as well
             stone.transform.GetChild(1).gameObject.SetActive(true);
         }
-        // Child at index 0 should be stoneOrBuilding1
+
+        // Position the other objects, checking for overlaps
         if (stone.transform.childCount > 0)
         {
-            stone.transform.GetChild(0).localPosition = GetRandomPositionOnCircle(minRadius, maxRadius);
-            //set it to enabled as well
+            PlaceObjectWithoutOverlap(stone.transform.GetChild(0), minRadius, maxRadius, maxPlacementAttempts);
             stone.transform.GetChild(0).gameObject.SetActive(true);
         }
-        // Child at index 2 should be stoneOrBuilding3
+
         if (stone.transform.childCount > 2)
         {
-            stone.transform.GetChild(2).localPosition = GetRandomPositionOnCircle(minRadius, maxRadius);
-            //set it to enabled as well
+            PlaceObjectWithoutOverlap(stone.transform.GetChild(2), minRadius, maxRadius, maxPlacementAttempts);
             stone.transform.GetChild(2).gameObject.SetActive(true);
         }
 
@@ -242,6 +241,55 @@ public class PostGameAR : Order
 
         Continue();
 
+    }
+
+    private void PlaceObjectWithoutOverlap(Transform objectToPlace, float minRadius, float maxRadius, int maxAttempts)
+    {
+        Collider objectCollider = objectToPlace.GetComponent<Collider>();
+        if (objectCollider == null)
+        {
+            Debug.LogWarning($"Object {objectToPlace.name} is missing a Collider component. Overlap checks will be skipped.");
+            objectToPlace.localPosition = GetRandomPositionOnCircle(minRadius, maxRadius);
+            return;
+        }
+
+        for (int i = 0; i < maxAttempts; i++)
+        {
+            Vector3 testPosition = GetRandomPositionOnCircle(minRadius, maxRadius);
+            objectToPlace.localPosition = testPosition;
+
+            // Temporarily activate the parent to allow physics checks
+            Transform parent = objectToPlace.parent;
+            bool wasParentActive = parent.gameObject.activeSelf;
+            parent.gameObject.SetActive(true);
+
+            Vector3 boxCenter = objectToPlace.TransformPoint(objectCollider.bounds.center);
+            Vector3 halfExtents = Vector3.Scale(objectCollider.bounds.extents, objectToPlace.lossyScale);
+            Quaternion orientation = objectToPlace.rotation;
+
+            // Check for overlap with other colliders, ignoring the object itself
+            Collider[] overlaps = Physics.OverlapBox(boxCenter, halfExtents, orientation);
+
+            // Restore parent's original active state
+            parent.gameObject.SetActive(wasParentActive);
+
+            bool isOverlapping = false;
+            foreach (var overlap in overlaps)
+            {
+                if (overlap.transform != objectToPlace && overlap.transform.IsChildOf(parent))
+                {
+                    isOverlapping = true;
+                    break;
+                }
+            }
+
+            if (!isOverlapping)
+            {
+                return; // Found a valid position
+            }
+        }
+
+        Debug.LogWarning($"Could not find a non-overlapping position for {objectToPlace.name} after {maxAttempts} attempts.");
     }
 
     private Vector3 GetRandomPositionOnCircle(float minRadius, float maxRadius)

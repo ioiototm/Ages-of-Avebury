@@ -818,7 +818,7 @@ public class TinySave : MonoBehaviour
                 loadButton.SetActive(false);
                 loadGame = false; // Set the flag to indicate we cannot load
             }
-           
+
         }
 
         //if(HasPlayedBefore)
@@ -830,17 +830,7 @@ public class TinySave : MonoBehaviour
         //    //    basicFlowEngine.ExecuteNode(LastNodeSeen);
         //    //}
         //}
-        //else
-        //{
-        //    //get the basicflowengine
-        //    BasicFlowEngine basicFlowEngine = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>();
-        //    basicFlowEngine.ExecuteNode("FirstPlay");
-
-        //    //save the game state
-        //    Save();
-        //}
-
-
+        
 
 
     }
