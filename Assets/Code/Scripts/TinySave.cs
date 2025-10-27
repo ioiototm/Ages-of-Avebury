@@ -1,4 +1,5 @@
 using LoGaCulture.LUTE;
+using LoGaCulture.LUTE.Logs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -800,6 +801,8 @@ public class TinySave : MonoBehaviour
     private void Start()
     {
         DontDestroyOnLoad(gameObject); // Ensure this object persists across scenes
+
+        
 
         //if current scene is MainMenu
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "MainMenu")

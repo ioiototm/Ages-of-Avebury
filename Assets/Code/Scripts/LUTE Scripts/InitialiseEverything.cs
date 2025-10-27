@@ -62,9 +62,11 @@ public class InitialiseEverything : Order
 
     public override void OnEnter()
     {
-
+        //LogaManager.Instance.LogManager.Log(LogLevel.Info, "App Version: " + Application.version);
 
         Screen.sleepTimeout = SleepTimeout.NeverSleep; // Prevent the screen from sleeping
+
+        
 
 
         // Use provided GameObjects if available, otherwise find them in the scene
@@ -184,8 +186,7 @@ public class InitialiseEverything : Order
             dateInApp.Value = today;
         }
 
-        LogaManager.Instance.LogManager.Log(LogLevel.Info,"App Version: "+Application.version);
-
+        
         //Continue();
         //return;
 
@@ -249,7 +250,7 @@ public class InitialiseEverything : Order
             //TinySave.Instance.LoadAllStoneData();
 
         }
-
+        //LogaManager.Instance.LogManager.Log(LogLevel.Info, "App Version: " + Application.version);
 
         if (!TinySave.HasPlayedBefore)
         {
