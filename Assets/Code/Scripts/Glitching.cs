@@ -45,10 +45,30 @@ public class Glitching : MonoBehaviour
 
     private void Start()
     {
+        
+
+
+
+
+        //set glitchiness to 0, noise to 0, flicker to 0 and scan lines to -5
+        glitchMat.SetFloat(flickerProp, 0f);
+        glitchMat.SetFloat(noiseProp, 0f);
+        glitchMat.SetFloat(glitchProp, 0f);
+        glitchMat.SetFloat(scanProp, -5f);
+
         _mapManager = flowEngine.GetMapManager();
 
 
+    }
+
+    private void OnEnable()
+    {
+        //set glitchiness to 0, noise to 0, flicker to 0 and scan lines to -5
+        glitchMat.SetFloat(flickerProp, 0f);
+        glitchMat.SetFloat(noiseProp, 0f);
+        glitchMat.SetFloat(glitchProp, 0f);
         glitchMat.SetFloat(scanProp, -5f);
+
     }
 
     void Update()
