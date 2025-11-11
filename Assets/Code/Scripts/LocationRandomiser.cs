@@ -25,6 +25,8 @@ public class LocationRandomiser : MonoBehaviour
     public LocationVariable targetLocation;
     public LocationVariable lastSeenLocation;
 
+    private int[] forcedFirstIds;
+
 
     public bool southQuadrant = false;
 
@@ -251,6 +253,7 @@ public class LocationRandomiser : MonoBehaviour
 
         instance = this;
 
+        forcedFirstIds = new int[] {5};
 
 
         LUTEMapManager mapManager = basicFlowEngine.GetMapManager();
@@ -450,6 +453,21 @@ public class LocationRandomiser : MonoBehaviour
             Debug.Log("No locations found for next id " + nextIdPrefix);
             return lastSeenLocation.Value;
         }
+
+        // If this id is in forceFirstIds, prefer the ".1" variant (no tracking — always prefer .1)
+        bool isForced = forcedFirstIds != null && Array.IndexOf(forcedFirstIds, nextId) >= 0;
+        if (isForced)
+        {
+            LUTELocationInfo primary = Array.Find(candidates, c => c.name.StartsWith(nextIdPrefix + ".1"));
+            if (primary != null)
+            {
+                Debug.Log("Forcing selection of primary .1 location: " + primary.name);
+
+                return primary;
+            }
+            // if no .1 exists, fall through to random selection
+        }
+
 
         // Pick a random candidate
         int randomIndex = UnityEngine.Random.Range(0, candidates.Length);
