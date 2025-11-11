@@ -34,11 +34,17 @@ public class LocationUpdate : Order
 
                 LocationRandomiser.Instance.lastSeenLocation.Value = locationClickEventHandler.Location.Value;
 
-                var nextLoc = LocationRandomiser.Instance.GetNextNormalLocation();
+                //var nextLoc = LocationRandomiser.Instance.GetNextNormalLocation();
+                var nextLoc = LocationRandomiser.Instance.GetNextRandomLocation();
+
+                //var nextLoc = LocationRandomiser.Instance.RandomiseNextLocation(LocationRandomiser.Instance.targetLocation.Value);
 
                 //set the targetlocation 
-                LocationRandomiser.Instance.targetLocation.Value = nextLoc;
-
+                if (!LocationRandomiser.Instance.unreachedLocation)
+                {
+                    LocationRandomiser.Instance.unreachedLocation = false;
+                    LocationRandomiser.Instance.targetLocation.Value = nextLoc;
+                }
 
                 //print the last seen and target location
                 Debug.Log("Last seen location: " + LocationRandomiser.Instance.lastSeenLocation.Value.name);

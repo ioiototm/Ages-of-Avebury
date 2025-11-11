@@ -74,7 +74,11 @@ public class LocationRandomiser : MonoBehaviour
                 //get the last digit of the name
                 string number = match.Value;
                 //get the first location in the list that contains the quadrant and has the same id
-                LUTELocationInfo location = Array.Find(locationInfos, x => x.name.ToLower().Contains(quadrant) && x.name.StartsWith(number));
+                //LUTELocationInfo location = Array.Find(locationInfos, x => x.name.ToLower().Contains(quadrant) && x.name.StartsWith(number + "."));
+
+                var location = GetOppositeLocation(variable.Value);
+
+
                 //set the value of the variable to that location
                 if (location != null)
                 {
@@ -116,7 +120,8 @@ public class LocationRandomiser : MonoBehaviour
                     variable.Value = location;
                     //set the last seen location to that as well
                     lastSeenLocation.Value = location;
-                    targetLocation.Value = location;
+                    var flippedTarget = GetOppositeLocation(targetLocation.Value);
+                    targetLocation.Value = flippedTarget;
                 }
             }
 
@@ -126,10 +131,19 @@ public class LocationRandomiser : MonoBehaviour
             if (!name.Contains("1") || name.Contains("10") || name.Contains("11") || name.Contains("12") || name.Contains("13") || name.Contains("14"))
             {
                 //if it's not the LastSeenLocation and TargetLocation
-                if (name.Contains("LastSeenLocation") || name.Contains("TargetLocation"))
+                if (name.Contains("LastSeenLocation"))
                 {
+
+                    
+
                     continue;
                 }
+                if(name.Contains("TargetLocation"))
+                {
+                    //mapManager.ShowLocationMarker(variable);
+                    continue;
+                }
+                
 
                 //hide the location marker
                 mapManager.HideLocationMarker(variable);
@@ -138,19 +152,96 @@ public class LocationRandomiser : MonoBehaviour
             else
             {
                 //show the location marker
+                //var flippedTarget = GetOppositeLocation(variable.Value);
+                //variable.Value = flippedTarget;
+
                 mapManager.ShowLocationMarker(variable);
             }
         }
     }
 
-    
+    public LUTELocationInfo GetOppositeLocation(LUTELocationInfo current)
+    {
+        if (current == null)
+        {
+            Debug.LogWarning("GetOppositeLocation: current is null.");
+            return null;
+        }
+
+        // Ensure locations are loaded
+        if (locationInfos == null || locationInfos.Length == 0)
+        {
+            locationInfos = Resources.LoadAll<LUTELocationInfo>("Locations");
+            if (locationInfos == null || locationInfos.Length == 0)
+            {
+                Debug.LogWarning("GetOppositeLocation: No locationInfos loaded.");
+                return null;
+            }
+        }
+
+        string currentName = current.name;
+        string currentLower = currentName.ToLowerInvariant();
+
+        // Determine current and target quadrant
+        bool isSouth = currentLower.Contains("south");
+        bool isNorth = currentLower.Contains("north");
+        if (!isSouth && !isNorth)
+        {
+            Debug.LogWarning($"GetOppositeLocation: '{currentName}' doesn't contain 'north' or 'south'.");
+            return null;
+        }
+        string targetQuadrant = isSouth ? "north" : "south";
+
+        // Extract id prefix (before '-'), e.g., "2.2"
+        string idPrefix;
+        int hyphenIdx = currentName.IndexOf('-');
+        if (hyphenIdx >= 0)
+            idPrefix = currentName.Substring(0, hyphenIdx);
+        else
+        {
+            // Fallback: read leading number or number.number
+            var m = Regex.Match(currentName, @"^\d+(\.\d+)?");
+            idPrefix = m.Success ? m.Value : string.Empty;
+        }
+
+        // Find candidates with same id and opposite quadrant
+        LUTELocationInfo[] candidates = Array.FindAll(locationInfos, x =>
+            x != null &&
+            (string.IsNullOrEmpty(idPrefix) || x.name.StartsWith(idPrefix)) &&
+            x.name.ToLowerInvariant().Contains(targetQuadrant));
+
+        if (candidates.Length == 0)
+        {
+            Debug.Log($"GetOppositeLocation: No opposite candidates for id '{idPrefix}' and quadrant '{targetQuadrant}'.");
+            return null;
+        }
+
+        // Prefer exact same tail (after '-') ignoring quadrant token
+        string currentTail = hyphenIdx >= 0 ? currentName.Substring(hyphenIdx + 1) : currentName;
+        string currentBase = Regex.Replace(currentTail, "(?i)(north|south)", "").Trim();
+
+        foreach (var cand in candidates)
+        {
+            int h = cand.name.IndexOf('-');
+            string candTail = h >= 0 ? cand.name.Substring(h + 1) : cand.name;
+            string candBase = Regex.Replace(candTail, "(?i)(north|south)", "").Trim();
+
+            if (string.Equals(candBase, currentBase, StringComparison.OrdinalIgnoreCase))
+                return cand;
+        }
+
+        // Fallback: first candidate
+        return candidates[0];
+    }
+
+
     //function to set the last seen and target to the first NPC in the specified quadrant
     public void SetLastSeenAndTargetToFirstNPC()
     {
 
 
         lastSeenLocation.Value = GetLocationWithID(7);
-            targetLocation.Value = GetLocationWithID(8);
+        targetLocation.Value = GetLocationWithID(8);
 
 
     }
@@ -242,7 +333,7 @@ public class LocationRandomiser : MonoBehaviour
                     //get the last digit of the name
                     string number = match.Value;
                     //get the first location in the list that contains the quadrant and has the same id
-                    LUTELocationInfo location = Array.Find(locationInfos, x => x.name.ToLower().Contains(quadrant) && x.name.StartsWith(number));
+                    LUTELocationInfo location = Array.Find(locationInfos, x => x.name.ToLower().Contains(quadrant) && x.name.StartsWith(number + "."));
                     //set the value of the variable to that location
                     if (location != null)
                     {
@@ -271,6 +362,113 @@ public class LocationRandomiser : MonoBehaviour
 
     }
 
+
+    public LocationVariable GetLocationVariableWithID(int id)
+    {
+        if (basicFlowEngine == null)
+        {
+            Debug.LogWarning("BasicFlowEngine is null in GetLocationVariableWithID.");
+            return null;
+        }
+
+        var vars = basicFlowEngine.GetVariables<LocationVariable>();
+        if (vars == null || vars.Count == 0)
+        {
+            return null;
+        }
+
+        string idStr = id.ToString();
+        LocationVariable firstMatch = null;
+        int matchCount = 0;
+
+        foreach (var v in vars)
+        {
+            if (v == null || string.IsNullOrEmpty(v.Key))
+                continue;
+
+            // Match trailing digits and compare to the requested id
+            Match m = Regex.Match(v.Key, @"\d+$");
+            if (m.Success && m.Value == idStr)
+            {
+                matchCount++;
+                if (firstMatch == null)
+                    firstMatch = v;
+            }
+        }
+
+        if (matchCount > 1)
+        {
+            Debug.LogWarning($"Multiple LocationVariables end with id '{id}'. Returning the first match: {firstMatch.Key}");
+        }
+
+        return firstMatch;
+    }
+
+
+    /// <summary>
+    /// Returns a random location from the next id group (e.g. from 2.x after being at 1.x).
+    /// Unlike GetNextNormalLocation() this considers all sub-id variants (e.g. 3.1, 3.2, 3.3)
+    /// instead of forcing ".1". Falls back to the last seen location if none are found.
+    /// </summary>
+    public LUTELocationInfo GetNextRandomLocation()
+    {
+        // Refresh last seen
+        lastSeenLocation = basicFlowEngine.GetVariable<LocationVariable>("LastSeenLocation");
+        if (lastSeenLocation?.Value == null)
+        {
+            Debug.LogWarning("LastSeenLocation variable or its value is null.");
+            return null;
+        }
+
+        // Extract current numeric id (before any dot)
+        string idFull = lastSeenLocation.Value.name.Split('-')[0];     // e.g. "2.1"
+        string idNumericPart = idFull.Split('.')[0];                   // e.g. "2"
+
+        // Compute next id
+        if (!int.TryParse(idNumericPart, out int currentId))
+        {
+            Debug.LogWarning("Failed to parse current location id: " + idNumericPart);
+            return lastSeenLocation.Value;
+        }
+        int nextId = currentId + 1;
+        string nextIdPrefix = nextId.ToString(); // We intentionally do NOT append ".1" so we can fetch all 3.x variants.
+
+        // Determine quadrant filter
+        string quadrant = southQuadrant ? "south" : "north";
+        if (debugMode) quadrant = "campus";
+
+        // Filter all locations in the quadrant
+        LUTELocationInfo[] filtered = Array.FindAll(locationInfos, x =>
+            x != null && x.name.ToLower().Contains(quadrant));
+
+        // Get all locations whose name starts with the next id prefix (allows 3.1, 3.2, 3.5, etc.)
+        LUTELocationInfo[] candidates = Array.FindAll(filtered, x =>
+            x != null && x.name.StartsWith(nextIdPrefix));
+
+        if (candidates.Length == 0)
+        {
+            Debug.Log("No locations found for next id " + nextIdPrefix);
+            return lastSeenLocation.Value;
+        }
+
+        // Pick a random candidate
+        int randomIndex = UnityEngine.Random.Range(0, candidates.Length);
+        LUTELocationInfo chosen = candidates[randomIndex];
+
+        //// Optionally update a matching LocationVariable (mirrors original pattern)
+        //List<LocationVariable> locationVariables = basicFlowEngine.GetVariables<LocationVariable>();
+        //foreach (var locVar in locationVariables)
+        //{
+        //    // Match the variable key with the numeric id we are moving to
+        //    if (locVar.Key.Contains(nextIdPrefix))
+        //    {
+        //        locVar.Value = chosen;
+        //        break;
+        //    }
+        //}
+
+        return chosen;
+    }
 
     public LUTELocationInfo GetNextNormalLocation()
     {
@@ -388,6 +586,24 @@ public class LocationRandomiser : MonoBehaviour
 
     public List<InterfaceGameEvent> interfaceGameEvent;
 
+    public bool unreachedLocation = false;
+
+    /// <summary>
+    /// Extracts the trailing numeric id from a LocationVariable key (e.g. "Remnant3", "NPC10").
+    /// Returns -1 if the key doesn't end with digits.
+    /// </summary>
+    public int GetIdFromVariableKey(string key)
+    {
+        if (string.IsNullOrEmpty(key))
+            return -1;
+
+        Match m = Regex.Match(key, @"(\d+)$");
+        if (m.Success && int.TryParse(m.Value, out int id))
+            return id;
+
+        return -1;
+    }
+
     public void UnreachableTargetLocation()
     {
 
@@ -418,6 +634,9 @@ public class LocationRandomiser : MonoBehaviour
 
 
             targetLocation.Value = randomNext;
+
+            basicFlowEngine.GetMapManager().ShowLocationMarker(targetLocation);
+
             numberOfTries++;
             //print the name of the location
             Debug.Log("Current Location: " + targetLocation.Value.name);
@@ -438,13 +657,35 @@ public class LocationRandomiser : MonoBehaviour
 
             lastSeenLocation.Value = targetLocation.Value;
 
-            var randomNext = GetNextNormalLocation();
+            //var randomNext = GetNextNormalLocation();
+            var randomNext = GetNextRandomLocation();
+
+            Debug.Log("The random next location is: " + randomNext.name);
+
+            unreachedLocation = true;
+
+            //randomNext.
 
             currentLocationId++;
 
-
+            LocationVariable currentLocationVariable = GetLocationVariableWithID(currentLocationId);
 
             targetLocation.Value = randomNext;
+
+            int nextLocationId = GetIdFromVariableKey(currentLocationVariable.Key);
+
+            nextLocationId++;
+
+
+
+            LocationVariable fullLocationVariable = GetLocationVariableWithID(nextLocationId);
+            Debug.Log("Key is " + fullLocationVariable.Key);
+
+            fullLocationVariable.Value = randomNext;
+
+
+            basicFlowEngine.GetMapManager().HideLocationMarker(fullLocationVariable);
+
 
             //get the id of target location
             string id_full = lastSeenLocation.Value.name.Split('-')[0];
