@@ -37,6 +37,7 @@ public class TinySave : MonoBehaviour
     const string KEY_STONE_DATA_FIRST = "StoneDataFirst"; // JSON blob of stone 1 data
     const string KEY_STONE_DATA_SECOND = "StoneDataSecond"; // JSON blob of stone 2 data
     const string KEY_STONE_DATA_THIRD_SOCIAL = "StoneDataThirdSocial"; // JSON blob of stone 3 data
+    const string KEY_GAME_COMPLETED = "GameCompleted"; // bool for game completed
 
 
 
@@ -118,6 +119,23 @@ public class TinySave : MonoBehaviour
             _ => throw new ArgumentOutOfRangeException(nameof(whichStone), "whichStone must be 0, 1, or 2.")
         };
         PlayerPrefs.SetString(key, stoneBase64);
+        PlayerPrefs.Save();
+    }
+
+    public void CompleteGame()
+    {
+        PlayerPrefs.SetInt(KEY_GAME_COMPLETED, 1);
+        PlayerPrefs.Save();
+    }
+
+    public bool IsGameCompleted()
+    {
+        return PlayerPrefs.GetInt(KEY_GAME_COMPLETED, 0) == 1;
+    }
+
+    public void ResetGameCompletion()
+    {
+        PlayerPrefs.DeleteKey(KEY_GAME_COMPLETED);
         PlayerPrefs.Save();
     }
 
@@ -802,12 +820,14 @@ public class TinySave : MonoBehaviour
     {
         DontDestroyOnLoad(gameObject); // Ensure this object persists across scenes
 
-        
+        Debug.Log(Application.persistentDataPath);
 
         //if current scene is MainMenu
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "MainMenu")
         {
             GameObject loadButton = GameObject.Find("Button_Load");
+
+            GameObject modelButton = GameObject.Find("Button_3DModel");
 
             // If the game has been played before, load the saved state
             if (HasPlayedBefore)
@@ -821,6 +841,16 @@ public class TinySave : MonoBehaviour
                 loadButton.SetActive(false);
                 loadGame = false; // Set the flag to indicate we cannot load
             }
+
+            if(IsGameCompleted())
+            {
+                modelButton.SetActive(true);
+            }
+            else
+            {
+                modelButton.SetActive(false);
+            }
+
 
         }
 
