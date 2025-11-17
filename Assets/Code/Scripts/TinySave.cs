@@ -6,6 +6,7 @@ using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class TinySave : MonoBehaviour
 {
@@ -19,6 +20,7 @@ public class TinySave : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject); // Keep this object across scenes
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else
         {
@@ -26,6 +28,11 @@ public class TinySave : MonoBehaviour
         }
     }
 
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
     const string KEY_HAS_PLAYED = "HasPlayedBefore";
     const string KEY_OBJECTS = "SavedObjects";   // JSON blob
     const string KEY_STONES = "SavedStones";    // JSON blob of meshes
@@ -137,6 +144,49 @@ public class TinySave : MonoBehaviour
     {
         PlayerPrefs.DeleteKey(KEY_GAME_COMPLETED);
         PlayerPrefs.Save();
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "MainMenu")
+        {
+            RefreshMainMenuUI();
+        }
+    }
+
+    private void RefreshMainMenuUI()
+    {
+        // Find main menu buttons; bail out if not present
+        GameObject playButton = GameObject.Find("Button_Play");
+        GameObject loadButton = GameObject.Find("Button_Load");
+        GameObject modelButton = GameObject.Find("Button_3DModel");
+
+        if (playButton == null || loadButton == null || modelButton == null)
+        {
+            Debug.LogWarning("TinySave: Main Menu UI elements not found in scene.");
+            return;
+        }
+
+        // Update Play / Load
+        TMP_Text playButtonText = playButton.GetComponentInChildren<TMP_Text>();
+        if (playButtonText != null)
+        {
+            if (HasPlayedBefore)
+            {
+                playButtonText.text = "START NEW GAME";
+                loadButton.SetActive(true);
+                loadGame = true;
+            }
+            else
+            {
+                playButtonText.text = "PLAY GAME";
+                loadButton.SetActive(false);
+                loadGame = false;
+            }
+        }
+
+        // Update 3D Model visibility based on completion
+        modelButton.SetActive(IsGameCompleted());
     }
 
     public void LoadAllStoneData()
@@ -825,31 +875,53 @@ public class TinySave : MonoBehaviour
         //if current scene is MainMenu
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "MainMenu")
         {
-            GameObject loadButton = GameObject.Find("Button_Load");
+            RefreshMainMenuUI();
 
-            GameObject modelButton = GameObject.Find("Button_3DModel");
+            //GameObject playButton = GameObject.Find("Button_Play");
 
-            // If the game has been played before, load the saved state
-            if (HasPlayedBefore)
-            {
-                loadButton.SetActive(true);
-                loadGame = true; // Set the flag to indicate we can load
-                //Load(); // Load the saved state
-            }
-            else
-            {
-                loadButton.SetActive(false);
-                loadGame = false; // Set the flag to indicate we cannot load
-            }
+            //GameObject loadButton = GameObject.Find("Button_Load");
 
-            if(IsGameCompleted())
-            {
-                modelButton.SetActive(true);
-            }
-            else
-            {
-                modelButton.SetActive(false);
-            }
+            //GameObject modelButton = GameObject.Find("Button_3DModel");
+
+            //// If the game has been played before, load the saved state
+            //if (HasPlayedBefore)
+            //{
+
+            //    //get the textmeshpro in the child of play buitton and change the text to say "Start New Game"
+            //    TMP_Text playButtonText = playButton.GetComponentInChildren<TMP_Text>();
+
+            //    if (playButtonText != null)
+            //    {
+            //        playButtonText.text = "START NEW GAME";
+            //    }
+
+            //    loadButton.SetActive(true);
+            //    loadGame = true; // Set the flag to indicate we can load
+            //    //Load(); // Load the saved state
+            //}
+            //else
+            //{
+
+            //    //change the text to say "PLAY GAME"
+            //    TMP_Text playButtonText = playButton.GetComponentInChildren<TMP_Text>();
+            //    if (playButtonText != null)
+            //    {
+            //        playButtonText.text = "PLAY GAME";
+            //    }
+
+
+            //    loadButton.SetActive(false);
+            //    loadGame = false; // Set the flag to indicate we cannot load
+            //}
+
+            //if(IsGameCompleted())
+            //{
+            //    modelButton.SetActive(true);
+            //}
+            //else
+            //{
+            //    modelButton.SetActive(false);
+            //}
 
 
         }
