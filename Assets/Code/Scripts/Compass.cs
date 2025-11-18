@@ -165,8 +165,16 @@ public class Compass : MonoBehaviour
 
         if (!IsConnectedToInternet())
         {
-            
-            TinySave.Instance.Load();
+            // prefer file cache, then Resources, then PlayerPrefs legacy load
+            bool loaded = TinySave.Instance.LoadStonesFromPersistentCacheFile();
+            if (!loaded)
+            {
+                loaded = TinySave.Instance.LoadStonesFromResources();
+            }
+            if (!loaded)
+            {
+                TinySave.Instance.Load();
+            }
 
             yield break;
         }
@@ -216,6 +224,8 @@ public class Compass : MonoBehaviour
                            //}
                        }
 
+                       // save runtime cache for offline next launch
+                       TinySave.Instance.SaveStonesToPersistentCacheFile();
 
                        TinySave.Instance.SaveTheStones(); // Save the loaded stones to PlayerPrefs
 

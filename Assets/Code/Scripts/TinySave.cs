@@ -7,6 +7,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.IO; // added for file-based cache
 
 public class TinySave : MonoBehaviour
 {
@@ -46,6 +47,10 @@ public class TinySave : MonoBehaviour
     const string KEY_STONE_DATA_THIRD_SOCIAL = "StoneDataThirdSocial"; // JSON blob of stone 3 data
     const string KEY_GAME_COMPLETED = "GameCompleted"; // bool for game completed
 
+    // File-based cache paths
+    private const string StoneCacheFileName = "stonecache.json";
+    private static string PersistentStoneCachePath => Path.Combine(Application.persistentDataPath, StoneCacheFileName);
+    private const string ResourcesStoneCacheNameNoExt = "stonecache"; // Resources.Load<TextAsset>("stonecache")
 
 
     [SerializeField]
@@ -218,27 +223,6 @@ public class TinySave : MonoBehaviour
                 Debug.LogError("stone1 is not assigned in TinySave.");
             }
 
-            //stoneCreator.outlinePoints = normalizedPts;
-            ////stoneCreator.GenerateSlab();
-
-            ////get the mesh filter of this object, and set it to the random mesh from Compass.meshesAndOutlines
-            //MeshFilter meshFilter = stoneCreator.GetComponent<MeshFilter>();
-            //stoneCreator.enabled = false;
-            //if (meshFilter != null)
-            //{
-            //    meshFilter.sharedMesh = Compass.meshesAndOutlines[randomIndex].mesh;
-            //}
-            //else
-            //{
-            //    Debug.LogError("MeshFilter component not found on the GameObject.");
-            //}
-
-            ////disable the mesh renderer so it doesn't show
-            //stoneCreator.gameObject.SetActive(false);
-
-            ////create a new stonecreator object
-
-
         }
 
         if (PlayerPrefs.HasKey(KEY_STONE_DATA_SECOND))
@@ -383,11 +367,6 @@ public class TinySave : MonoBehaviour
 
     public void SaveMessages()
     {
-        //messages are objects, and they have a From, Subject, and Message property that we want to save
-        //go thorugh each message in InitialiseEverything._inboxCanvas, and go into ModernInbox/Scroll View/Viewport/Content and get all the Message objects
-        //each message object has a subobject called FromField/FromField, SubjectField/SubjectField, and Panel/ContentsField
-        //save them one by one in a list of MessageData objects
-
         if (InitialiseEverything._inboxCanvas == null)
         {
             Debug.LogWarning("TinySave: Inbox content transform not assigned. Cannot save messages.");
@@ -396,15 +375,12 @@ public class TinySave : MonoBehaviour
 
         var messageList = new List<MessageData>();
 
-        //using the InitialiseEverything._inboxCanvas, get the subobject called "Scroll View/Viewport/Content"
         Transform inboxContent = InitialiseEverything._inboxCanvas.transform.Find("ModernInbox/Scroll View/Viewport/Content");
 
         foreach (Transform messageObject in inboxContent)
         {
-            // Find the text components within the message object hierarchy
             var fromText = messageObject.Find("FromField/FromField")?.GetComponent<TMP_Text>();
             var subjectText = messageObject.Find("SubjectField/SubjectField")?.GetComponent<TMP_Text>();
-            // The comment mentions Panel/ContentsField. Assuming it's a TMP_Text component.
             var messageContent = messageObject.Find("Panel/ContentsField")?.GetComponent<TMP_Text>();
 
             var highlighted = messageObject.Find("Highlight")?.gameObject.activeSelf ?? false;
@@ -425,15 +401,13 @@ public class TinySave : MonoBehaviour
             }
         }
 
-        // Serialize the list to JSON and save to PlayerPrefs
         string json = JsonUtility.ToJson(new Wrapper<MessageData> { items = messageList });
         PlayerPrefs.SetString(KEY_MESSAGES, json);
-        PlayerPrefs.Save(); // Ensure changes are saved immediately
+        PlayerPrefs.Save();
         Debug.Log($"TinySave: Saved {messageList.Count} messages.");
 
     }
 
-    // Load messages from PlayerPrefs, same but in reverse, using the prefab
     public void LoadMessages()
     {
         if (!PlayerPrefs.HasKey(KEY_MESSAGES))
@@ -443,7 +417,7 @@ public class TinySave : MonoBehaviour
         }
         string json = PlayerPrefs.GetString(KEY_MESSAGES);
         var wrapper = JsonUtility.FromJson<Wrapper<MessageData>>(json);
-        // Clear existing messages in the inbox, a loop and destroy them
+
         Transform inboxContent = InitialiseEverything._inboxCanvas.transform.Find("ModernInbox/Scroll View/Viewport/Content");
         foreach (Transform child in inboxContent)
         {
@@ -455,7 +429,6 @@ public class TinySave : MonoBehaviour
 
         foreach (var data in wrapper.items)
         {
-            // Instantiate a new message prefab
             GameObject messageObject = Instantiate(messagePrefab, InitialiseEverything._inboxCanvas.transform.Find("ModernInbox/Scroll View/Viewport/Content"));
             var fromText = messageObject.transform.Find("FromField/FromField").GetComponent<TMP_Text>();
             var subjectText = messageObject.transform.Find("SubjectField/SubjectField").GetComponent<TMP_Text>();
@@ -469,7 +442,7 @@ public class TinySave : MonoBehaviour
                 highlightObject.gameObject.SetActive(data.highlighted);
                 if (data.highlighted)
                 {
-                    unreadMessages = true; // If any message is highlighted, set the flag
+                    unreadMessages = true;
                 }
             }
             else
@@ -500,7 +473,6 @@ public class TinySave : MonoBehaviour
         }
         string json = PlayerPrefs.GetString(KEY_MEDIEVAL_MESSAGES);
         var wrapper = JsonUtility.FromJson<Wrapper<MessageData>>(json);
-        // Clear existing messages in the inbox, a loop and destroy them
         Transform inboxContent = InitialiseEverything._inboxMiddleCanvas.transform.Find("Scroll View/Viewport/Content");
         foreach (Transform child in inboxContent)
         {
@@ -508,7 +480,6 @@ public class TinySave : MonoBehaviour
         }
         foreach (var data in wrapper.items)
         {
-            // Instantiate a new message prefab
             GameObject messageObject = Instantiate(medievalMessagePrefab, InitialiseEverything._inboxMiddleCanvas.transform.Find("Scroll View/Viewport/Content"));
             var fromText = messageObject.transform.Find("MsgBG/FromField/FromField").GetComponent<TMP_Text>();
             var contentText = messageObject.transform.Find("MsgBG/ContentsField").GetComponent<TMP_Text>();
@@ -520,7 +491,6 @@ public class TinySave : MonoBehaviour
 
     public void SaveEngineVariables()
     {
-        // f) collect variable data
         var variableList = new List<VariableData>();
         BasicFlowEngine flowEngine = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>();
         if (flowEngine != null)
@@ -554,11 +524,6 @@ public class TinySave : MonoBehaviour
                 }
                 else if (variableObj is LocationVariable locationVariable)
                 {
-
-                    
-
-                    //the location has two main properties outside the name. it's the visited status, and if it's visible or not
-
                     var locationData = new LocationSaveData
                     {
                         Status = locationVariable.Value.LocationStatus,
@@ -568,9 +533,6 @@ public class TinySave : MonoBehaviour
 
                     serializedValue = JsonUtility.ToJson(locationData);
                     variableType = "location";
-
-                    //serializedValue = JsonUtility.ToJson(locationVariable.Value);
-                    //variableType = "location";
                 }
                 if (!string.IsNullOrEmpty(variableType))
                 {
@@ -580,13 +542,12 @@ public class TinySave : MonoBehaviour
         }
         string variablesJson = JsonUtility.ToJson(new Wrapper<VariableData> { items = variableList });
         PlayerPrefs.SetString(KEY_VARIABLES, variablesJson);
-        PlayerPrefs.Save(); // Ensure changes are saved immediately
+        PlayerPrefs.Save();
     }
 
 
     public void LoadEngineVariables()
     {
-        // Load variables
         if (PlayerPrefs.HasKey(KEY_VARIABLES))
         {
             string json = PlayerPrefs.GetString(KEY_VARIABLES);
@@ -601,7 +562,6 @@ public class TinySave : MonoBehaviour
                     switch (data.type)
                     {
                         case "int":
-                            // Assuming you have an IntVariable type, otherwise handle accordingly
                             if (variableObj is IntegerVariable intVar && int.TryParse(data.value, out int intValue))
                             {
                                 intVar.Value = intValue;
@@ -629,10 +589,8 @@ public class TinySave : MonoBehaviour
                         case "location":
                             if (variableObj is LocationVariable locVar)
                             {
-                                // Deserialize the JSON string into a LocationSaveData object
                                 LocationSaveData locationData = JsonUtility.FromJson<LocationSaveData>(data.value);
                                 
-                                // Set the properties of the LocationVariable
                                 locVar.Value.LocationStatus = locationData.Status;
                                 locVar.Value.LocationHidden = locationData.Hidden;
                                 locVar.Value.LocationDisabled = locationData.Disabled;
@@ -642,17 +600,12 @@ public class TinySave : MonoBehaviour
                                     flowEngine.GetMapManager().ShowLocationMarker(locVar);
                                 }
 
-                                //the locaVar.name contains locations like this 3.1-Remnant, 6.2-FirstArea, 10.1NPCSouth3, 2.2-EmptyPit, etc
-                                //get the number at the start of the name, before the dot, and it can be multi digit, so use regex
-                                //if it's bigger tham 5, hide the marker
-
                                 var match = System.Text.RegularExpressions.Regex.Match(locVar.Value.name, @"^\d+");
                                 if (match.Success && int.TryParse(match.Value, out int locationID))
                                 {
                                     if (locationID > 5)
                                     {
                                         locVar.Value.LocationHidden = true;
-                                        //locVar.Value.LocationDisabled = true;
                                         flowEngine.GetMapManager().HideLocationMarker(locVar);
                                     }
 
@@ -661,9 +614,6 @@ public class TinySave : MonoBehaviour
                                         locVar.Value.LocationStatus = LocationStatus.Completed;
                                     }
                                 }
-
-                               
-
 
                             }
                             break;
@@ -678,7 +628,6 @@ public class TinySave : MonoBehaviour
     {
 
         return; 
-        // a) collect stone data
         var stoneList = new List<StoneData>();
         foreach (var stone in Compass.meshesAndOutlines)
         {
@@ -688,39 +637,191 @@ public class TinySave : MonoBehaviour
                 base64 = MeshSerializer.ToBase64(stone.mesh, stone.outline)
             });
         }
-        // b) dump to JSON and store in prefs
         string json = JsonUtility.ToJson(new Wrapper<StoneData> { items = stoneList });
         PlayerPrefs.SetString(KEY_STONES, json);
-        PlayerPrefs.Save(); // Ensure changes are saved immediately
+        PlayerPrefs.Save();
         Debug.Log($"TinySave: Saved {stoneList.Count} stones.");
+    }
+
+    // New: Save stones to persistentDataPath
+    public void SaveStonesToPersistentCacheFile()
+    {
+        try
+        {
+            var stoneList = new List<StoneData>();
+            foreach (var stone in Compass.meshesAndOutlines)
+            {
+                if (stone.mesh == null || stone.outline == null) continue;
+                stoneList.Add(new StoneData { base64 = MeshSerializer.ToBase64(stone.mesh, stone.outline) });
+            }
+
+            string json = JsonUtility.ToJson(new Wrapper<StoneData> { items = stoneList });
+            File.WriteAllText(PersistentStoneCachePath, json);
+            Debug.Log($"TinySave: Saved {stoneList.Count} stones to file: {PersistentStoneCachePath}");
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"TinySave: Failed saving stones to file. {ex}");
+        }
+    }
+
+    public bool LoadStonesFromPersistentCacheFile()
+    {
+        try
+        {
+            if (!File.Exists(PersistentStoneCachePath))
+            {
+                Debug.Log("TinySave: No persistent stone cache file found.");
+                return false;
+            }
+
+            string json = File.ReadAllText(PersistentStoneCachePath);
+            var wrapper = JsonUtility.FromJson<Wrapper<StoneData>>(json);
+            if (wrapper?.items == null || wrapper.items.Count == 0)
+            {
+                Debug.LogWarning("TinySave: Persistent stone cache is empty.");
+                return false;
+            }
+
+            Compass.meshesAndOutlines.Clear();
+            foreach (var data in wrapper.items)
+            {
+                MeshSerializer.FromBase64(data.base64, out Mesh mesh, out List<Vector2> outline);
+                if (mesh != null)
+                {
+                    Compass.meshesAndOutlines.Add(new Compass.MeshAndOutline { mesh = mesh, outline = outline });
+                }
+            }
+            Debug.Log($"TinySave: Loaded {Compass.meshesAndOutlines.Count} stones from file cache.");
+            return Compass.meshesAndOutlines.Count > 0;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"TinySave: Failed loading stones from file cache. {ex}");
+            return false;
+        }
+    }
+
+    public bool LoadStonesFromResources()
+    {
+        try
+        {
+            TextAsset ta = Resources.Load<TextAsset>(ResourcesStoneCacheNameNoExt);
+            if (ta == null)
+            {
+                Debug.Log("TinySave: No Resources stone cache found (Resources/stonecache.json).");
+                return false;
+            }
+            var wrapper = JsonUtility.FromJson<Wrapper<StoneData>>(ta.text);
+            if (wrapper?.items == null || wrapper.items.Count == 0)
+            {
+                Debug.LogWarning("TinySave: Resources stone cache is empty.");
+                return false;
+            }
+
+            Compass.meshesAndOutlines.Clear();
+            foreach (var data in wrapper.items)
+            {
+                MeshSerializer.FromBase64(data.base64, out Mesh mesh, out List<Vector2> outline);
+                if (mesh != null)
+                {
+                    Compass.meshesAndOutlines.Add(new Compass.MeshAndOutline { mesh = mesh, outline = outline });
+                }
+            }
+            Debug.Log($"TinySave: Loaded {Compass.meshesAndOutlines.Count} stones from Resources cache.");
+            return Compass.meshesAndOutlines.Count > 0;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"TinySave: Failed loading stones from Resources. {ex}");
+            return false;
+        }
+    }
+
+#if UNITY_EDITOR
+    [ContextMenu("Save Stones -> Assets/Resources/stonecache.json")]
+    public void SaveStonesToResourcesAsset()
+    {
+        try
+        {
+            var stoneList = new List<StoneData>();
+            foreach (var stone in Compass.meshesAndOutlines)
+            {
+                if (stone.mesh == null || stone.outline == null) continue;
+                stoneList.Add(new StoneData { base64 = MeshSerializer.ToBase64(stone.mesh, stone.outline) });
+            }
+            string json = JsonUtility.ToJson(new Wrapper<StoneData> { items = stoneList });
+
+            string resourcesDir = Path.Combine(Application.dataPath, "Resources");
+            if (!Directory.Exists(resourcesDir)) Directory.CreateDirectory(resourcesDir);
+            string assetPath = Path.Combine(resourcesDir, StoneCacheFileName);
+            File.WriteAllText(assetPath, json);
+
+            UnityEditor.AssetDatabase.Refresh();
+            Debug.Log($"TinySave: Saved {stoneList.Count} stones to Resources at {assetPath}");
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"TinySave: Failed saving stones to Resources asset. {ex}");
+        }
+    }
+
+    [ContextMenu("Prefetch 50 Stones -> persistent + Resources")]
+    private void Prefetch50ToBoth()
+    {
+        PrefetchAndCacheStones(50, true);
+    }
+#endif
+
+    public void PrefetchAndCacheStones(int count = 50, bool alsoSaveToResourcesInEditor = false)
+    {
+        ConnectionManager.Instance.FetchSharedVariables(
+            "StoneComplete",
+            (variables) =>
+            {
+                Compass.meshesAndOutlines.Clear();
+                if (variables != null && variables.Length > 0)
+                {
+                    int added = 0;
+                    foreach (var variable in variables)
+                    {
+                        try
+                        {
+                            Mesh stoneMesh = null;
+                            List<Vector2> outline = new List<Vector2>();
+                            MeshSerializer.FromBase64(variable.data, out stoneMesh, out outline);
+                            if (stoneMesh != null)
+                            {
+                                Compass.meshesAndOutlines.Add(new Compass.MeshAndOutline { mesh = stoneMesh, outline = outline });
+                                added++;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.LogWarning($"TinySave: Failed to decode a stone variable. {ex}");
+                        }
+                    }
+                    Debug.Log($"TinySave: Prefetched {added} stones from server.");
+
+                    SaveStonesToPersistentCacheFile();
+#if UNITY_EDITOR
+                    if (alsoSaveToResourcesInEditor)
+                    {
+                        SaveStonesToResourcesAsset();
+                    }
+#endif
+                }
+                else
+                {
+                    Debug.LogWarning("TinySave: Prefetch returned no stones.");
+                }
+            },
+            count);
     }
 
     public void Save(bool andStones = false)
     {
-        // a) flag that the game has been opened once
         PlayerPrefs.SetInt(KEY_HAS_PLAYED, 1);
-
-        //// b) collect object data
-        //var objList = new List<ObjData>();
-        //foreach (var go in trackedObjects)
-        //{
-        //    if (!go) continue;   // skip null slots
-
-        //    objList.Add(new ObjData
-        //    {
-        //        name   = go.name,
-        //        active = go.activeSelf,
-        //        x = go.transform.position.x,
-        //        y = go.transform.position.y,
-        //        z = go.transform.position.z
-        //    });
-        //}
-
-        //// c) dump to JSON and store in prefs
-        //string json = JsonUtility.ToJson(new Wrapper<ObjData>{ items = objList });
-        //PlayerPrefs.SetString(KEY_OBJECTS, json);
-
-        // d) collect stone data
 
         if (andStones)
         {
@@ -729,14 +830,11 @@ public class TinySave : MonoBehaviour
         SaveMessages();
         SaveEngineVariables();
 
-        // e) save last node seen
         if (!string.IsNullOrEmpty(LastNodeSeen))
         {
             PlayerPrefs.SetString(KEY_LAST_NODE, LastNodeSeen);
         }
 
-
-        // g) flush to disk
         PlayerPrefs.Save();
         Debug.Log("TinySave: Saved objects, stones, and variables.");
     }
@@ -747,30 +845,12 @@ public class TinySave : MonoBehaviour
         bool hasPlayed = PlayerPrefs.GetInt(KEY_HAS_PLAYED, 0) == 1;
         Debug.Log("Has played before? " + hasPlayed);
 
-        //// Load tracked objects
-        //if (PlayerPrefs.HasKey(KEY_OBJECTS))
-        //{
-        //    string json = PlayerPrefs.GetString(KEY_OBJECTS);
-        //    var wrapper = JsonUtility.FromJson<Wrapper<ObjData>>(json);
-
-        //    foreach (var data in wrapper.items)
-        //    {
-        //        // find the matching object by name
-        //        GameObject go = trackedObjects.Find(g => g && g.name == data.name);
-        //        if (!go) continue;
-
-        //        go.SetActive(data.active);
-        //        go.transform.position = new Vector3(data.x, data.y, data.z);
-        //    }
-        //}
-
         LoadEngineVariables();
         LoadMessages();
 
-        // Load stones
         if (PlayerPrefs.HasKey(KEY_STONES))
         {
-            Compass.meshesAndOutlines.Clear(); // Avoid duplicates
+            Compass.meshesAndOutlines.Clear();
 
             string json = PlayerPrefs.GetString(KEY_STONES);
             var wrapper = JsonUtility.FromJson<Wrapper<StoneData>>(json);
@@ -786,16 +866,12 @@ public class TinySave : MonoBehaviour
             Debug.Log($"TinySave: Loaded {Compass.meshesAndOutlines.Count} stones from storage.");
         }
 
-        // Load last node seen
         if (PlayerPrefs.HasKey(KEY_LAST_NODE))
         {
             LastNodeSeen = PlayerPrefs.GetString(KEY_LAST_NODE);
         }
 
-
         LoadAllStoneData();
-
-
 
         if (PlayerPrefs.HasKey(KEY_OBJECTS) || PlayerPrefs.HasKey(KEY_STONES) || PlayerPrefs.HasKey(KEY_VARIABLES))
         {
@@ -833,21 +909,18 @@ public class TinySave : MonoBehaviour
         set
         {
             PlayerPrefs.SetString(KEY_LAST_NODE, value);
-            PlayerPrefs.Save(); // Ensure the last node is saved immediately
+            PlayerPrefs.Save();
         }
-    } // Ensure the last node is saved immediately
+    }
         
-    
 
     private void Update()
     {
-        //if press h
         if (Input.GetKeyDown(KeyCode.H))
         {
             SaveMessages();
            SaveEngineVariables();
 
-            // g) flush to disk
             PlayerPrefs.Save();
 
 
@@ -868,75 +941,14 @@ public class TinySave : MonoBehaviour
 
     private void Start()
     {
-        DontDestroyOnLoad(gameObject); // Ensure this object persists across scenes
+        DontDestroyOnLoad(gameObject);
 
         Debug.Log(Application.persistentDataPath);
 
-        //if current scene is MainMenu
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "MainMenu")
         {
             RefreshMainMenuUI();
-
-            //GameObject playButton = GameObject.Find("Button_Play");
-
-            //GameObject loadButton = GameObject.Find("Button_Load");
-
-            //GameObject modelButton = GameObject.Find("Button_3DModel");
-
-            //// If the game has been played before, load the saved state
-            //if (HasPlayedBefore)
-            //{
-
-            //    //get the textmeshpro in the child of play buitton and change the text to say "Start New Game"
-            //    TMP_Text playButtonText = playButton.GetComponentInChildren<TMP_Text>();
-
-            //    if (playButtonText != null)
-            //    {
-            //        playButtonText.text = "START NEW GAME";
-            //    }
-
-            //    loadButton.SetActive(true);
-            //    loadGame = true; // Set the flag to indicate we can load
-            //    //Load(); // Load the saved state
-            //}
-            //else
-            //{
-
-            //    //change the text to say "PLAY GAME"
-            //    TMP_Text playButtonText = playButton.GetComponentInChildren<TMP_Text>();
-            //    if (playButtonText != null)
-            //    {
-            //        playButtonText.text = "PLAY GAME";
-            //    }
-
-
-            //    loadButton.SetActive(false);
-            //    loadGame = false; // Set the flag to indicate we cannot load
-            //}
-
-            //if(IsGameCompleted())
-            //{
-            //    modelButton.SetActive(true);
-            //}
-            //else
-            //{
-            //    modelButton.SetActive(false);
-            //}
-
-
         }
-
-        //if(HasPlayedBefore)
-        //{
-        //    Load();
-        //    //BasicFlowEngine basicFlowEngine = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>();
-        //    //if (basicFlowEngine != null && !string.IsNullOrEmpty(LastNodeSeen))
-        //    //{
-        //    //    basicFlowEngine.ExecuteNode(LastNodeSeen);
-        //    //}
-        //}
-        
-
 
     }
 
