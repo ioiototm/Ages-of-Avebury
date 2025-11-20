@@ -307,7 +307,7 @@ public class SelfieSegmentationSample : MonoBehaviour
         if (pressedButton)
         {
 
-            if (contour.Count < 20)
+            if (contour.Count < 50)
             {
                 pressedButton = false;
                 return;

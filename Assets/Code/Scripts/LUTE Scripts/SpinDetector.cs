@@ -21,6 +21,7 @@ public class SpinDetector : Order
 
     //list of events to trigger when spinning starts and stops
     [SerializeField]
+    private Light spinLight;
 
     public override void OnEnter()
     {
@@ -58,13 +59,27 @@ public class SpinDetector : Order
             // Accumulate the spin angle
             float horizontalRotation = Mathf.Abs(rotationRate.y) * Mathf.Rad2Deg;
 
-            if (horizontalRotation > 50f) // Adjust threshold as needed
+            if (horizontalRotation > 30f) // Adjust threshold as needed
             {
-                spinAccumulation += horizontalRotation * Time.deltaTime;
+                spinAccumulation += horizontalRotation * Time.deltaTime *0.5f;
+
+           
             }
             else
             {
-                spinAccumulation = 0.0f; // Reset if not spinning
+
+                //slowly decrease the spin accumulation over time when not spinning
+                //very slowly, 5 degrees per second
+                spinAccumulation -= 20f * Time.deltaTime;
+                // spinAccumulation = 0.0f; // Reset if not spinning
+
+            }
+
+            //set the intensity of the light based on the spin accumulation
+            if (spinLight != null)
+            {
+                //the light intensity should go between 0 and 30 based on the spin accumulation
+                spinLight.intensity = Mathf.Clamp(spinAccumulation / spinThreshold * 30f, 0f, 30f);
 
             }
 
@@ -103,7 +118,7 @@ public class SpinDetector : Order
 
     IEnumerator continueAfterAMinute()
     {
-        yield return new WaitForSeconds(90f); // Wait for 1 minute
+        yield return new WaitForSeconds(30f); // Wait for 1 minute
         Continue(); // Continue the order after 1 minute
     }
     public override string GetSummary()

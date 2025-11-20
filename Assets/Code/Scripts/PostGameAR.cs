@@ -59,6 +59,14 @@ public class PostGameAR : Order
         GameObject mapComplete = GameObject.Find("MapComplete");
         MapCompletion mapCompletion = mapComplete.GetComponent<MapCompletion>();
 
+        var xrObject = XRManager.Instance.GetXRObject();
+
+        //get the camera rig in the XR object
+        Camera xrCam = xrObject.GetComponentInChildren<Camera>();
+
+        //set the far clip plane to 50
+        xrCam.farClipPlane = 50f;
+
         var decisions = MapCompletion.decisions;
         var toSave = false;
 
@@ -150,12 +158,12 @@ public class PostGameAR : Order
                 GameObject instance = Instantiate(stoneOrBuilding1Prefab, stone.transform);
                 if (decision.Save)
                 {
-                    instance.transform.localScale = Vector3.one * 0.2f;
+                    instance.transform.localScale = Vector3.one * 0.4f;
                 }
                 else
                 {
                     instance.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = GetRandomBakeryName();
-                    instance.transform.localScale = Vector3.one * 7f;
+                    instance.transform.localScale = Vector3.one * 8.5f;
                 }
             }
             else if (decision.Type == DecisionMedieval.StoneType.Stone2)
@@ -164,11 +172,11 @@ public class PostGameAR : Order
                 GameObject instance = Instantiate(stoneOrBuilding2Prefab, stone.transform);
                 if (decision.Save)
                 {
-                    instance.transform.localScale = Vector3.one * 0.2f;
+                    instance.transform.localScale = Vector3.one * 0.4f;
                 }
                 else
                 {
-                    instance.transform.localScale = Vector3.one * 8f;
+                    instance.transform.localScale = Vector3.one * 9.5f;
                 }
             }
             else if (decision.Type == DecisionMedieval.StoneType.OtherStone)
@@ -177,11 +185,11 @@ public class PostGameAR : Order
                 GameObject instance = Instantiate(stoneOrBuilding3Prefab, stone.transform);
                 if (decision.Save)
                 {
-                    instance.transform.localScale = Vector3.one * 0.2f;
+                    instance.transform.localScale = Vector3.one * 0.4f;
                 }
                 else
                 {
-                    instance.transform.localScale *= 8f;
+                    instance.transform.localScale = Vector3.one * 9.5f;
                 }
             }
         }

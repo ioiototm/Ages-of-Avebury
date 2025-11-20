@@ -169,7 +169,7 @@ public class TinySave : MonoBehaviour
         if (playButton == null || loadButton == null || modelButton == null)
         {
             Debug.LogWarning("TinySave: Main Menu UI elements not found in scene.");
-            return;
+            //return;
         }
 
         // Update Play / Load

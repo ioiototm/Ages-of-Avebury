@@ -66,7 +66,9 @@ public class ChangeToNeolithic : Order
 
         //set the target location to the location that has 6 as the ID
         targetLocation.Value = LocationRandomiser.Instance.GetLocationWithID(6,true);
-        lastSeenLocation.Value = LocationRandomiser.Instance.GetLocationWithID(5,true);
+        GetEngine().GetVariable<LocationVariable>("FirstStoneCreation6").Value = targetLocation.Value;
+
+        lastSeenLocation.Value = GetEngine().GetVariable<LocationVariable>("Portal5").Value;
 
         Compass compass = GameObject.Find("Compass Test").GetComponent<Compass>();
         compass.timePeriod = Compass.TimePeriod.Neolithic;

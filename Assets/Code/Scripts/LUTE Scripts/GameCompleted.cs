@@ -16,6 +16,8 @@ public class GameCompleted : Order
         mapCompletion.gameCompleted = true;
         GameCompletedFlag = true;
 
+        TinySave.Instance.CompleteGame();
+
 
         //get the FirstStoneCreation6 and SecondStoneCreation7 location variables from the engine
         var firstStoneCreation = GetEngine().GetVariable<LocationVariable>("FirstStoneCreation6");

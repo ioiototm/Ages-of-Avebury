@@ -696,6 +696,13 @@ public class LocationRandomiser : MonoBehaviour
 
 
 
+            //TODO fix later
+            if(currentLocationVariable.Key == "Portal5")
+            {
+
+                currentLocationVariable.Value.LocationStatus = LocationStatus.Completed;
+            }
+
             LocationVariable fullLocationVariable = GetLocationVariableWithID(nextLocationId);
             Debug.Log("Key is " + fullLocationVariable.Key);
 
