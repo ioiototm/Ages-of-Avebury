@@ -34,6 +34,12 @@ public class ShowQuadrantChoice : Order
             //return;
         }
 
+        //enable them all
+        northQuadrantM.Value.LocationDisabled = false;
+        southQuadrantM.Value.LocationDisabled = false;
+        northQuadrantS.Value.LocationDisabled = false;
+        southQuadrantS.Value.LocationDisabled = false;
+
         var node = GetEngine().FindNode(ParentNode._NodeName);
         var lastOrder = node.OrderList.Last<Order>();
 

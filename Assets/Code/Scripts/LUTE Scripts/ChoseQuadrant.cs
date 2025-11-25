@@ -30,6 +30,19 @@ public class ChoseQuadrant : Order
 
 
 
+        var northQuadrantM = GetEngine().GetVariable<LocationVariable>("StartingPointNorthMain");
+        var southQuadrantM = GetEngine().GetVariable<LocationVariable>("StartingPointSouthMain");
+        var northQuadrantS = GetEngine().GetVariable<LocationVariable>("StartingPointNorthSecondary");
+        var southQuadrantS = GetEngine().GetVariable<LocationVariable>("StartingPointSouthSecondary");
+
+
+        //disable them all 
+
+        northQuadrantM.Value.LocationDisabled = true;
+        southQuadrantM.Value.LocationDisabled = true;
+        northQuadrantS.Value.LocationDisabled = true;
+        southQuadrantS.Value.LocationDisabled = true;
+
 
 
         if (quadrant == Quadrant.South)

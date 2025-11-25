@@ -1,10 +1,13 @@
 using JetBrains.Annotations;
 using LoGaCulture.LUTE;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
+using static LocationRandomiser;
 
 public class LocationRandomiser : MonoBehaviour
 {
@@ -44,6 +47,10 @@ public class LocationRandomiser : MonoBehaviour
             return instance;
         }
     }
+
+
+    public enum SkipResultType { AlternateSameId, AdvancedNextId, Completed }
+
 
     public void changeQuadrant()
     {
@@ -159,8 +166,128 @@ public class LocationRandomiser : MonoBehaviour
 
                 mapManager.ShowLocationMarker(variable);
             }
+
+
         }
+
+
     }
+
+
+    private int skipStage = 0;
+
+    public LocationVariable GetLocationVariableFromLocationInfo(LUTELocationInfo location)
+    {
+        var locationVariables = basicFlowEngine.GetVariables<LocationVariable>();
+        foreach (var locVar in locationVariables)
+        {
+            if (locVar.Value == location)
+            {
+                return locVar;
+            }
+        }
+        return null;
+    }
+
+    public LocationVariable GetFlowEngineLocationVariableFromLocationInfo(LUTELocationInfo location)
+    {
+        //location has a name like "1.1-NameOfPlace"
+        //extract the first number before the dot
+        string id_full = location.name.Split('-')[0];
+        string id = id_full.Split('.')[0];
+        return GetLocationVariableWithID(int.Parse(id));
+    }
+
+    public LUTELocationInfo VisitLocation(LUTELocationInfo location)
+    {
+        LUTELocationInfo nextLocation;
+
+
+
+        nextLocation = GetNextRandomLocation(location);
+
+        location.LocationStatus = LocationStatus.Visited;
+
+
+        lastSeenLocation.Value = location;
+        targetLocation.Value = nextLocation;
+
+        LocationVariable currentLocationVar = GetFlowEngineLocationVariableFromLocationInfo(nextLocation);
+        currentLocationVar.Value = nextLocation;
+
+        basicFlowEngine.GetMapManager().HideLocationMarker(currentLocationVar);
+        //nextLocation.LocationDisabled = true;
+        //to do, better way to disable the location so it doesn't appear on the map again
+
+        skipStage = 0;
+
+        //todo CLOSE the ICan'tGetThere panel after a few seconds
+        StartCoroutine(updateText("I can't get there!"));
+        
+
+
+
+
+        //get the ICantGetThere/Mask/Panel object and the script LocationClickHandler on it
+        //LocationClickHandler locationClickHandler = GameObject.Find("ICantGetThere/Mask/Panel").GetComponent<LocationClickHandler>();
+        //locationClickHandler.resetClickCount();
+
+
+
+        return nextLocation;
+
+
+        //switch(skipStage)
+        // {
+        //     case 0:
+        //         //normal visit, no skipping
+        //         //get a random next location
+        //         nextLocation = GetNextRandomLocation();
+        //         lastSeenLocation.Value = location;
+        //         targetLocation.Value = nextLocation;
+
+        //         return nextLocation;
+
+        //     case 1:
+        //         //they clicked skip once, but visited the second location
+        //         skipStage = 0;
+        //         nextLocation = GetNextRandomLocation();
+        //         lastSeenLocation.Value = location;
+        //         targetLocation.Value = nextLocation;
+        //         return nextLocation;
+
+        //     case 2:
+        //     default:
+        //         //they clicked skip twice, so advance to the next id
+        //         skipStage = 0;
+        //         nextLocation = GetNextRandomLocation();
+        //         lastSeenLocation.Value = location;
+        //         targetLocation.Value = nextLocation;
+        //         return nextLocation;
+
+        // }
+
+
+
+    }
+
+
+    public SkipResult SkipCurrentLocation()
+    {
+        var current = targetLocation.Value;
+
+        var alternate = RandomiseCurrentLocation(current);
+
+        if (alternate == null || alternate == current)
+        {
+            return new SkipResult { Type = SkipResultType.AlternateSameId, NewTarget = current, LastSeen = lastSeenLocation.Value };
+        }
+
+        targetLocation.Value = alternate;
+        skipStage = 1;
+        return new SkipResult { Type = SkipResultType.AlternateSameId, NewTarget = alternate, LastSeen = lastSeenLocation.Value };
+    }
+
 
     public LUTELocationInfo GetOppositeLocation(LUTELocationInfo current)
     {
@@ -413,7 +540,7 @@ public class LocationRandomiser : MonoBehaviour
     /// Unlike GetNextNormalLocation() this considers all sub-id variants (e.g. 3.1, 3.2, 3.3)
     /// instead of forcing ".1". Falls back to the last seen location if none are found.
     /// </summary>
-    public LUTELocationInfo GetNextRandomLocation()
+    public LUTELocationInfo GetNextRandomLocation(LUTELocationInfo currentLocation)
     {
         // Refresh last seen
         lastSeenLocation = basicFlowEngine.GetVariable<LocationVariable>("LastSeenLocation");
@@ -424,14 +551,14 @@ public class LocationRandomiser : MonoBehaviour
         }
 
         // Extract current numeric id (before any dot)
-        string idFull = lastSeenLocation.Value.name.Split('-')[0];     // e.g. "2.1"
+        string idFull = currentLocation.name.Split('-')[0];     // e.g. "2.1"
         string idNumericPart = idFull.Split('.')[0];                   // e.g. "2"
 
         // Compute next id
         if (!int.TryParse(idNumericPart, out int currentId))
         {
             Debug.LogWarning("Failed to parse current location id: " + idNumericPart);
-            return lastSeenLocation.Value;
+            return currentLocation;
         }
         int nextId = currentId + 1;
         string nextIdPrefix = nextId.ToString(); // We intentionally do NOT append ".1" so we can fetch all 3.x variants.
@@ -451,7 +578,7 @@ public class LocationRandomiser : MonoBehaviour
         if (candidates.Length == 0)
         {
             Debug.Log("No locations found for next id " + nextIdPrefix);
-            return lastSeenLocation.Value;
+            return currentLocation;
         }
 
         // If this id is in forceFirstIds, prefer the ".1" variant (no tracking — always prefer .1)
@@ -598,7 +725,12 @@ public class LocationRandomiser : MonoBehaviour
         SetAllLocationsToEnabled();
 
     }
+    
 
+    public void RestartTries()
+    {
+        numberOfTries = 0;
+    }
 
     private int numberOfTries = 0;
 
@@ -622,112 +754,343 @@ public class LocationRandomiser : MonoBehaviour
         return -1;
     }
 
+
+    public TextMeshProUGUI iCantGetThereText;
+    public GameObject cantGetThereObject;
+    public Animator animator;
+    private IEnumerator updateText(string text)
+    {
+        //wait 1 second
+        yield return new WaitForSeconds(1f);
+        iCantGetThereText.text = text;
+
+    }
+
+    private IEnumerator PlayAnimationAndUpdateText()
+    {
+        yield return new WaitForSeconds(3f); // Wait before starting animation
+
+        //animator.Play("ICGTClose");
+
+        // Wait for animation to finish
+        float duration = GetAnimationLength("ICGTClose");
+        yield return new WaitForSeconds(duration + 3);
+
+
+        iCantGetThereText.text = "I can't get there!";
+
+        if (cantGetThereObject != null)
+        {
+            cantGetThereObject.SetActive(false);
+        }
+        else
+        {
+            Debug.LogWarning("GameObject 'ICantGetThere' not assigned.");
+        }
+    }
+
+    private float GetAnimationLength(string stateName)
+    {
+        if (animator == null || animator.runtimeAnimatorController == null)
+            return 1f;
+
+        foreach (AnimationClip clip in animator.runtimeAnimatorController.animationClips)
+        {
+            if (clip.name == stateName)
+                return clip.length;
+        }
+
+        Debug.LogWarning($"Animation '{stateName}' not found. Defaulting to 1 second.");
+        return 1f;
+    }
+
     public void UnreachableTargetLocation()
     {
 
 
         Animator animator = GameObject.Find("ICantGetThere").GetComponent<Animator>();
-
+        LocationVariable currentLocationVar;
         animator.Play("ICGTClose");
 
+        Debug.Log("Skip stage is " + skipStage);
 
-        if (numberOfTries == 0)
+
+        switch (skipStage)
+        {
+            case 0:
+                //this is the first time they click skip
+                //just pick an alternate location with the same id
+                skipStage = 1;
+
+                var randomCurrent = RandomiseCurrentLocation(targetLocation.Value);
+                targetLocation.Value = randomCurrent;
+
+                basicFlowEngine.GetMapManager().ShowLocationMarker(targetLocation);
+
+                currentLocationVar = GetFlowEngineLocationVariableFromLocationInfo(randomCurrent);
+                currentLocationVar.Value = randomCurrent;
+
+                StartCoroutine(updateText("I can't get there either!"));
+
+                break;
+            case 1:
+            default:
+              
+                //they clicked skip twice , so just pick a random next location
+                skipStage = 0;
+
+                var randomNext = GetNextRandomLocation(targetLocation.Value);
+
+                lastSeenLocation.Value = targetLocation.Value;
+
+
+                //extract the id from the target locaiton.value (the first character is the digit)
+                //get the id of target location
+                string id_full_target = targetLocation.Value.name.Split('-')[0];
+                //split by the dot
+                string id_target = id_full_target.Split('.')[0];
+
+                //to int
+                int intIdTarget = int.Parse(id_target);
+                currentLocationId = intIdTarget;
+
+                LocationVariable currentLocationVariable = GetLocationVariableWithID(currentLocationId);
+
+
+                currentLocationVariable.Value = lastSeenLocation.Value;
+                lastSeenLocation.Value.LocationStatus = LocationStatus.Visited;
+                //currentLocationVariable.Value.LocationStatus = LocationStatus.Completed;
+                //to do for portal5
+
+                Debug.Log("Changed current from " + lastSeenLocation.Value.name + " to " + currentLocationVariable.Value.name);
+
+
+
+                targetLocation.Value = randomNext;
+                basicFlowEngine.GetMapManager().HideLocationMarker(targetLocation);
+
+
+                currentLocationVar = GetFlowEngineLocationVariableFromLocationInfo(randomNext);
+                currentLocationVar.Value = randomNext;
+
+                basicFlowEngine.GetMapManager().HideLocationMarker(currentLocationVar);
+
+
+                //iCantGetThereText.text = "I can't get there!";
+
+                if (animator != null)
+                {
+                    StartCoroutine(PlayAnimationAndUpdateText());
+                }
+                else
+                {
+                    Debug.LogWarning("Animator not assigned.");
+                }
+
+
+                string id_full = lastSeenLocation.Value.name.Split('-')[0];
+                //split by the dot
+                string id = id_full.Split('.')[0];
+
+                //to int
+                int newId = int.Parse(id) - 1;
+
+                interfaceGameEvent[newId].Raise();
+
+                break;
+
+              
+        }
+
+
+
+        //if (numberOfTries == 0)
+        //{
+
+        //    //get the "CurrentLocation" variable from the basic flow engine
+        //    LocationVariable targetLocation = basicFlowEngine.GetVariable<LocationVariable>("TargetLocation");
+
+        //    //if the target location is null, then pick a random one by getting the last seen location and adding one
+        //    if (targetLocation == null)
+        //    {
+        //        lastSeenLocation = basicFlowEngine.GetVariable<LocationVariable>("LastSeenLocation");
+
+        //        targetLocation.Value = RandomiseNextLocation(lastSeenLocation.Value);
+
+
+        //    }
+
+
+        //    var randomNext = RandomiseCurrentLocation(targetLocation.Value);
+
+
+        //    unreachedLocation = true;
+
+        //    targetLocation.Value = randomNext;
+
+        //    basicFlowEngine.GetMapManager().ShowLocationMarker(targetLocation);
+
+        //    numberOfTries++;
+        //    //print the name of the location
+        //    Debug.Log("Current Location: " + targetLocation.Value.name);
+        //}
+        //else
+        //{
+        //    numberOfTries = 0;
+
+        //    //get the "CurrentLocation" variable from the basic flow engine
+        //    LocationVariable targetLocation = basicFlowEngine.GetVariable<LocationVariable>("TargetLocation");
+
+        //    //if the target location is null, then pick a random one by getting the last seen location and adding one
+        //    if (targetLocation == null)
+        //    {
+        //        lastSeenLocation = basicFlowEngine.GetVariable<LocationVariable>("LastSeenLocation");
+        //        targetLocation.Value = RandomiseNextLocation(lastSeenLocation.Value);
+        //    }
+
+        //    lastSeenLocation.Value = targetLocation.Value;
+
+        //    //var randomNext = GetNextNormalLocation();
+        //    var randomNext = GetNextRandomLocation();
+
+        //    Debug.Log("The random next location is: " + randomNext.name);
+
+        //    unreachedLocation = true;
+
+        //    //extract the id from the target locaiton.value (the first character is the digit)
+        //    //get the id of target location
+        //    string id_full_target = targetLocation.Value.name.Split('-')[0];
+        //    //split by the dot
+        //    string id_target = id_full_target.Split('.')[0];
+
+        //    //to int
+        //    int intIdTarget = int.Parse(id_target);
+
+        //    currentLocationId = intIdTarget;
+
+
+        //    //currentLocationId++;
+
+        //    LocationVariable currentLocationVariable = GetLocationVariableWithID(currentLocationId);
+
+        //    targetLocation.Value = randomNext;
+
+        //    int nextLocationId = GetIdFromVariableKey(currentLocationVariable.Key);
+
+        //    nextLocationId++;
+
+
+        //    currentLocationVariable.Value = lastSeenLocation.Value;
+
+        //    Debug.Log("Changed current from " + lastSeenLocation.Value.name + " to " + currentLocationVariable.Value.name);
+
+
+        //    //TODO fix later
+        //    if (currentLocationVariable.Key == "Portal5")
+        //    {
+
+        //        currentLocationVariable.Value.LocationStatus = LocationStatus.Completed;
+        //    }
+
+        //    LocationVariable fullLocationVariable = GetLocationVariableWithID(nextLocationId);
+        //    Debug.Log("Key is " + fullLocationVariable.Key);
+
+        //    fullLocationVariable.Value = randomNext;
+
+
+        //    basicFlowEngine.GetMapManager().HideLocationMarker(fullLocationVariable);
+
+
+        //    //get the id of target location
+        //    string id_full = lastSeenLocation.Value.name.Split('-')[0];
+        //    //split by the dot
+        //    string id = id_full.Split('.')[0];
+
+        //    //to int
+        //    int newId = int.Parse(id) - 1;
+
+        //    //raise the event
+        //    interfaceGameEvent[newId].Raise();
+
+
+        //    //print the name of the location
+        //    Debug.Log("Next Location is Location: " + targetLocation.Value.name);
+
+        //}
+    }
+
+    public void setCorrectLocations()
+    {
+        //get the "CurrentLocation" variable from the basic flow engine
+        LocationVariable targetLocation = basicFlowEngine.GetVariable<LocationVariable>("TargetLocation");
+
+        //if the target location is null, then pick a random one by getting the last seen location and adding one
+        if (targetLocation == null)
+        {
+            lastSeenLocation = basicFlowEngine.GetVariable<LocationVariable>("LastSeenLocation");
+            targetLocation.Value = RandomiseNextLocation(lastSeenLocation.Value);
+        }
+
+        lastSeenLocation.Value = targetLocation.Value;
+
+        //var randomNext = GetNextNormalLocation();
+        var randomNext = GetNextRandomLocation(targetLocation.Value);
+
+        Debug.Log("The random next location is: " + randomNext.name);
+
+        unreachedLocation = true;
+
+        //randomNext.
+        //extract the id from the target location
+        int currentLocationId = GetIdFromVariableKey(targetLocation.Key);
+
+        currentLocationId++;
+
+        LocationVariable currentLocationVariable = GetLocationVariableWithID(currentLocationId);
+
+        targetLocation.Value = randomNext;
+
+        int nextLocationId = GetIdFromVariableKey(currentLocationVariable.Key);
+
+        nextLocationId++;
+
+
+        currentLocationVariable.Value = lastSeenLocation.Value;
+
+        Debug.Log("Changed current from " + lastSeenLocation.Value.name + " to " + currentLocationVariable.Value.name);
+
+
+        //TODO fix later
+        if (currentLocationVariable.Key == "Portal5")
         {
 
-            //get the "CurrentLocation" variable from the basic flow engine
-            LocationVariable targetLocation = basicFlowEngine.GetVariable<LocationVariable>("TargetLocation");
-
-            //if the target location is null, then pick a random one by getting the last seen location and adding one
-            if (targetLocation == null)
-            {
-                lastSeenLocation = basicFlowEngine.GetVariable<LocationVariable>("LastSeenLocation");
-
-                targetLocation.Value = RandomiseNextLocation(lastSeenLocation.Value);
-
-
-            }
-
-
-            var randomNext = RandomiseCurrentLocation(targetLocation.Value);
-
-
-            targetLocation.Value = randomNext;
-
-            basicFlowEngine.GetMapManager().ShowLocationMarker(targetLocation);
-
-            numberOfTries++;
-            //print the name of the location
-            Debug.Log("Current Location: " + targetLocation.Value.name);
+            currentLocationVariable.Value.LocationStatus = LocationStatus.Completed;
         }
-        else
-        {
-            numberOfTries = 0;
 
-            //get the "CurrentLocation" variable from the basic flow engine
-            LocationVariable targetLocation = basicFlowEngine.GetVariable<LocationVariable>("TargetLocation");
+        LocationVariable fullLocationVariable = GetLocationVariableWithID(nextLocationId);
+        Debug.Log("Key is " + fullLocationVariable.Key);
 
-            //if the target location is null, then pick a random one by getting the last seen location and adding one
-            if (targetLocation == null)
-            {
-                lastSeenLocation = basicFlowEngine.GetVariable<LocationVariable>("LastSeenLocation");
-                targetLocation.Value = RandomiseNextLocation(lastSeenLocation.Value);
-            }
-
-            lastSeenLocation.Value = targetLocation.Value;
-
-            //var randomNext = GetNextNormalLocation();
-            var randomNext = GetNextRandomLocation();
-
-            Debug.Log("The random next location is: " + randomNext.name);
-
-            unreachedLocation = true;
-
-            //randomNext.
-
-            currentLocationId++;
-
-            LocationVariable currentLocationVariable = GetLocationVariableWithID(currentLocationId);
-
-            targetLocation.Value = randomNext;
-
-            int nextLocationId = GetIdFromVariableKey(currentLocationVariable.Key);
-
-            nextLocationId++;
+        fullLocationVariable.Value = randomNext;
 
 
-
-            //TODO fix later
-            if(currentLocationVariable.Key == "Portal5")
-            {
-
-                currentLocationVariable.Value.LocationStatus = LocationStatus.Completed;
-            }
-
-            LocationVariable fullLocationVariable = GetLocationVariableWithID(nextLocationId);
-            Debug.Log("Key is " + fullLocationVariable.Key);
-
-            fullLocationVariable.Value = randomNext;
+        basicFlowEngine.GetMapManager().HideLocationMarker(fullLocationVariable);
 
 
-            basicFlowEngine.GetMapManager().HideLocationMarker(fullLocationVariable);
+        //get the id of target location
+        string id_full = lastSeenLocation.Value.name.Split('-')[0];
+        //split by the dot
+        string id = id_full.Split('.')[0];
+
+        //to int
+        int newId = int.Parse(id) - 1;
+
+        //raise the event
+        interfaceGameEvent[newId].Raise();
 
 
-            //get the id of target location
-            string id_full = lastSeenLocation.Value.name.Split('-')[0];
-            //split by the dot
-            string id = id_full.Split('.')[0];
+        //print the name of the location
+        Debug.Log("Next Location is Location: " + targetLocation.Value.name);
 
-            //to int
-            int newId = int.Parse(id) - 1;
-
-            //raise the event
-            interfaceGameEvent[newId].Raise();
-
-
-            //print the name of the location
-            Debug.Log("Next Location is Location: " + targetLocation.Value.name);
-
-        }
     }
 
     public void skipDirectlyToNextNode()
@@ -1019,3 +1382,11 @@ public class LocationRandomiser : MonoBehaviour
 
     }
 }
+
+public class SkipResult
+{
+    public SkipResultType Type;
+    public LUTELocationInfo NewTarget;   // null if Completed
+    public LUTELocationInfo LastSeen;
+}
+

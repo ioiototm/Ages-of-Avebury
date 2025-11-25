@@ -26,33 +26,58 @@ public class LocationUpdate : Order
             if (ParentNode._EventHandler is LocationClickEventHandler locationClickEventHandler)
             {
 
-                //if lastseenlocation is null, get it from the engine
-                if (LocationRandomiser.Instance.lastSeenLocation == null)
+
+                Debug.Log("Location clicked: " + locationClickEventHandler.Location.Value.name);
+
+
+                //if (locationClickEventHandler.Location.Value.LocationStatus == LocationStatus.Unvisited)
                 {
-                    LocationRandomiser.Instance.lastSeenLocation = GetEngine().GetVariable<LocationVariable>("lastSeenLocation");
+                    LocationRandomiser.Instance.VisitLocation(locationClickEventHandler.Location.Value);
+
+                    var locationClickHandlerGO = GameObject.Find("ICantGetThere/Mask/Panel");
+
+                    if(locationClickHandlerGO != null)
+                    {
+                        var locationClickHandler = locationClickHandlerGO.GetComponent<LocationClickHandler>();
+                        if(locationClickHandler != null)
+                        {
+                            locationClickHandler.resetClickCount();
+                        }
+                    }
+
+                   
                 }
 
-                LocationRandomiser.Instance.lastSeenLocation.Value = locationClickEventHandler.Location.Value;
+                ////if lastseenlocation is null, get it from the engine
+                //if (LocationRandomiser.Instance.lastSeenLocation == null)
+                //{
+                //    LocationRandomiser.Instance.lastSeenLocation = GetEngine().GetVariable<LocationVariable>("lastSeenLocation");
+                //}
 
-                //var nextLoc = LocationRandomiser.Instance.GetNextNormalLocation();
-                var nextLoc = LocationRandomiser.Instance.GetNextRandomLocation();
+                //LocationRandomiser.Instance.lastSeenLocation.Value = locationClickEventHandler.Location.Value;
 
-                //var nextLoc = LocationRandomiser.Instance.RandomiseNextLocation(LocationRandomiser.Instance.targetLocation.Value);
+                ////var nextLoc = LocationRandomiser.Instance.GetNextNormalLocation();
+                //var nextLoc = LocationRandomiser.Instance.GetNextRandomLocation();
 
-                //set the targetlocation 
-                if (!LocationRandomiser.Instance.unreachedLocation)
-                {
-                    LocationRandomiser.Instance.unreachedLocation = false;
-                    LocationRandomiser.Instance.targetLocation.Value = nextLoc;
-                }
+                ////var nextLoc = LocationRandomiser.Instance.RandomiseNextLocation(LocationRandomiser.Instance.targetLocation.Value);
 
-                //print the last seen and target location
-                Debug.Log("Last seen location: " + LocationRandomiser.Instance.lastSeenLocation.Value.name);
-                Debug.Log("Target location: " + LocationRandomiser.Instance.targetLocation.Value.name);
+                ////set the targetlocation 
+                //if (!LocationRandomiser.Instance.unreachedLocation)
+                //{
+                //    LocationRandomiser.Instance.setCorrectLocations();
+                //}
 
-                //get the location data
-                //LocationData locationData = locationClickEventHandler.Location;
-                //Debug.Log("Location from node is: " + locationData.Value.name);
+
+
+                ////print the last seen and target location
+                //Debug.Log("Last seen location: " + LocationRandomiser.Instance.lastSeenLocation.Value.name);
+                //Debug.Log("Target location: " + LocationRandomiser.Instance.targetLocation.Value.name);
+
+                //LocationRandomiser.Instance.RestartTries();
+
+                ////get the location data
+                ////LocationData locationData = locationClickEventHandler.Location;
+                ////Debug.Log("Location from node is: " + locationData.Value.name);
             }
         }
 

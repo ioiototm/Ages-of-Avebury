@@ -68,7 +68,13 @@ public class ChangeToNeolithic : Order
         targetLocation.Value = LocationRandomiser.Instance.GetLocationWithID(6,true);
         GetEngine().GetVariable<LocationVariable>("FirstStoneCreation6").Value = targetLocation.Value;
 
-        lastSeenLocation.Value = GetEngine().GetVariable<LocationVariable>("Portal5").Value;
+        var portalLoc = GetEngine().GetVariable<LocationVariable>("Portal5");
+
+        lastSeenLocation.Value = portalLoc.Value;
+
+        portalLoc.Value.LocationStatus = LocationStatus.Completed;
+
+
 
         Compass compass = GameObject.Find("Compass Test").GetComponent<Compass>();
         compass.timePeriod = Compass.TimePeriod.Neolithic;

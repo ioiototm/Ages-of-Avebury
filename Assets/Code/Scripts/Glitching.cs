@@ -153,6 +153,8 @@ public class Glitching : MonoBehaviour
 
         string[] parts = portalLocation.Value.Position.Split(',');
         if (parts.Length != 2) return false;
+        Debug.Log("Portal GPS coordinates: " + portalLocation.Value.Position);
+
 
         if (float.TryParse(parts[0].Trim(), out latitude) && float.TryParse(parts[1].Trim(), out longitude))
         {

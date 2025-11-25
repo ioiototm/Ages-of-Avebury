@@ -1,7 +1,8 @@
+using LoGaCulture.LUTE;
+using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using TMPro;
-using System.Collections;
 
 public class LocationClickHandler : MonoBehaviour, IPointerClickHandler
 {
@@ -11,9 +12,17 @@ public class LocationClickHandler : MonoBehaviour, IPointerClickHandler
 
     private int clickCount = 0;
 
+
+    public void resetClickCount()
+    {
+            clickCount = 0;
+
+    }
     public void OnPointerClick(PointerEventData eventData)
     {
         clickCount++;
+
+        Debug.Log("Location clicked. Click count: " + clickCount);
 
         if (clickCount == 1)
         {
@@ -32,6 +41,8 @@ public class LocationClickHandler : MonoBehaviour, IPointerClickHandler
                 Debug.LogWarning("Animator not assigned.");
             }
 
+            //LocationRandomiser.Instance.VisitLocation(LocationRandomiser.Instance.lastSeenLocation.Value);
+
             clickCount = 0; // Reset for next cycle
         }
     }
@@ -48,7 +59,7 @@ public class LocationClickHandler : MonoBehaviour, IPointerClickHandler
     {
         yield return new WaitForSeconds(3f); // Wait before starting animation
 
-        animator.Play("ICGTClose");
+        //animator.Play("ICGTClose");
 
         // Wait for animation to finish
         float duration = GetAnimationLength("ICGTClose");

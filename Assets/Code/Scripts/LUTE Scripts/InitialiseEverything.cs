@@ -132,6 +132,8 @@ public class InitialiseEverything : Order
 
                 var name = locationVariable.Key;
 
+                Debug.Log("Processing location variable: " + name);
+
                 //the names are random but have a number somewhere, so check if the name contains any numbers, in any place
                 if (name.Contains("barnCentre") || name.Contains("StartingPoint") || name.Contains("PostGame"))
                 {
@@ -165,6 +167,19 @@ public class InitialiseEverything : Order
                         mapManager.ShowLocationMarker(locationVariable);
                     }
 
+                   
+
+                }
+
+                if (name.Equals("StartingPointNorthMain") || name.Equals("StartingPointNorthSecondary") ||
+                       name.Equals("StartingPointSouthMain") || name.Equals("StartingPointSouthSecondary"))
+                {
+                    //hide the location marker
+                    mapManager.HideLocationMarker(locationVariable);
+                    //disable
+                    locationVariable.Value.LocationDisabled = true;
+
+                    Debug.Log("Hiding and disabling location: " + name);
                 }
 
             }
