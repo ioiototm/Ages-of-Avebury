@@ -29,6 +29,39 @@ public class PostGameAR : Order
                 {
                     child.gameObject.SetActive(true);
                 }
+
+                // Position the first three children relative to the parent's local axes (left/right/forward)
+                var xrObject = XRManager.Instance.GetXRObject();
+                Camera xrCam = xrObject.GetComponentInChildren<Camera>();
+
+                // Align the parent yaw to camera so local forward = camera forward
+                Vector3 camForward = xrCam.transform.forward; camForward.y = 0f; if (camForward.sqrMagnitude < 0.0001f) camForward = Vector3.forward; camForward.Normalize();
+                spawnable.transform.rotation = Quaternion.LookRotation(camForward, Vector3.up);
+
+                // Use local positions to simply move them apart
+                float offsetDistance = 10f; // increased spacing
+
+                GameObject stoneAndBuildings = spawnable.transform.GetChild(1).gameObject; // Assuming the stones and buildings container is the second 
+                //Fix in the future
+
+                int childCount = stoneAndBuildings.transform.childCount;
+
+                if (childCount > 0)
+                {
+                    var c0 = stoneAndBuildings.transform.GetChild(0);
+                    c0.localPosition = Vector3.left * offsetDistance;
+                }
+                if (childCount > 1)
+                {
+                    var c1 = stoneAndBuildings.transform.GetChild(1);
+                    c1.localPosition = Vector3.forward * offsetDistance;
+                }
+                if (childCount > 2)
+                {
+                    var c2 = stoneAndBuildings.transform.GetChild(2);
+                    c2.localPosition = Vector3.right * offsetDistance;
+                }
+
                 yield break; // Exit the coroutine once done
             }
             yield return new WaitForSeconds(1f); // Wait for 1 second before checking again
@@ -70,75 +103,6 @@ public class PostGameAR : Order
         var decisions = MapCompletion.decisions;
         var toSave = false;
 
-
-        //switch (stoneType)
-        //{
-        //    case DecisionMedieval.StoneType.Stone1:
-
-        //        foreach (var decision in decisions)
-        //        {
-        //            if (decision.Type == DecisionMedieval.StoneType.Stone1)
-        //            {
-        //                toSave = decision.Save;
-        //                if (decision.Save)
-        //                {
-        //                    itemToSpawn = mapCompletion.createdStone1;
-        //                }
-        //                else
-        //                {
-        //                    itemToSpawn = mapCompletion.bakery;
-        //                }
-        //                break;
-        //            }
-        //        }
-
-
-        //        //itemToSpawn = mapCompletion.createdStone1;
-        //        break;
-        //    case DecisionMedieval.StoneType.Stone2:
-        //        foreach (var decision in decisions)
-        //        {
-        //            if (decision.Type == DecisionMedieval.StoneType.Stone2)
-        //            {
-        //                toSave = decision.Save;
-        //                if (decision.Save)
-        //                {
-        //                    itemToSpawn = mapCompletion.createdStone2;
-        //                }
-        //                else
-        //                {
-        //                    itemToSpawn = mapCompletion.cottage;
-        //                }
-        //                break;
-        //            }
-        //        }
-        //        break;
-        //    case DecisionMedieval.StoneType.OtherStone:
-        //        foreach (var decision in decisions)
-        //        {
-        //            if (decision.Type == DecisionMedieval.StoneType.OtherStone)
-        //            {
-        //                toSave = decision.Save;
-        //                if (decision.Save)
-        //                {
-        //                    itemToSpawn = mapCompletion.foundStone;
-        //                }
-        //                else
-        //                {
-        //                    itemToSpawn = mapCompletion.church;
-        //                }
-        //                break;
-        //            }
-        //        }
-        //        break;
-        //    default:
-        //        Debug.LogError("Unknown stone type: " + stoneType);
-        //        return;
-        //}
-
-
-        //get all the stones or buildings to place (all 3), and create a new object, where the second stone/building is in the middle,
-        ////and then the other two stones/buildings are in a radius around them, not too close, not to far, randomly placed
 
         //check the decisions list for each stone type, and get the corresponding prefab from mapCompletion
         GameObject stoneOrBuilding1Prefab = null;
@@ -194,58 +158,23 @@ public class PostGameAR : Order
             }
         }
 
-        // Now position the instantiated children within the deactivated parent
-        float minRadius = 10f;
-        float maxRadius = 20f;
-        int maxPlacementAttempts = 5;
-
-        // Child at index 1 should be stoneOrBuilding2, which goes in the center
-        if (stone.transform.childCount > 1)
-        {
-            stone.transform.GetChild(1).localPosition = Vector3.zero;
-            stone.transform.GetChild(1).gameObject.SetActive(true);
-        }
-
-        // Position the other objects, checking for overlaps
-        if (stone.transform.childCount > 0)
-        {
-            PlaceObjectWithoutOverlap(stone.transform.GetChild(0), minRadius, maxRadius, maxPlacementAttempts);
-            stone.transform.GetChild(0).gameObject.SetActive(true);
-        }
-
-        if (stone.transform.childCount > 2)
-        {
-            PlaceObjectWithoutOverlap(stone.transform.GetChild(2), minRadius, maxRadius, maxPlacementAttempts);
-            stone.transform.GetChild(2).gameObject.SetActive(true);
-        }
-
-
         var node = GetEngine().FindNode(ParentNode._NodeName);
         var lastOrder = node.OrderList.Last<Order>();
-
-    
-
-        //get the next order to this one
 
         foreach (Order order in node.OrderList)
         {
             if (order.OrderIndex == this.OrderIndex + 2)
             {
-
-                //if it's of type PlaceObjectOnPlane
                 if (order is PlaceObjectXR)
                 {
                     PlaceObjectXR placeOrder = (PlaceObjectXR)order;
                     placeOrder.m_PrefabToPlace = stone;
                 }
-
-
             }
         }
 
         // Start the coroutine to check and enable the child once spawned
         StartCoroutine(CheckAndEnableOnceSpawned());
-
 
         Continue();
 
@@ -266,7 +195,6 @@ public class PostGameAR : Order
             Vector3 testPosition = GetRandomPositionOnCircle(minRadius, maxRadius);
             objectToPlace.localPosition = testPosition;
 
-            // Temporarily activate the parent to allow physics checks
             Transform parent = objectToPlace.parent;
             bool wasParentActive = parent.gameObject.activeSelf;
             parent.gameObject.SetActive(true);
@@ -275,10 +203,8 @@ public class PostGameAR : Order
             Vector3 halfExtents = Vector3.Scale(objectCollider.bounds.extents, objectToPlace.lossyScale);
             Quaternion orientation = objectToPlace.rotation;
 
-            // Check for overlap with other colliders, ignoring the object itself
             Collider[] overlaps = Physics.OverlapBox(boxCenter, halfExtents, orientation);
 
-            // Restore parent's original active state
             parent.gameObject.SetActive(wasParentActive);
 
             bool isOverlapping = false;
@@ -313,7 +239,6 @@ public class PostGameAR : Order
 
     public override string GetSummary()
     {
-        //you can use this to return a summary of the order which is displayed in the inspector of the order
         return "Sets up everything for the AR post game";
     }
 }

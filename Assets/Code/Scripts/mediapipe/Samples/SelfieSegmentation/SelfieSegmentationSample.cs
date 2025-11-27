@@ -190,9 +190,14 @@ public class SelfieSegmentationSample : MonoBehaviour
 
     }
 
+    [SerializeField] private float shimmerAmplitude = 0.015f;   // max offset in world units
+    [SerializeField] private float shimmerFrequency = 0.75f;     // cycles per second
+    [SerializeField] private float shimmerNoiseScale = 0.8f;     // perlin sampling density
+
+
     Coroutine runningCoroutine = null;
-    private bool forceFinishLine = false;   // <- new
-    private bool pauseAfterFinish = false;  // <- new
+    private bool forceFinishLine = false;   
+    private bool pauseAfterFinish = false; 
 
     private IEnumerator DrawContourWithRenderer(
         List<Vector2> contour,
@@ -201,28 +206,23 @@ public class SelfieSegmentationSample : MonoBehaviour
         float frameDelay = 0.1f,
         float endPause = 1f)
     {
-        // Don’t start if still drawing something
         if (runningCoroutine != null) yield break;
         runningCoroutine = StartCoroutine(Co());
-        yield return runningCoroutine;   // let the nested Co() run
+        yield return runningCoroutine;
         runningCoroutine = null;
-        yield break;                     // nothing more to do
+        yield break;
 
         IEnumerator Co()
         {
-            // 1️⃣ kill any previous line
             GameObject prev = GameObject.Find("ContourLine");
             if (prev) Destroy(prev);
 
-            // 2️⃣ fresh renderer
             var go = new GameObject("ContourLine");
             var lr = go.AddComponent<LineRenderer>();
             lr.material = new Material(Shader.Find("Sprites/Default"));
             lr.widthMultiplier = 0.05f;
-            lr.loop = forceFinishLine; // Set to true to connect the last and first points
+            lr.loop = forceFinishLine;
 
-            // 3️⃣ animate or draw all at once
-            int pointCount = forceFinishLine ? contour.Count : 0;
             if (forceFinishLine)
             {
                 lr.positionCount = contour.Count;
@@ -245,11 +245,12 @@ public class SelfieSegmentationSample : MonoBehaviour
                 }
             }
 
-            // 4️⃣ optional end pause
+            // Attach shimmer animator
+            var animator = go.AddComponent<ContourLineAnimator>();
+            animator.Initialize(lr, shimmerAmplitude, shimmerFrequency, shimmerNoiseScale);
+
             if (!forceFinishLine || pauseAfterFinish)
                 yield return new WaitForSeconds(endPause);
-
-            // Coroutine ends -> runningCoroutine becomes null (see wrapper)
         }
     }
 
@@ -1194,5 +1195,70 @@ public class SelfieSegmentationSample : MonoBehaviour
     }
 
 
+}
+
+// Animates a LineRenderer by subtly offsetting each point over time around its original position.
+internal class ContourLineAnimator : MonoBehaviour
+{
+    private LineRenderer _lr;
+    private Vector3[] _basePositions;
+    private float _amplitude;
+    private float _frequency;
+    private float _noiseScale;
+    private float _seed;
+
+    // Cache to distribute phase along the contour for nicer motion
+    private float[] _phaseOffsets;
+
+    public void Initialize(LineRenderer lr, float amplitude, float frequency, float noiseScale)
+    {
+        _lr = lr;
+        _amplitude = Mathf.Max(0f, amplitude);
+        _frequency = Mathf.Max(0f, frequency);
+        _noiseScale = Mathf.Max(0.001f, noiseScale);
+        _seed = Random.value * 1000f;
+
+        _basePositions = new Vector3[_lr.positionCount];
+        _lr.GetPositions(_basePositions);
+
+        _phaseOffsets = new float[_basePositions.Length];
+        for (int i = 0; i < _phaseOffsets.Length; i++)
+        {
+            // Spread phases around the loop to avoid uniform movement
+            _phaseOffsets[i] = (float)i / Mathf.Max(1, _phaseOffsets.Length - 1);
+        }
+    }
+
+    private void Update()
+    {
+        if (_lr == null || _basePositions == null || _basePositions.Length == 0)
+            return;
+
+        float t = Time.time * _frequency * 2f * Mathf.PI;
+
+        // Recompute positions each frame with small offsets
+        for (int i = 0; i < _basePositions.Length; i++)
+        {
+            Vector3 basePos = _basePositions[i];
+
+            // Sample perlin noise to derive local direction, then modulate by a sin for breathing
+            float n0 = Mathf.PerlinNoise(_seed + basePos.x * _noiseScale, _seed + basePos.y * _noiseScale);
+            float n1 = Mathf.PerlinNoise(_seed + (basePos.x + 10f) * _noiseScale, _seed + (basePos.y + 10f) * _noiseScale);
+
+            // Build a stable small direction vector
+            Vector2 dir = new Vector2(n0 - 0.5f, n1 - 0.5f);
+            if (dir.sqrMagnitude < 1e-4f)
+                dir = Vector2.up;
+            dir.Normalize();
+
+            // Gentle time-based modulation with phase offset per point
+            float phase = t + _phaseOffsets[i] * Mathf.PI * 2f;
+            float breath = Mathf.Sin(phase) * 0.5f + 0.5f; // 0..1
+            float offsetMag = breath * _amplitude;
+
+            Vector3 offset = new Vector3(dir.x, dir.y, 0f) * offsetMag;
+            _lr.SetPosition(i, basePos + offset);
+        }
+    }
 }
 
