@@ -225,7 +225,7 @@ public class Compass : MonoBehaviour
                        }
 
                        // save runtime cache for offline next launch
-                       TinySave.Instance.SaveStonesToPersistentCacheFile();
+                       //TinySave.Instance.SaveStonesToPersistentCacheFile();
 
                        TinySave.Instance.SaveTheStones(); // Save the loaded stones to PlayerPrefs
 

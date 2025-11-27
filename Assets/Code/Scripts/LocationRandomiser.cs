@@ -213,10 +213,14 @@ public class LocationRandomiser : MonoBehaviour
         targetLocation.Value = nextLocation;
 
         LocationVariable currentLocationVar = GetFlowEngineLocationVariableFromLocationInfo(nextLocation);
-        currentLocationVar.Value = nextLocation;
 
-        basicFlowEngine.GetMapManager().HideLocationMarker(currentLocationVar);
-        //nextLocation.LocationDisabled = true;
+        if (currentLocationVar != null)
+        {
+            currentLocationVar.Value = nextLocation;
+
+            basicFlowEngine.GetMapManager().HideLocationMarker(currentLocationVar);
+        }
+            //nextLocation.LocationDisabled = true;
         //to do, better way to disable the location so it doesn't appear on the map again
 
         skipStage = 0;
