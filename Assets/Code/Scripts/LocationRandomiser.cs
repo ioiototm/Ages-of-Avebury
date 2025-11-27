@@ -816,9 +816,12 @@ public class LocationRandomiser : MonoBehaviour
         else if(middlePeriodSkipCount == 2)
         {
             basicFlowEngine.ExecuteNode("Mid NPC03");
+            middlePeriodSkipCount = 0;
         }
 
         middlePeriodSkipCount++;
+
+
 
 
     }
