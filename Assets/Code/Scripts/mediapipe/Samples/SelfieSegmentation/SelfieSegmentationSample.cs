@@ -129,12 +129,15 @@ public class SelfieSegmentationSample : MonoBehaviour
     }
 
 
+    
+
     public void OnClick(Button button)
     {
         if (pressedButton == false)
         {
             pressedButton = true;
 
+            pressedButtonObject = button;
             //disable the button
             button.interactable = false;
 
@@ -258,6 +261,11 @@ public class SelfieSegmentationSample : MonoBehaviour
     bool firstStone = true;
 
 
+    private Button pressedButtonObject;
+
+
+    public StoneCreation stoneOrder = null;
+
     private void OnTextureUpdate(Texture texture)
     {   
 
@@ -317,9 +325,17 @@ public class SelfieSegmentationSample : MonoBehaviour
             if (contour.Count < 50)
             {
                 pressedButton = false;
+                pressedButtonObject.interactable = true;
                 return;
             }
 
+
+           
+
+            //make it uninteractable
+            pressedButtonObject.interactable = false;
+
+            stoneOrder.CreateStone();
 
 
             pressedButton = false;

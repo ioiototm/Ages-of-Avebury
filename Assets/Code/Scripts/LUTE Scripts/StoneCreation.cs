@@ -37,7 +37,7 @@ public class StoneCreation : Order
 
 
 
-        yield return new WaitForSeconds(10f);
+        yield return new WaitForSeconds(6f);
 
         // Add your stone creation logic here
         Debug.Log("Stone Created!");
@@ -71,11 +71,15 @@ public class StoneCreation : Order
         if (selfieSegmentationSample == null)
         {
             selfieSegmentationSample = GameObject.Find("SelfieSegmentationSample").GetComponent<SelfieSegmentationSample>();
+            
+            selfieSegmentationSample.stoneOrder = this;
             return;
         }
 
+
         selfieSegmentationSample.gameObject.SetActive(true);
         selfieSegmentationSample.currentStone = stoneObject;
+        selfieSegmentationSample.stoneOrder = this;
 
         makeStoneButton.SetActive(true);
         //To continue or not depending on if this order takes care of everything or diffrent orders take care of the rest
