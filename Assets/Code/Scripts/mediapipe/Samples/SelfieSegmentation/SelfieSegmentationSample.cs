@@ -129,10 +129,16 @@ public class SelfieSegmentationSample : MonoBehaviour
     }
 
 
-    public void OnClick()
+    public void OnClick(Button button)
     {
-        if(pressedButton == false)
-        pressedButton = true;
+        if (pressedButton == false)
+        {
+            pressedButton = true;
+
+            //disable the button
+            button.interactable = false;
+
+        }
     }
 
     private Vector3 TextureToWorldPoint(Vector2 texCoord, Camera camera, RenderTexture maskTex, float distance = 1f)

@@ -789,6 +789,36 @@ public class LocationRandomiser : MonoBehaviour
         }
     }
 
+
+    static int middlePeriodSkipCount = 0;
+    public void MiddlePeriodSkip()
+    {
+
+
+
+        //Mid NPC01, Mid NPC02, Mid NPC03 are the node names
+        //when called, check the middlePeriodSkipCount
+        //on first call, execute node 01, then increment the count
+        //on second call, execute node 02, then increment the count, etc
+
+        if(middlePeriodSkipCount == 0)
+        {
+            basicFlowEngine.ExecuteNode("Mid NPC01");
+        }
+        else if(middlePeriodSkipCount == 1)
+        {
+            basicFlowEngine.ExecuteNode("Mid NPC02");
+        }
+        else if(middlePeriodSkipCount == 2)
+        {
+            basicFlowEngine.ExecuteNode("Mid NPC03");
+        }
+
+        middlePeriodSkipCount++;
+
+
+    }
+
     private float GetAnimationLength(string stateName)
     {
         if (animator == null || animator.runtimeAnimatorController == null)
