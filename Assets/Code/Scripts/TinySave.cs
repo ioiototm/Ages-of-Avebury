@@ -46,6 +46,9 @@ public class TinySave : MonoBehaviour
     const string KEY_STONE_DATA_SECOND = "StoneDataSecond"; // JSON blob of stone 2 data
     const string KEY_STONE_DATA_THIRD_SOCIAL = "StoneDataThirdSocial"; // JSON blob of stone 3 data
     const string KEY_GAME_COMPLETED = "GameCompleted"; // bool for game completed
+    const string KEY_STONE_OUTCOME_PREFIX = "StoneOutcome_"; // cached per-stone outcome flag
+
+    private static readonly Dictionary<int, GameObject> cachedSavedStonePrefabs = new();
 
     // File-based cache paths
     private const string StoneCacheFileName = "stonecache.json";
@@ -109,13 +112,167 @@ public class TinySave : MonoBehaviour
     public class StoneDecisionData
     {
         public DecisionMedieval.StoneDecision stoneDecision;
-        public int WhichStone; // 0 for first stone, 1 for second stone, etc.
+        public int WhichStone; // 1 = first stone, 2 = second stone, 3 = social stone
     }
 
     [Serializable]
     public class StoneDecisionCollection
     {
         public List<StoneDecisionData> decisions = new List<StoneDecisionData>();
+    }
+
+    public enum StoneOutcome
+    {
+        Unknown = 0,
+        Saved = 1,
+        Destroyed = 2
+    }
+
+    private static bool IsValidStoneIndex(int whichStone) => whichStone >= 1 && whichStone <= 3;
+
+    private static string GetStoneOutcomeKey(int whichStone) => $"{KEY_STONE_OUTCOME_PREFIX}{whichStone}";
+
+    private static bool TryGetStoneDataKey(int whichStone, out string key)
+    {
+        key = whichStone switch
+        {
+            1 => KEY_STONE_DATA_FIRST,
+            2 => KEY_STONE_DATA_SECOND,
+            3 => KEY_STONE_DATA_THIRD_SOCIAL,
+            _ => string.Empty
+        };
+        return !string.IsNullOrEmpty(key);
+    }
+
+    private static void CacheStoneOutcome(int whichStone, StoneOutcome outcome)
+    {
+        if (!IsValidStoneIndex(whichStone)) return;
+        PlayerPrefs.SetInt(GetStoneOutcomeKey(whichStone), (int)outcome);
+    }
+
+    private static void CacheStoneOutcomeFromDecision(DecisionMedieval.StoneDecision decision, int whichStone)
+    {
+        if (decision == null || !IsValidStoneIndex(whichStone)) return;
+        CacheStoneOutcome(whichStone, decision.Save ? StoneOutcome.Saved : StoneOutcome.Destroyed);
+    }
+
+    private static void BackfillStoneOutcomeCache(StoneDecisionCollection collection)
+    {
+        if (collection?.decisions == null) return;
+
+        bool updatedCache = false;
+        foreach (var decisionData in collection.decisions)
+        {
+            if (decisionData?.stoneDecision == null || !IsValidStoneIndex(decisionData.WhichStone)) continue;
+
+            var desiredOutcome = decisionData.stoneDecision.Save ? StoneOutcome.Saved : StoneOutcome.Destroyed;
+            var currentOutcome = GetStoneOutcome(decisionData.WhichStone);
+            if (currentOutcome == desiredOutcome) continue;
+
+            CacheStoneOutcome(decisionData.WhichStone, desiredOutcome);
+            updatedCache = true;
+        }
+
+        if (updatedCache)
+        {
+            PlayerPrefs.Save();
+        }
+    }
+
+    public static StoneOutcome GetStoneOutcome(int whichStone)
+    {
+        if (!IsValidStoneIndex(whichStone)) return StoneOutcome.Unknown;
+        return (StoneOutcome)PlayerPrefs.GetInt(GetStoneOutcomeKey(whichStone), (int)StoneOutcome.Unknown);
+    }
+
+    public static bool TryGetStoneOutcome(int whichStone, out StoneOutcome outcome)
+    {
+        outcome = GetStoneOutcome(whichStone);
+        return outcome != StoneOutcome.Unknown;
+    }
+
+    public static bool StoneWasSaved(int whichStone) => GetStoneOutcome(whichStone) == StoneOutcome.Saved;
+
+    public static bool StoneWasDestroyed(int whichStone) => GetStoneOutcome(whichStone) == StoneOutcome.Destroyed;
+
+    public static bool HasPlayerStoneData(int whichStone)
+    {
+        return TryGetStoneDataKey(whichStone, out var key) && PlayerPrefs.HasKey(key);
+    }
+
+    public static bool HasAnyPlayerCreatedStones => HasPlayerStoneData(1) || HasPlayerStoneData(2) || HasPlayerStoneData(3);
+
+    public static bool TryGetSavedStoneMeshData(int whichStone, out Mesh mesh, out List<Vector2> outline)
+    {
+        mesh = null;
+        outline = null;
+
+        if (!TryGetStoneDataKey(whichStone, out string key) || !PlayerPrefs.HasKey(key))
+        {
+            return false;
+        }
+
+        string base64 = PlayerPrefs.GetString(key);
+        if (string.IsNullOrEmpty(base64))
+        {
+            return false;
+        }
+
+        try
+        {
+            MeshSerializer.FromBase64(base64, out mesh, out outline);
+            return mesh != null;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"TinySave: Failed to decode saved stone {whichStone}. {ex}");
+            mesh = null;
+            outline = null;
+            return false;
+        }
+    }
+
+    public static GameObject GetSavedStonePrefab(int whichStone, Material stoneMaterial, Material outlineMaterial)
+    {
+
+        Debug.Log($"TinySave: Getting saved stone prefab for stone {whichStone}.");
+
+        if (!IsValidStoneIndex(whichStone)) return null;
+
+        if (cachedSavedStonePrefabs.TryGetValue(whichStone, out GameObject cached) && cached != null)
+        {
+            return cached;
+        }
+
+        if (!TryGetSavedStoneMeshData(whichStone, out Mesh mesh, out _))
+        {
+            return null;
+        }
+
+        GameObject prefab = new GameObject($"PlayerStone_{whichStone}");
+        var filter = prefab.AddComponent<MeshFilter>();
+        filter.sharedMesh = mesh;
+
+        var renderer = prefab.AddComponent<MeshRenderer>();
+        if (stoneMaterial != null && outlineMaterial != null)
+        {
+            renderer.sharedMaterials = new[] { stoneMaterial, outlineMaterial };
+        }
+        else if (stoneMaterial != null)
+        {
+            renderer.sharedMaterial = stoneMaterial;
+        }
+
+        prefab.SetActive(false);
+        UnityEngine.Object.DontDestroyOnLoad(prefab);
+
+        cachedSavedStonePrefabs[whichStone] = prefab;
+        return prefab;
+    }
+
+    public static bool GetGameCompletionFlag()
+    {
+        return PlayerPrefs.GetInt(KEY_GAME_COMPLETED, 0) == 1;
     }
 
 
@@ -128,7 +285,7 @@ public class TinySave : MonoBehaviour
             1 => KEY_STONE_DATA_FIRST,
             2 => KEY_STONE_DATA_SECOND,
             3 => KEY_STONE_DATA_THIRD_SOCIAL,
-            _ => throw new ArgumentOutOfRangeException(nameof(whichStone), "whichStone must be 0, 1, or 2.")
+            _ => throw new ArgumentOutOfRangeException(nameof(whichStone), "whichStone must be 1, 2, or 3.")
         };
         PlayerPrefs.SetString(key, stoneBase64);
         PlayerPrefs.Save();
@@ -142,7 +299,7 @@ public class TinySave : MonoBehaviour
 
     public bool IsGameCompleted()
     {
-        return PlayerPrefs.GetInt(KEY_GAME_COMPLETED, 0) == 1;
+        return GetGameCompletionFlag();
     }
 
     public void ResetGameCompletion()
@@ -292,6 +449,7 @@ public class TinySave : MonoBehaviour
             // Add new decision
             collection.decisions.Add(new StoneDecisionData { stoneDecision = decision, WhichStone = whichStone });
         }
+        CacheStoneOutcomeFromDecision(decision, whichStone);
 
         // Serialize the entire collection and save it
         string updatedJson = JsonUtility.ToJson(collection);
@@ -303,11 +461,19 @@ public class TinySave : MonoBehaviour
 
     public StoneDecisionCollection LoadStoneMedieval()
     {
+        return LoadStoneMedievalFromPrefs();
+    }
+
+    public static StoneDecisionCollection LoadStoneMedievalFromPrefs()
+    {
         if (PlayerPrefs.HasKey(KEY_STONE_DECISION))
         {
             string json = PlayerPrefs.GetString(KEY_STONE_DECISION);
-            return JsonUtility.FromJson<StoneDecisionCollection>(json);
+            var collection = JsonUtility.FromJson<StoneDecisionCollection>(json) ?? new StoneDecisionCollection();
+            BackfillStoneOutcomeCache(collection);
+            return collection;
         }
+
         return new StoneDecisionCollection();
     }
 
@@ -534,6 +700,7 @@ public class TinySave : MonoBehaviour
                     serializedValue = JsonUtility.ToJson(locationData);
                     variableType = "location";
                 }
+
                 if (!string.IsNullOrEmpty(variableType))
                 {
                     variableList.Add(new VariableData { name = variableName, type = variableType, value = serializedValue });
@@ -769,12 +936,53 @@ public class TinySave : MonoBehaviour
     [ContextMenu("Prefetch 50 Stones -> persistent + Resources")]
     private void Prefetch50ToBoth()
     {
-        PrefetchAndCacheStones(50, true);
+        PrefetchAndCacheStones(50, true, null);
     }
 #endif
 
-    public void PrefetchAndCacheStones(int count = 50, bool alsoSaveToResourcesInEditor = false)
+    public void EnsureSharedStoneCache(int count = 50, System.Action<bool> onFinished = null)
     {
+        bool hasCompassCache = Compass.meshesAndOutlines != null && Compass.meshesAndOutlines.Count > 0;
+        if (hasCompassCache)
+        {
+            onFinished?.Invoke(true);
+            return;
+        }
+
+        void FallbackToCache()
+        {
+            if (LoadStonesFromPersistentCacheFile() || LoadStonesFromResources())
+            {
+                onFinished?.Invoke(true);
+            }
+            else
+            {
+                onFinished?.Invoke(false);
+            }
+        }
+
+        PrefetchAndCacheStones(count, false, success =>
+        {
+            if (success)
+            {
+                onFinished?.Invoke(true);
+            }
+            else
+            {
+                FallbackToCache();
+            }
+        });
+    }
+
+    public void PrefetchAndCacheStones(int count = 50, bool alsoSaveToResourcesInEditor = false, System.Action<bool> onFinished = null)
+    {
+        if (ConnectionManager.Instance == null)
+        {
+            Debug.LogWarning("TinySave: ConnectionManager not available; cannot prefetch stones.");
+            onFinished?.Invoke(false);
+            return;
+        }
+
         ConnectionManager.Instance.FetchSharedVariables(
             "StoneComplete",
             (variables) =>
@@ -810,10 +1018,12 @@ public class TinySave : MonoBehaviour
                         SaveStonesToResourcesAsset();
                     }
 #endif
+                    onFinished?.Invoke(Compass.meshesAndOutlines.Count > 0);
                 }
                 else
                 {
                     Debug.LogWarning("TinySave: Prefetch returned no stones.");
+                    onFinished?.Invoke(false);
                 }
             },
             count);

@@ -139,6 +139,7 @@ public class DecisionMedieval : Order
         Debug.Log("Stone saved successfully!");
 
         MapCompletion.decisions.Add(decision);
+        PersistDecision();
 
 
         var savedStones = GameObject.Find("BasicFlowEngine").GetComponent<BasicFlowEngine>().GetVariable<IntegerVariable>("SavedStones");
@@ -156,8 +157,35 @@ public class DecisionMedieval : Order
         Debug.Log("Stone broken successfully!");
 
         MapCompletion.decisions.Add(decision);
+        PersistDecision();
 
         StartCoroutine(wait());
+    }
+
+    void PersistDecision()
+    {
+        var tinySave = TinySave.Instance != null ? TinySave.Instance : Object.FindObjectOfType<TinySave>();
+        if (tinySave == null)
+        {
+            Debug.LogWarning("DecisionMedieval: TinySave instance not found; medieval choice not persisted.");
+            return;
+        }
+
+        int whichStone = stoneType switch
+        {
+            StoneType.Stone1 => 1,
+            StoneType.Stone2 => 2,
+            StoneType.OtherStone => 3,
+            _ => -1
+        };
+
+        if (whichStone == -1)
+        {
+            Debug.LogWarning($"DecisionMedieval: Unknown stone type {stoneType}, cannot persist decision.");
+            return;
+        }
+
+        tinySave.SaveStoneMedieval(decision, whichStone);
     }
 
 

@@ -35,6 +35,12 @@ public class MapCompletion : MonoBehaviour
     [SerializeField]
     public bool destroyedStone1 = false, destroyedStone2 = false, foundStoneCreated = false;
 
+    [SerializeField]
+    public bool savedStone1 = false, savedStone2 = false;
+
+    [SerializeField]
+    public bool destroyedStone3 = false, savedStone3 = false;
+
 
     [SerializeField] public static List<DecisionMedieval.StoneDecision> decisions = new List<DecisionMedieval.StoneDecision>();
 
@@ -47,11 +53,105 @@ public class MapCompletion : MonoBehaviour
     [SerializeField]
     GameObject beamOfLight;
 
+    [SerializeField]
+    public bool hasStones = false;
+
     public static bool alreadyLoaded=false;
 
-    IEnumerator wait10AndCreateStones()
+    public void SyncFromTinySave()
     {
-               yield return new WaitForSeconds(5f);
+        var ts = TinySave.Instance != null ? TinySave.Instance : FindObjectOfType<TinySave>();
+
+        gameCompleted = ts != null ? ts.IsGameCompleted() : TinySave.GetGameCompletionFlag();
+
+        bool prefetchedStonesAvailable = Compass.meshesAndOutlines != null && Compass.meshesAndOutlines.Count > 0;
+        hasStones = prefetchedStonesAvailable || TinySave.HasAnyPlayerCreatedStones;
+
+        TinySave.StoneDecisionCollection collection = ts != null
+            ? ts.LoadStoneMedieval()
+            : TinySave.LoadStoneMedievalFromPrefs();
+
+        if (collection?.decisions != null)
+        {
+            decisions = collection.decisions
+                .Where(d => d?.stoneDecision != null)
+                .Select(d => d.stoneDecision)
+                .ToList();
+        }
+        else
+        {
+            decisions = new List<DecisionMedieval.StoneDecision>();
+        }
+
+        ApplyStoneOutcomeFlags();
+        EnsurePlayerStonePrefabs();
+
+        Debug.Log($"MapCompletion: Saved stones - slot1:{TinySave.HasPlayerStoneData(1)} slot2:{TinySave.HasPlayerStoneData(2)} slot3:{TinySave.HasPlayerStoneData(3)}");
+    }
+
+    private void ApplyStoneOutcomeFlags()
+    {
+        destroyedStone1 = TinySave.StoneWasDestroyed(1);
+        destroyedStone2 = TinySave.StoneWasDestroyed(2);
+        destroyedStone3 = TinySave.StoneWasDestroyed(3);
+
+        savedStone1 = TinySave.StoneWasSaved(1);
+        savedStone2 = TinySave.StoneWasSaved(2);
+        savedStone3 = TinySave.StoneWasSaved(3);
+    }
+
+    private void EnsurePlayerStonePrefabs()
+    {
+        createdStone1 = ResolvePlayerStone(createdStone1, 1, "stone 1");
+        createdStone2 = ResolvePlayerStone(createdStone2, 2, "stone 2");
+        foundStone = ResolvePlayerStone(foundStone, 3, "stone 3");
+
+        if (!hasStones)
+        {
+            hasStones = createdStone1 != null || createdStone2 != null || foundStone != null;
+        }
+    }
+
+    private GameObject ResolvePlayerStone(GameObject current, int slot, string label)
+    {
+        bool hasData = TinySave.HasPlayerStoneData(slot);
+        bool needsReload = current == null || current.GetComponent<MeshFilter>()?.sharedMesh == null;
+
+        if (!hasData)
+        {
+            return current; // nothing saved for this slot
+        }
+
+        if (!needsReload)
+        {
+            return current; // current reference already contains a mesh
+        }
+
+        var prefab = TinySave.GetSavedStonePrefab(slot, stoneMaterial, stoneOutlineMaterial);
+        if (prefab == null)
+        {
+            Debug.LogWarning($"MapCompletion: Player {label} data exists but prefab failed to reconstruct.");
+        }
+        else
+        {
+            Debug.Log($"MapCompletion: Reloaded player {label} from saved data.");
+        }
+
+        return prefab;
+    }
+
+    private GameObject SpawnBuildingAt(Vector3 position, Quaternion rotation, Transform parent)
+    {
+        GameObject prefab = cottage != null ? cottage : bakery; // prefer cottage
+        if (prefab == null) return null;
+        var building = Instantiate(prefab, position, rotation * Quaternion.Euler(0, 180, 0), parent);
+        building.name = prefab.name + "_FromStoneDecision";
+        return building;
+    }
+
+    public IEnumerator wait10AndCreateStones(float seconds)
+    {
+               yield return new WaitForSeconds(seconds);
 
         //go thorugh each Compass.rocks rock, and normalise and create the stones
 
@@ -79,6 +179,7 @@ public class MapCompletion : MonoBehaviour
 
         }
 
+        hasStones = stones.Count > 0;
         alreadyLoaded = true; // Set the flag to true after loading the stones
 
         //foreach (var rock in Compass.rocks)
@@ -160,6 +261,7 @@ public class MapCompletion : MonoBehaviour
                 sphere.transform.parent = child; // Set parent to New Stones
 
                 id++;
+                EnsurePlayerStonePrefabs();
 
                 if(southQuadrant)
                 {
@@ -172,6 +274,13 @@ public class MapCompletion : MonoBehaviour
 
                         if (child.name.Contains("81"))
                         {
+                            if (destroyedStone1)
+                            {
+                                SpawnBuildingAt(sphere.transform.position, Quaternion.identity, sphere.transform);
+                                continue;
+                            }
+                            if (createdStone1 == null) continue;
+
                             //spawn the createdStone1 prefab at the position of the sphere
                             GameObject stoneCopy = Instantiate(createdStone1, sphere.transform.position, Quaternion.identity, sphere.transform);
                             stoneCopy.name = "Created Stone 1 " + child.name; // Name the stone copy
@@ -179,9 +288,11 @@ public class MapCompletion : MonoBehaviour
                             stoneCopy.SetActive(true); // Activate the stone copy
 
                             //spawn a beam of light at the position of the stone, above it
-                            GameObject beam = Instantiate(beamOfLight, stoneCopy.transform.position + Vector3.up * 2f, Quaternion.identity, stoneCopy.transform);
+                            GameObject beam = Instantiate(beamOfLight, stoneCopy.transform.position + Vector3.up * 1f, Quaternion.identity, stoneCopy.transform);
                             beam.name = "Beam of Light " + child.name; // Name the beam of light
-                            beam.transform.localScale = Vector3.one * 0.1f; // Scale down the beam of light
+                            beam.transform.localScale = new Vector3(10, 150, 10);
+
+                            //beam.transform.localScale = Vector3.one * 0.1f; // Scale down the beam of light
                             beam.SetActive(true); // Activate the beam of light
 
                             //rotate the stone copy to face the centre of the map
@@ -194,6 +305,13 @@ public class MapCompletion : MonoBehaviour
                         }
                         else if (child.name.Contains("87"))
                         {
+                            if (destroyedStone2)
+                            {
+                                SpawnBuildingAt(sphere.transform.position, Quaternion.identity, sphere.transform);
+                                continue;
+                            }
+                            if (createdStone2 == null) continue;
+
                             //spawn the createdStone2 prefab at the position of the sphere
                             GameObject stoneCopy = Instantiate(createdStone2, sphere.transform.position, Quaternion.identity, sphere.transform);
                             stoneCopy.name = "Created Stone 2 " + child.name; // Name the stone copy
@@ -202,9 +320,11 @@ public class MapCompletion : MonoBehaviour
                                                        //rotate the stone copy to face the centre of the map
 
                             //spawn a beam of light at the position of the stone, above it
-                            GameObject beam = Instantiate(beamOfLight, stoneCopy.transform.position + Vector3.up * 2f, Quaternion.identity, stoneCopy.transform);
+                            GameObject beam = Instantiate(beamOfLight, stoneCopy.transform.position + Vector3.up * 1f, Quaternion.identity, stoneCopy.transform);
                             beam.name = "Beam of Light " + child.name; // Name the beam of light
-                            beam.transform.localScale = Vector3.one * 0.1f; // Scale down the beam of light
+                            beam.transform.localScale = new Vector3(10, 150, 10);
+
+                            //beam.transform.localScale = Vector3.one * 0.1f; // Scale down the beam of light
                             beam.SetActive(true); // Activate the beam of light
 
                             if (centreOfMap != null)
@@ -230,7 +350,12 @@ public class MapCompletion : MonoBehaviour
                         if (child.name.Contains("61"))
                         {
 
-
+                            if (destroyedStone1)
+                            {
+                                SpawnBuildingAt(sphere.transform.position, Quaternion.identity, sphere.transform);
+                                continue;
+                            }
+                            if (createdStone1 == null) continue;
 
                             //spawn the createdStone1 prefab at the position of the sphere
                             GameObject stoneCopy = Instantiate(createdStone1, sphere.transform.position, Quaternion.identity, sphere.transform);
@@ -240,9 +365,11 @@ public class MapCompletion : MonoBehaviour
                                                        //rotate the stone copy to face the centre of the map
 
                             //spawn a beam of light at the position of the stone, above it
-                            GameObject beam = Instantiate(beamOfLight, stoneCopy.transform.position + Vector3.up * 2f, Quaternion.identity, stoneCopy.transform);
+                            GameObject beam = Instantiate(beamOfLight, stoneCopy.transform.position + Vector3.up * 1f, Quaternion.identity, stoneCopy.transform);
                             beam.name = "Beam of Light " + child.name; // Name the beam of light
-                            beam.transform.localScale = Vector3.one * 0.1f; // Scale down the beam of light
+                            //beam.transform.localScale = Vector3.one * 0.9f; // Scale down the beam of light
+                            beam.transform.localScale = new Vector3(10, 150, 10);
+
                             beam.SetActive(true); // Activate the beam of light
                             if (centreOfMap != null)
                             {
@@ -253,6 +380,13 @@ public class MapCompletion : MonoBehaviour
                         }
                         else if (child.name.Contains("53"))
                         {
+                            if (destroyedStone2)
+                            {
+                                SpawnBuildingAt(sphere.transform.position, Quaternion.identity, sphere.transform);
+                                continue;
+                            }
+                            if (createdStone2 == null) continue;
+
                             //spawn the createdStone2 prefab at the position of the sphere
                             GameObject stoneCopy = Instantiate(createdStone2, sphere.transform.position, Quaternion.identity, sphere.transform);
                             stoneCopy.name = "Created Stone 2 " + child.name; // Name the stone copy
@@ -261,9 +395,10 @@ public class MapCompletion : MonoBehaviour
                                                        //rotate the stone copy to face the centre of the map
 
                             //spawn a beam of light at the position of the stone, above it
-                            GameObject beam = Instantiate(beamOfLight, stoneCopy.transform.position + Vector3.up * 2f, Quaternion.identity, stoneCopy.transform);
+                            GameObject beam = Instantiate(beamOfLight, stoneCopy.transform.position + Vector3.up * 1f, Quaternion.identity, stoneCopy.transform);
                             beam.name = "Beam of Light " + child.name; // Name the beam of light
-                            beam.transform.localScale = Vector3.one * 0.1f; // Scale down the beam of light
+                            //beam.transform.localScale = Vector3.one * 0.1f; // Scale down the beam of light
+                            beam.transform.localScale = new Vector3(10, 150, 10);
                             beam.SetActive(true); // Activate the beam of light
                             if (centreOfMap != null)
                             {
@@ -280,27 +415,54 @@ public class MapCompletion : MonoBehaviour
                 //pick a random stone from the stones, spawn a copy of it at the position of the sphere
                 if (stones.Count > 0)
                 {
+                    // Special handling: third stone decision applied once
+                    if (!foundStoneCreated && (savedStone3 || destroyedStone3))
+                    {
+                        if (destroyedStone3)
+                        {
+                            SpawnBuildingAt(sphere.transform.position, Quaternion.identity, sphere.transform);
+                            foundStoneCreated = true;
+                            continue;
+                        }
+                        else if (savedStone3 && foundStone != null)
+                        {
+                            GameObject stoneCopy = Instantiate(foundStone, sphere.transform.position, Quaternion.identity, sphere.transform);
+                            stoneCopy.name = "Found Stone 3 " + child.name;
+                            stoneCopy.transform.localScale = Vector3.one * 0.05f;
+                            stoneCopy.SetActive(true);
+
+                            GameObject beam = Instantiate(beamOfLight, stoneCopy.transform.position + Vector3.up * 1f, Quaternion.identity, stoneCopy.transform);
+                            beam.name = "Beam of Light " + child.name;
+                            //beam.transform.localScale = Vector3.one * 0.1f;
+                            beam.transform.localScale = new Vector3(10, 150, 10);
+
+                            beam.SetActive(true);
+
+                            if (centreOfMap != null)
+                            {
+                                Vector3 directionToCentre = (centreOfMap.transform.position - stoneCopy.transform.position).normalized;
+                                Quaternion lookRotation = Quaternion.LookRotation(directionToCentre);
+                                stoneCopy.transform.rotation = lookRotation;
+                            }
+
+                            foundStoneCreated = true;
+                            continue;
+                        }
+                    }
+
                     int randomIndex = Random.Range(0, stones.Count);
-                    GameObject stoneCopy = Instantiate(stones[randomIndex], sphere.transform.position, Quaternion.identity,sphere.transform);
-                    //stoneCopy.transform.parent = sphere.transform; // Set parent to the sphere
-                    stoneCopy.name = "Stone Copy " + child.name; // Name the stone copy
-                                                                 //set scale to 0.05f
-                    stoneCopy.transform.localScale = Vector3.one * 0.05f; // Scale down the stone copy
+                    GameObject stoneCopy2 = Instantiate(stones[randomIndex], sphere.transform.position, Quaternion.identity,sphere.transform);
+                    stoneCopy2.name = "Stone Copy " + child.name; // Name the stone copy
+                    stoneCopy2.transform.localScale = Vector3.one * 0.05f; // Scale down the stone copy
 
-                    stoneCopy.SetActive(true); // Activate the stone copy
-
-                    //spawn a beam of light at the position of the stone, above it
-                    //GameObject beam = Instantiate(beamOfLight, stoneCopy.transform.position + Vector3.up * 0.4f, Quaternion.identity, stoneCopy.transform);
-                    //beam.name = "Beam of Light " + child.name; // Name the beam of light
-                    //beam.transform.localScale = Vector3.one * 0.1f; // Scale down the beam of light
-                    //beam.SetActive(true); // Activate the beam of light
+                    stoneCopy2.SetActive(true); // Activate the stone copy
 
                     //rotate the stone copy to face the centre of the map
                     if (centreOfMap != null)
                     {
-                        Vector3 directionToCentre = (centreOfMap.transform.position - stoneCopy.transform.position).normalized;
+                        Vector3 directionToCentre = (centreOfMap.transform.position - stoneCopy2.transform.position).normalized;
                         Quaternion lookRotation = Quaternion.LookRotation(directionToCentre);
-                        stoneCopy.transform.rotation = lookRotation;
+                        stoneCopy2.transform.rotation = lookRotation;
                     }
 
                     Debug.Log("Spawned stone "+ child.name);
@@ -360,9 +522,35 @@ public class MapCompletion : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(wait10AndCreateStones());
+        SyncFromTinySave();
+        StartCoroutine(InitializeStoneFlow());
 
         DontDestroyOnLoad(this); // Ensure this script persists across scenes
+    }
+
+    IEnumerator InitializeStoneFlow()
+    {
+        yield return EnsureSharedStonesAvailable();
+        yield return wait10AndCreateStones(0.25f);
+    }
+
+    IEnumerator EnsureSharedStonesAvailable()
+    {
+        var tinySave = TinySave.Instance != null ? TinySave.Instance : FindObjectOfType<TinySave>();
+        if (tinySave == null)
+        {
+            yield break;
+        }
+
+        bool completed = false;
+        tinySave.EnsureSharedStoneCache(75, _ => completed = true);
+
+        float timeout = 10f;
+        while (!completed && timeout > 0f)
+        {
+            timeout -= Time.deltaTime;
+            yield return null;
+        }
     }
 
     // Update is called once per frame

@@ -23,6 +23,13 @@ public class SelfieSegmentationSample : MonoBehaviour
 
 
     public GameObject currentStone;
+    [SerializeField, Range(1, 2)]
+    int stoneSlot = 1;
+
+    public void ConfigureStoneSlot(int slot)
+    {
+        stoneSlot = Mathf.Clamp(slot, 1, 2);
+    }
   
 
     private void Start()
@@ -257,10 +264,6 @@ public class SelfieSegmentationSample : MonoBehaviour
         }
     }
 
-    [SerializeField]
-    bool firstStone = true;
-
-
     private Button pressedButtonObject;
 
 
@@ -384,7 +387,7 @@ public class SelfieSegmentationSample : MonoBehaviour
 
             var mapCompletion = GameObject.Find("MapComplete").GetComponent<MapCompletion>();
 
-            if(firstStone)
+            if (stoneSlot == 1)
             {
                 mapCompletion.createdStone1 = stoneCreator.gameObject;
             }
@@ -419,7 +422,16 @@ public class SelfieSegmentationSample : MonoBehaviour
 
             var meshData = MeshSerializer.ToBase64(mesh, normalisedContour);
             ConnectionManager.Instance.SaveSharedVariable("StoneComplete", "MeshAndOutlineBase64",meshData);
-            TinySave.Instance.SaveStoneData(meshData, firstStone ? 1 : 2);
+            var tinySave = TinySave.Instance != null ? TinySave.Instance : FindObjectOfType<TinySave>();
+            if (tinySave != null)
+            {
+                tinySave.SaveStoneData(meshData, stoneSlot);
+                Debug.Log($"SelfieSegmentationSample: Saved stone slot {stoneSlot} (mesh length {meshData.Length}).");
+            }
+            else
+            {
+                Debug.LogError("SelfieSegmentationSample: TinySave not found; stone mesh not persisted.");
+            }
 
 
             //load next scene in the build

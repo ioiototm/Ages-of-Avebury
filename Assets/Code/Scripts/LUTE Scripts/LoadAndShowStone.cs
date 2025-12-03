@@ -132,7 +132,16 @@ public class LoadAndShowStone : Order
         //serialize the stone to base64
         var base64Stone = MeshSerializer.ToBase64(meshFilter.sharedMesh, stoneCreator.outlinePoints);
 
-        TinySave.Instance.SaveStoneData(base64Stone, 3);
+        var tinySave = TinySave.Instance != null ? TinySave.Instance : FindObjectOfType<TinySave>();
+        if (tinySave != null)
+        {
+            tinySave.SaveStoneData(base64Stone, 3);
+            Debug.Log("LoadAndShowStone: Saved social stone data (slot 3).");
+        }
+        else
+        {
+            Debug.LogError("LoadAndShowStone: TinySave not found; social stone mesh not persisted.");
+        }
 
 
         return lineGO;

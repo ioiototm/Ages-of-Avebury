@@ -21,6 +21,9 @@ public class StoneCreation : Order
     [SerializeField]
     GameObject stoneObject;
 
+    [SerializeField, Range(1, 2)]
+    int stoneSlot = 1;
+
 
     //a function that will be called when the user has pressed the button and created the stone
     public void CreateStone()
@@ -71,8 +74,8 @@ public class StoneCreation : Order
         if (selfieSegmentationSample == null)
         {
             selfieSegmentationSample = GameObject.Find("SelfieSegmentationSample").GetComponent<SelfieSegmentationSample>();
-            
             selfieSegmentationSample.stoneOrder = this;
+            selfieSegmentationSample.ConfigureStoneSlot(stoneSlot);
             return;
         }
 
@@ -80,6 +83,7 @@ public class StoneCreation : Order
         selfieSegmentationSample.gameObject.SetActive(true);
         selfieSegmentationSample.currentStone = stoneObject;
         selfieSegmentationSample.stoneOrder = this;
+        selfieSegmentationSample.ConfigureStoneSlot(stoneSlot);
 
         makeStoneButton.SetActive(true);
         //To continue or not depending on if this order takes care of everything or diffrent orders take care of the rest

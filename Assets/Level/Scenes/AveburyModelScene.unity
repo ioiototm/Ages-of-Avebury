@@ -6037,6 +6037,7 @@ GameObject:
   - component: {fileID: 1189736489}
   - component: {fileID: 1189736488}
   - component: {fileID: 1189736492}
+  - component: {fileID: 1189736493}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -6169,7 +6170,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1189736487}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 282628f90d888d246a254c749ff4c37b, type: 3}
   m_Name: 
@@ -6183,6 +6184,18 @@ MonoBehaviour:
   panSpeed: 0.5
   minYAngle: 10
   maxYAngle: 30
+--- !u!114 &1189736493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1189736487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90ff039de4263c544b191e77b3bbb799, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1208183519
 GameObject:
   m_ObjectHideFlags: 0
@@ -9702,6 +9715,85 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _measurements: 5
+--- !u!1 &2139386152
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2139386155}
+  - component: {fileID: 2139386154}
+  - component: {fileID: 2139386153}
+  m_Layer: 0
+  m_Name: MapComplete
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2139386153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2139386152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 320bc6748c4ffcb49b781007a553b985, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2139386154
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2139386152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aab4f39c02d8e543bb393dc43990589, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mapWithEmpty: {fileID: 908037693231588034, guid: 4ea5a47a9ebb64a4a983301788811ec8, type: 3}
+  completeMap: 0
+  gameCompleted: 0
+  stoneMaterial: {fileID: 2100000, guid: 608cd06443256a746a1fa703b73ca161, type: 2}
+  stoneOutlineMaterial: {fileID: 2100000, guid: 4a2319962aacb9c49b27fade26e04ed4, type: 2}
+  stones: []
+  createdStone1: {fileID: 0}
+  createdStone2: {fileID: 0}
+  foundStone: {fileID: 0}
+  destroyedStone1: 0
+  destroyedStone2: 0
+  foundStoneCreated: 0
+  savedStone1: 0
+  savedStone2: 0
+  destroyedStone3: 0
+  savedStone3: 0
+  southQuadrant: 0
+  bakery: {fileID: 1732013985733744393, guid: 86a767fa921a4cd4298a5c995c23577a, type: 3}
+  cottage: {fileID: 7446336629091917979, guid: 8cfc6fef7fbcfe942a3aee616ea07620, type: 3}
+  church: {fileID: 4581592603595316899, guid: 03a6edb0b1971694a94ac77a5063ca5c, type: 3}
+  beamOfLight: {fileID: 6938984573449454688, guid: 3b600ce15386ef342a6dca5949da6bb2, type: 3}
+  hasStones: 0
+--- !u!4 &2139386155
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2139386152}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.0022530789, y: 0.756193, z: 0.06063638}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -9719,3 +9811,4 @@ SceneRoots:
   - {fileID: 1007672987}
   - {fileID: 139268679}
   - {fileID: 1366407253}
+  - {fileID: 2139386155}
