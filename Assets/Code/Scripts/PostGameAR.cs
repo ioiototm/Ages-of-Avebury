@@ -50,16 +50,20 @@ public class PostGameAR : Order
                 {
                     var c0 = stoneAndBuildings.transform.GetChild(0);
                     c0.localPosition = Vector3.left * offsetDistance;
+                    //set it to enabled
+                    c0.gameObject.SetActive(true);
                 }
                 if (childCount > 1)
                 {
                     var c1 = stoneAndBuildings.transform.GetChild(1);
                     c1.localPosition = Vector3.forward * offsetDistance;
+                    c1.gameObject.SetActive(true);
                 }
                 if (childCount > 2)
                 {
                     var c2 = stoneAndBuildings.transform.GetChild(2);
                     c2.localPosition = Vector3.right * offsetDistance;
+                    c2.gameObject.SetActive(true);
                 }
 
                 yield break; // Exit the coroutine once done
